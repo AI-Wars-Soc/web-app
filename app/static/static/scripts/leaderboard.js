@@ -190,7 +190,7 @@ const leaderboard = (function () {
         // Make graph object
         $("#overTimeChartContainer").html($("<canvas />", {id: "overTimeChart"}).hide());
 
-        $.post('/api/get_leaderboard_over_time')
+        login.authorisedPost('/api/get_leaderboard_over_time')
             .then(response => {
                 const ctx = document.getElementById('overTimeChart').getContext('2d');
                 const config = get_graph_config(response.data.users, response.data.deltas, response.data.initial_score);

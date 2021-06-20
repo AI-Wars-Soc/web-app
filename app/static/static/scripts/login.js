@@ -19,7 +19,7 @@ const login = (function () {
         window.sessionStorage.removeItem("token");
     }
 
-    obj.authorisedPost = function (url, data) {
+    obj.authorisedPost = function (url, data = {}) {
         let q = {
             url: url,
             type: 'POST',
@@ -60,6 +60,7 @@ const login = (function () {
             .then(response => {
                 const error_message = $("#login-error-msg");
                 error_message.hide();
+                $('#loginModal').modal('hide');
                 setToken(response["access_token"]);
                 templates.refresh();
             })

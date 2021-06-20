@@ -6,14 +6,10 @@ submissions = (function () {
     obj.setSubmissionEnabledSwitch = function (checkbox, submission_id) {
         const v = checkbox.checked;
 
-        $.ajax('/api/set_submission_active',
+        login.authorisedPost('/api/set_submission_active',
             {
-                data: JSON.stringify({
-                    submission_id: submission_id,
-                    enabled: v
-                }),
-                contentType: 'application/json',
-                type: 'POST'
+                submission_id: submission_id,
+                enabled: v
             })
             .then(() => templates.refresh())
             .catch(res => {
@@ -34,14 +30,7 @@ submissions = (function () {
         const spinner = $("#submit-spinner");
         spinner.show();
 
-        $.ajax('/api/add_submission',
-            {
-                data: JSON.stringify({
-                    url: url
-                }),
-                contentType: 'application/json',
-                type: 'POST'
-            })
+        login.authorisedPost('/api/add_submission', {url: url})
             .then(response => {
                 if (response.status === "resent") { // Ignore resent requests
                     return;
@@ -56,14 +45,10 @@ submissions = (function () {
     function onBotSubmit(e) {
         e.preventDefault();
 
-        $.ajax('/api/add_submission',
+        login.authorisedPost('/api/add_bot',
             {
-                data: JSON.stringify({
-                    url: $("#repo").val(),
-                    name: $("#bot-name").val()
-                }),
-                contentType: 'application/json',
-                type: 'POST'
+                url: $("#repo").val(),
+                name: $("#bot-name").val()
             })
             .then(() => {
                 $("#submission-error-msg").hide();
@@ -84,22 +69,13 @@ submissions = (function () {
     }
 
     obj.deleteBot = function (id) {
-        const xhr = new XMLHttpRequest();
-        xhr.open('POST', '/api/remove_bot');
-        xhr.setRequestHeader('Content-Type', 'application/json');
-        xhr.onload = function () {
-            if (xhr.status !== 200) {
-                onSubmitFail(xhr.responseText);
-                return;
-            }
-            window.location.reload();
-        };
-        xhr.onerror = function () {
-            onSubmitFail(xhr.responseText);
-        };
-        xhr.send(JSON.stringify({
-            id: id
-        }));
+        login.authorisedPost('/api/remove_bot', {id: id})
+            .then(response => {
+                window.location.reload();
+            })
+            .catch(response => {
+                onSubmitFail(response);
+            });
     }
 
     function registerCollapse(s) {
@@ -121,13 +97,9 @@ submissions = (function () {
         }
         objs.show();
 
-        $.ajax('/api/get_submission_summary_graph',
+        login.authorisedPost('/api/get_submission_summary_graph',
             {
-                data: JSON.stringify({
-                    submission_id: id
-                }),
-                contentType: 'application/json',
-                type: 'POST'
+                submission_id: id
             })
             .then(response => {
                 madeGraphs.add(id);
