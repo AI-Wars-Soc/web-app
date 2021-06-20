@@ -1,7 +1,23 @@
 const login = (function () {
     let obj = {};
 
-    let token = null;
+    // TODO: This leaves us open to XSS attacks and we should use http-only cookies instead
+    function getToken() {
+        return window.sessionStorage.getItem("token");
+    }
+
+    function loggedIn () {
+        return (getToken() !== null)
+    }
+    obj.loggedIn = loggedIn;
+
+    function setToken(new_token) {
+        window.sessionStorage.setItem("token", new_token);
+    }
+
+    obj.revokeToken = function () {
+        window.sessionStorage.removeItem("token");
+    }
 
     obj.authorisedPost = function (url, data) {
         let q = {
@@ -11,8 +27,8 @@ const login = (function () {
             contentType: 'application/json; charset=utf-8'
         };
 
-        if (token !== null) {
-            q.headers = {Authorization: "Bearer " + token };
+        if (loggedIn()) {
+            q.headers = {Authorization: "Bearer " + getToken()};
         }
 
         return $.ajax(q);
@@ -44,8 +60,7 @@ const login = (function () {
             .then(response => {
                 const error_message = $("#login-error-msg");
                 error_message.hide();
-                token = response["access_token"];
-                console.log(token);
+                setToken(response["access_token"]);
                 templates.refresh();
             })
             .catch(response => obj.onLoginFail(response));

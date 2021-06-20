@@ -14,12 +14,14 @@
 {% endblock %}
 {% block modal %}
     <script>
+        login.revokeToken();
+
         function onGoogleSignIn(e) {
-            return Logout.onGoogleSignIn(e);
+            return logout.onGoogleSignIn(e);
         }
 
         function onGoogleFail(e) {
-            return Logout.onGoogleLoginFail(e);
+            return logout.onGoogleLoginFail(e);
         }
     </script>
 

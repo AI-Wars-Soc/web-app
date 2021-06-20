@@ -1,20 +1,22 @@
-class Logout {
-    static onGoogleSignIn() {
-        console.log("Signed in to google");
+logout = (function () {
+    let obj = {};
+
+    obj.onGoogleSignIn = function () {
         const auth2 = gapi.auth2.getAuthInstance();
         auth2.signOut().then(function () {
-            Logout.allLoggedOut();
+            obj.allLoggedOut();
         });
     }
 
-    static onGoogleLoginFail(error) {
-        console.log("Could not sign in to google");
+    obj.onGoogleLoginFail = function (error) {
         console.log(error);
 
-        Logout.allLoggedOut();
+        obj.allLoggedOut();
     }
 
-    static allLoggedOut() {
+    obj.allLoggedOut = function () {
         window.location.replace("/");
     }
-}
+
+    return obj;
+}());
