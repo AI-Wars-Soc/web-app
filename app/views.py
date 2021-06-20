@@ -1,4 +1,7 @@
+import base64
+import hashlib
 import logging
+import os
 
 from cuwais.config import config_file
 from flask import Flask, render_template, redirect
@@ -7,6 +10,8 @@ from werkzeug.middleware.profiler import ProfilerMiddleware
 app = Flask(
     __name__,
     template_folder="templates",
+    static_folder='static',
+    static_url_path=''
 )
 app.config["DEBUG"] = config_file.get("debug")
 
@@ -24,6 +29,25 @@ def rich_render_template(page_name, **kwargs):
         config_file=config_file.get_all(),
         **kwargs
     )
+
+
+def generate_sri(inp_file):
+    hashed = hashlib.sha256()
+
+    file = os.path.join(os.path.dirname(os.path.abspath(__file__)), inp_file[1:])
+    print(file, flush=True)
+    with open(file, 'rb') as f:
+        while True:
+            vs = f.read(65536)
+            if not vs:
+                break
+            hashed.update(vs)
+    hashed = hashed.digest()
+    hash_base64 = base64.b64encode(hashed).decode('utf-8')
+    return 'sha256-{}'.format(hash_base64)
+
+
+app.jinja_env.globals['sri'] = generate_sri
 
 
 def human_format(num):
@@ -53,7 +77,7 @@ def index():
 
 
 @app.route('/about')
-def about(db_session):
+def about():
     return rich_render_template('about')
 
 

@@ -1,14 +1,14 @@
 {% macro import(filename) %}
-    {% set url = url_for('static', filename=filename) %}
-    {% set uri = sri(url) %}
+    {% set url = "/static/" + filename %}
+    {% set uri = sri("/static" + url) %}
     <script src="{{ url + "?" + uri }}"
             integrity="{{ uri }}"
             crossorigin="anonymous"></script>
 {% endmacro %}
 {% macro css(filename, id) %}
     {% set id = id|default('css'+filename) %}
-    {% set url = url_for('static', filename=filename) %}
-    {% set uri = sri(url) %}
+    {% set url = "/static/" + filename %}
+    {% set uri = sri("/static" + url) %}
     <link href="{{ url + "?" + uri }}"
           integrity="{{ uri }}"
           rel="stylesheet"
@@ -17,8 +17,8 @@
 {% endmacro %}
 {% macro client_template(template, data_url, div_id) %}
     {% set filename = "client-templates/" + template + ".mustache" %}
-    {% set url = url_for('static', filename=filename) %}
-    {% set uri = sri(url) %}
+    {% set url = "/static/" + filename %}
+    {% set uri = sri("/static" + url) %}
     <script>
         templates.add_template("{{ url + "?" + uri }}", "{{ data_url }}", "{{ div_id }}");
     </script>
