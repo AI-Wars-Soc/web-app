@@ -1,0 +1,42 @@
+<nav class="navbar navbar-expand-md navbar-dark bg-primary">
+    <div class="navbar-collapse collapse w-100 order-1 order-md-0 dual-collapse2">
+        <ul class="navbar-nav mr-auto">
+        {{#each l_nav}}
+            <li class="nav-item{{ active }}">
+                <a class="nav-link"
+                    {{#if data_toggle }} data-toggle="{{ data_toggle }}" {{/if}}
+                   href="{{ link }}">
+                    {{ text }}
+                    {{#if icon }}
+                        &nbsp;
+                        <i class="{{ icon }}"></i>
+                    {{/if}}
+                </a>
+            </li>
+        {{/each}}
+        </ul>
+    </div>
+    <div class="mx-auto order-0">
+        <a class="navbar-brand mx-auto" href="/">{{ soc_name }}</a>
+    </div>
+    <div class="collapse navbar-collapse w-100 order-3 dual-collapse2">
+        <ul class="navbar-nav ml-auto">
+        {{#each r_nav}}
+            <li class="nav-item{{ active }}">
+                <a class="nav-link"
+                    {{#if data_toggle }} data-toggle="{{ data_toggle }}" {{/if}}
+                   href="{{ link }}">
+                    {{ text }}
+                    {{#if icon }}
+                        &nbsp;
+                        <i class="{{ icon }}"></i>
+                    {{/if}}
+                </a>
+            </li>
+        {{/each}}
+        </ul>
+    </div>
+    <button class="navbar-toggler" type="button" data-toggle="collapse" data-target=".dual-collapse2">
+        <span class="navbar-toggler-icon"></span>
+    </button>
+</nav>

@@ -15,7 +15,7 @@
           crossorigin="anonymous"
           id="{{ id }}">
 {% endmacro %}
-{% macro client_template(template, data_url, div_id) %}
+{% macro client_template(template, data_url, div_id, args) %}
     {% set filename = "client-templates/" + template + ".mustache" %}
     {% set url = "/static/" + filename %}
     {% set uri = sri("/static" + url) %}
@@ -40,14 +40,15 @@
     <meta name="msapplication-TileColor" content="#da532c">
     <meta name="theme-color" content="#ffffff">
 
-    <!-- Bootstrap -->
+    <!-- Bootstrap
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.0-beta1/dist/css/bootstrap.min.css" rel="stylesheet"
-          integrity="sha384-giJF6kkoqNQ00vy+HMDP7azOuL0xtbfIcaT9wjKHr8RbDVddVHyTfAAsrekwKmP1" crossorigin="anonymous">
+          integrity="sha384-giJF6kkoqNQ00vy+HMDP7azOuL0xtbfIcaT9wjKHr8RbDVddVHyTfAAsrekwKmP1" crossorigin="anonymous">-->
 
     <!-- Bootswatch -->
     <link rel="stylesheet" integrity="sha384-nNK9n28pDUDDgIiIqZ/MiyO3F4/9vsMtReZK39klb/MtkZI3/LtjSjlmyVPS3KdN"
           href="https://stackpath.bootstrapcdn.com/bootswatch/4.5.2/darkly/bootstrap.min.css" crossorigin="anonymous"
-          id="bootswatch-dark">
+          id="bootswatch-dark"
+          media="none" onload="if(media!=='all')media='all'">
     <link rel="stylesheet" integrity="sha384-qF/QmIAj5ZaYFAeQcrQ6bfVMAh4zZlrGwTPY7T/M+iTTLJqJBJjwwnsE5Y0mV7QK"
           href="https://stackpath.bootstrapcdn.com/bootswatch/4.5.2/flatly/bootstrap.min.css" crossorigin="anonymous"
           id="bootswatch-light">
@@ -63,7 +64,7 @@
     <!-- Font Awesome js -->
     <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css"
           integrity="sha384-wvfXpqpZZVQGK6TAh5PVlGOfQNHSoD2xbE+QkPxCAFlNEevoEH3Sl0sibVcOQVnN" crossorigin="anonymous"
-          media="none" onload="if(media!='all')media='all'">
+          media="none" onload="if(media!=='all')media='all'">
     <noscript>
         <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css"
               integrity="sha384-wvfXpqpZZVQGK6TAh5PVlGOfQNHSoD2xbE+QkPxCAFlNEevoEH3Sl0sibVcOQVnN"
@@ -101,17 +102,14 @@
     <!-- CUWAIS Scripts -->
     {{ import('scripts/template.js') }}
     {{ import('scripts/style.js') }}
+    {{ import('scripts/login.js') }}
 
-    {% if user is none %}
-        {{ import('scripts/login.js') }}
-
-        <!-- Google login -->
-        <script src="https://apis.google.com/js/platform.js?onload=Login.googleInit" async defer></script>
-        <meta name="google-signin-client_id"
-              content="{{ config_file.google_client_id }}">
-        {% if config_file.allowed_email_domain is not none %}
-            <meta name="google-signin-hosted_domain" content="{{ config_file.allowed_email_domain }}">
-        {% endif %}
+    <!-- Google login -->
+    <script src="https://apis.google.com/js/platform.js?onload=Login.googleInit" async defer></script>
+    <meta name="google-signin-client_id"
+          content="{{ config_file.google_client_id }}">
+    {% if config_file.allowed_email_domain is not none %}
+        <meta name="google-signin-hosted_domain" content="{{ config_file.allowed_email_domain }}">
     {% endif %}
 
     {% block imports %}{% endblock %}
@@ -119,49 +117,14 @@
     <title>{{ config_file.soc_name.upper() }} - {{ page_name.replace("_", " ").title() }}</title>
 </head>
 <body>
+
 <!-- Navbar (top) -->
-{% macro nav_item(text, icon, active=False, link='#', data_toggle=None) -%}
-    <li class="nav-item{{ ' active' if active }}">
-        <a class="nav-link"
-                {% if data_toggle %} data-toggle="{{ data_toggle }}" {% endif %}
-           href="{{ link }}">
-            {{ text }}
-            {% if icon %}
-                &nbsp;
-                <i class="{{ icon }}"></i>
-            {% endif %}
-        </a>
-    </li>
-{%- endmacro %}
-{% macro nav(items) -%}
-    {% for item in items %}
-        {{ nav_item(item.text, item.icon, item.active, item.link, item.data_toggle) }}
-    {% endfor %}
-{%- endmacro %}
+{{ client_template("navbar-template", "/api/get_navbar", "#navbar") }}
 <div id="navbar">
     <nav class="navbar navbar-expand-md navbar-dark bg-primary">
-        <div class="navbar-collapse collapse w-100 order-1 order-md-0 dual-collapse2">
-            {% block navbar_left %}
-                <ul class="navbar-nav mr-auto">
-                    {{ nav(l_nav) }}
-                </ul>
-            {% endblock %}
-        </div>
-        <div class="mx-auto order-0">
-            {% block navbar_mid %}
-                <a class="navbar-brand mx-auto" href="/">{{ config_file.soc_name.upper() }}</a>
-            {% endblock %}
-        </div>
-        <div class="collapse navbar-collapse w-100 order-3 dual-collapse2">
-            {% block navbar_end %}
-                <ul class="navbar-nav ml-auto">
-                    {{ nav(r_nav) }}
-                </ul>
-            {% endblock %}
-        </div>
-        <button class="navbar-toggler" type="button" data-toggle="collapse" data-target=".dual-collapse2">
-            <span class="navbar-toggler-icon"></span>
-        </button>
+    <div class="mx-auto order-0">
+        <a class="navbar-brand mx-auto" href="/">{{ config_file.soc_name.upper() }}</a>
+    </div>
     </nav>
 </div>
 
@@ -171,47 +134,45 @@
     <div class="modal-dialog" role="document">
         <div class="modal-content">
             {% block modal %}
-                {% if user is none %}
-                    <div class="modal-header">
-                        <h5 class="modal-title" id="loginModalLabel">Login</h5>
-                        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-                            <span aria-hidden="true">&times;</span>
-                        </button>
-                    </div>
-                    <div class="modal-body">
-                        <h4 class="card-title mb-4 mt-1">Sign in</h4>
-                        <div class="d-grid gap-3">
-                            <p>
-                                By logging in you agree to the rules on the about page,
-                                as well as allowing us to store your name and and email address.
-                                You can delete your account at any time.
-                            </p>
-                            <div class="d-flex justify-content-center">
-                                <script>
-                                    function onGoogleSignIn(e) {
-                                        return Login.onGoogleSignIn(e);
-                                    }
+                <div class="modal-header">
+                    <h5 class="modal-title" id="loginModalLabel">Login</h5>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+                <div class="modal-body">
+                    <h4 class="card-title mb-4 mt-1">Sign in</h4>
+                    <div class="d-grid gap-3">
+                        <p>
+                            By logging in you agree to the rules on the about page,
+                            as well as allowing us to store your name and and email address.
+                            You can delete your account at any time.
+                        </p>
+                        <div class="d-flex justify-content-center">
+                            <script>
+                                function onGoogleSignIn(e) {
+                                    return Login.onGoogleSignIn(e);
+                                }
 
-                                    function onGoogleFail(e) {
-                                        return Login.onLoginFail(e);
-                                    }
-                                </script>
-                                <div class="g-signin2" data-width="300" data-height="50" data-longtitle="true"
-                                     data-onsuccess="onGoogleSignIn" data-onfailure="onGoogleFail"
-                                     data-theme="light">
-                                </div>
-                            </div>
-                            <div id="login-error-msg"
-                                 class="p-2 bg-danger text-white text-center border border-danger rounded"
-                                 style="display:none">
-                                Something went wrong. Please try again or let someone know.
+                                function onGoogleFail(e) {
+                                    return Login.onLoginFail(e);
+                                }
+                            </script>
+                            <div class="g-signin2" data-width="300" data-height="50" data-longtitle="true"
+                                 data-onsuccess="onGoogleSignIn" data-onfailure="onGoogleFail"
+                                 data-theme="light">
                             </div>
                         </div>
+                        <div id="login-error-msg"
+                             class="p-2 bg-danger text-white text-center border border-danger rounded"
+                             style="display:none">
+                            Something went wrong. Please try again or let someone know.
+                        </div>
                     </div>
-                    <div class="modal-footer">
-                        <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
-                    </div>
-                {% endif %}
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                </div>
             {% endblock %}
         </div>
     </div>
