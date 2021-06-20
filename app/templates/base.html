@@ -105,7 +105,7 @@
     {{ import('scripts/login.js') }}
 
     <!-- Google login -->
-    <script src="https://apis.google.com/js/platform.js?onload=Login.googleInit" async defer></script>
+    <script src="https://apis.google.com/js/platform.js?onload=login.googleInit" async defer></script>
     <meta name="google-signin-client_id"
           content="{{ config_file.google_client_id }}">
     {% if config_file.allowed_email_domain is not none %}
@@ -151,11 +151,11 @@
                         <div class="d-flex justify-content-center">
                             <script>
                                 function onGoogleSignIn(e) {
-                                    return Login.onGoogleSignIn(e);
+                                    return login.onGoogleSignIn(e);
                                 }
 
                                 function onGoogleFail(e) {
-                                    return Login.onLoginFail(e);
+                                    return login.onLoginFail(e);
                                 }
                             </script>
                             <div class="g-signin2" data-width="300" data-height="50" data-longtitle="true"
