@@ -10,12 +10,9 @@ const templates = (function () {
             return $.get(template_url)
                 .then(template_str => {
                     template = Handlebars.compile(template_str);
-                    return $.ajax({
-                        url: data_url,
-                        type: 'POST',
-                        data: JSON.stringify({page_name: window.location.pathname.substring(1)}),
-                        contentType: 'application/json; charset=utf-8'
-                    })
+                    return login.authorisedPost(data_url,{
+                        page_name: window.location.pathname.substring(1)
+                    });
                 })
                 .then(data => $(div_id).html(template(data)))
                 .catch(failure => console.error(failure));

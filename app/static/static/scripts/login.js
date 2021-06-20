@@ -1,6 +1,23 @@
 const login = (function () {
     let obj = {};
 
+    let token = null;
+
+    obj.authorisedPost = function (url, data) {
+        let q = {
+            url: url,
+            type: 'POST',
+            data: JSON.stringify(data),
+            contentType: 'application/json; charset=utf-8'
+        };
+
+        if (token !== null) {
+            q.headers = {Authorization: "Bearer " + token };
+        }
+
+        return $.ajax(q);
+    }
+
     obj.googleInit = function () {
         gapi.load('auth2', function () {
             // Done
@@ -27,7 +44,9 @@ const login = (function () {
             .then(response => {
                 const error_message = $("#login-error-msg");
                 error_message.hide();
-                console.log(response);
+                token = response["access_token"];
+                console.log(token);
+                templates.refresh();
             })
             .catch(response => obj.onLoginFail(response));
     }
