@@ -4,6 +4,13 @@ const templates = (function () {
 
     let obj = {};
 
+    obj.setWindowLoc = function (location) {
+        if (location === "/") {
+            location = "/about";
+        }
+        window.location = location;
+    };
+
     obj.add_template = function (template_url, data_url, div_id) {
         template_gen_funcs.push(function () {
             let template;
@@ -16,6 +23,10 @@ const templates = (function () {
                 })
                 .then(data => $(div_id).html(template(data)))
                 .catch(failure => {
+                    $(div_id).html('');
+                    if (failure.status === 401) { // Permission Denied
+                        login.lockModalOpen();
+                    }
                     console.error(failure);
                 });
         });

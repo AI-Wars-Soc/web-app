@@ -12,6 +12,15 @@ const login = (function () {
         return $.ajax(q);
     }
 
+    obj.lockModalOpen = function () {
+        $('#modalButtonClose').hide();
+        $('#modalButtonBack').show();
+        $('#modalButtonXClose').hide();
+        $('#modalButtonXBack').show();
+
+        $('#loginModal').data("backdrop", "static").modal('show');
+    }
+
     obj.logout = function() {
         Cookies.set("log_out", "");
         templates.refresh();
