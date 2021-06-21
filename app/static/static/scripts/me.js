@@ -1,39 +1,37 @@
-function changeTheme(v) {
-    if (v.checked) {
-        Style.setDark();
-    } else {
-        Style.setLight();
+const me = (function () {
+    let obj = {};
+
+    obj.changeTheme = function (v) {
+        if (v.checked) {
+            style.setDark();
+        } else {
+            style.setLight();
+        }
     }
-}
 
-window.onload = function () {
-    const v = $("#darkModeSwitch");
-    v.prop('checked', Style.getTheme() !== "light");
-}
+    obj.changeNameVisibility = function (v) {
+        const set_visible = v.checked;
 
-function changeNameVisibility(v) {
-    const set_visible = v.checked;
-    const xhr = new XMLHttpRequest();
-    xhr.open('POST', '/api/set_name_visible');
-    xhr.setRequestHeader('Content-Type', 'application/json');
-    xhr.onerror = function () {
-        console.log(xhr.responseText);
-        v.checked = !set_visible;
-    };
-    xhr.send(JSON.stringify({
-        visible: set_visible,
-    }));
-}
+        login.authorisedPost('/api/set_name_visible', { visible: set_visible })
+            .then(console.log)
+            .catch(r => {
+                console.log(r);
+                v.checked = !set_visible;
+            });
+    }
 
-function deleteAccount() {
-    const xhr = new XMLHttpRequest();
-    xhr.open('POST', '/api/remove_user');
-    xhr.setRequestHeader('Content-Type', 'application/json');
-    xhr.onload = function () {
-        window.location.replace("/logout");
-    };
-    xhr.onerror = function () {
-        console.log(xhr.responseText);
-    };
-    xhr.send(JSON.stringify({}));
-}
+    obj.deleteAccount = function () {
+        login.authorisedPost('/api/remove_user')
+            .then(r => {
+                login.logout();
+                templates.setWindowLoc("/");
+            })
+            .catch(r => console.log(r));
+    }
+
+    templates.add_function_post_generate(() => {
+        $("#darkModeSwitch").prop('checked', style.getTheme() !== "light");
+    })
+
+    return obj;
+}());

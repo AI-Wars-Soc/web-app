@@ -1,53 +1,57 @@
 const STYLE_COOKIE_NAME = 'CUWAIS_THEME';
-const STYLE_COOKIE_ARGS = { sameSite:'strict' };
+const STYLE_COOKIE_ARGS = { sameSite: 'strict' };
 
-class Style {
-    static bootswatchLight = $("#bootswatch-light");
-    static bootswatchDark = $("#bootswatch-dark");
-    static bootswatchActive = $("#bootswatch-active");
-    static styleLight = $("#style-light");
-    static styleDark = $("#style-dark");
-    static styleActive = $("#style-active");
+style = (function () {
 
-    static copyRef(source, target) {
+    const bootswatchLight = $("#bootswatch-light");
+    const bootswatchDark = $("#bootswatch-dark");
+    const bootswatchActive = $("#bootswatch-active");
+    const styleLight = $("#style-light");
+    const styleDark = $("#style-dark");
+    const styleActive = $("#style-active");
+
+    let obj = {};
+
+    const copyRef = function(source, target) {
         target.attr({
             integrity: source.attr('integrity'),
             href: source.attr('href')
         });
     }
 
-    static setLight() {
-        Style.copyRef(Style.bootswatchLight, Style.bootswatchActive);
-        Style.copyRef(Style.styleLight, Style.styleActive);
+    obj.setLight = function () {
+        copyRef(bootswatchLight, bootswatchActive);
+        copyRef(styleLight, styleActive);
 
         Cookies.set(STYLE_COOKIE_NAME, 'light', STYLE_COOKIE_ARGS);
     }
 
-    static setDark() {
-        Style.copyRef(Style.bootswatchDark, Style.bootswatchActive);
-        Style.copyRef(Style.styleDark, Style.styleActive);
+    obj.setDark = function () {
+        copyRef(bootswatchDark, bootswatchActive);
+        copyRef(styleDark, styleActive);
 
         Cookies.set(STYLE_COOKIE_NAME, 'dark', STYLE_COOKIE_ARGS);
     }
 
-    static loadTheme() {
-        const theme = Style.getTheme();
+    $(() => {
+        const theme = obj.getTheme();
         switch (theme) {
             case 'light':
-                Style.setLight();
+                obj.setLight();
                 break;
             case 'dark':
-                Style.setDark();
-                break;
-            default:
-                Style.setLight();
+                obj.setDark();
                 break;
         }
+    });
+
+    obj.getTheme = function () {
+        let s = Cookies.get(STYLE_COOKIE_NAME);
+        if (s === null) {
+            return 'light';
+        }
+        return s;
     }
 
-    static getTheme() {
-        return Cookies.get(STYLE_COOKIE_NAME);
-    }
-}
-
-Style.loadTheme();
+    return obj;
+} ());
