@@ -58,18 +58,17 @@ submissions = (function () {
             .catch(v => onSubmitFail(v));
     }
 
-    function onSubmitFail(response_text) {
-        console.log(response_text);
-        const response = JSON.parse(response_text);
+    function onSubmitFail(response) {
+        console.log(response);
         const error_box = $("#submission-error-msg");
-        error_box.text(response.message);
+        error_box.text(response.detail);
         $("#repo").effect("shake");
         error_box.show();
         $("#submit-spinner").hide();
     }
 
-    obj.deleteBot = function (id) {
-        login.authorisedPost('/api/remove_bot', {id: id})
+    obj.deleteBot = function (bot_id) {
+        login.authorisedPost('/api/remove_bot', {bot_id: bot_id})
             .then(response => {
                 window.location.reload();
             })

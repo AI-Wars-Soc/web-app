@@ -1,24 +1,6 @@
 const login = (function () {
     let obj = {};
 
-    // TODO: This leaves us open to XSS attacks and we should use http-only cookies instead
-    function getToken() {
-        return window.sessionStorage.getItem("token");
-    }
-
-    function loggedIn () {
-        return (getToken() !== null)
-    }
-    obj.loggedIn = loggedIn;
-
-    function setToken(new_token) {
-        window.sessionStorage.setItem("token", new_token);
-    }
-
-    obj.revokeToken = function () {
-        window.sessionStorage.removeItem("token");
-    }
-
     obj.authorisedPost = function (url, data = {}) {
         let q = {
             url: url,
@@ -27,11 +9,12 @@ const login = (function () {
             contentType: 'application/json; charset=utf-8'
         };
 
-        if (loggedIn()) {
-            q.headers = {Authorization: "Bearer " + getToken()};
-        }
-
         return $.ajax(q);
+    }
+
+    obj.logout = function() {
+        Cookies.set("log_out", "");
+        templates.refresh();
     }
 
     obj.googleInit = function () {
@@ -58,10 +41,16 @@ const login = (function () {
             contentType: 'application/json; charset=utf-8'
         })
             .then(response => {
+                // As soon as we have redeemed the google token, log out again
+                console.log(response);
+                const auth2 = gapi.auth2.getAuthInstance();
+                return auth2.signOut()
+            })
+            .then(response => {
+                console.log(response);
                 const error_message = $("#login-error-msg");
                 error_message.hide();
                 $('#loginModal').modal('hide');
-                setToken(response["access_token"]);
                 templates.refresh();
             })
             .catch(response => obj.onLoginFail(response));

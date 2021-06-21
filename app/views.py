@@ -118,11 +118,6 @@ def bots():
     return rich_render_template('bots')
 
 
-@app.route('/logout')
-def logout():
-    return rich_render_template('logout')
-
-
 @app.route('/enable-js')
 def please_enable_js():
     return rich_render_template('please_enable_js')

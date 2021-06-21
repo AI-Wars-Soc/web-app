@@ -5,7 +5,7 @@ const templates = (function () {
     let obj = {};
 
     obj.add_template = function (template_url, data_url, div_id) {
-        template_gen_funcs.push(function fill_in_template (retry=true) {
+        template_gen_funcs.push(function () {
             let template;
             return $.get(template_url)
                 .then(template_str => {
@@ -16,10 +16,7 @@ const templates = (function () {
                 })
                 .then(data => $(div_id).html(template(data)))
                 .catch(failure => {
-                    console.error(failure)
-                    // Try to fix things and try again
-                    login.revokeToken();
-                    fill_in_template(false);
+                    console.error(failure);
                 });
         });
     };
