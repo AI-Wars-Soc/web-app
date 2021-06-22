@@ -23,10 +23,13 @@ const templates = (function () {
                 })
                 .then(data => $(div_id).html(template(data)))
                 .catch(failure => {
-                    $(div_id).html('');
                     if (failure.status === 401) { // Permission Denied
                         login.lockModalOpen();
                     }
+                    if (failure.status === 500) { // Server Error
+                        return;
+                    }
+                    $(div_id).html('');
                     console.error(failure);
                 });
         });
