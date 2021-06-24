@@ -1,27 +1,14 @@
-# Dockerfile for sandbox in which python 3 code is run
-FROM python:3-buster
+FROM nginx
 
-# Set up user
-RUN useradd --create-home --shell /bin/bash web_user
-WORKDIR /home/web_user
+WORKDIR /tmp/app
 
-# Install python libraries as user
-USER web_user
-COPY requirements.txt ./
-RUN pip3 install --no-cache-dir -r requirements.txt
-USER root
+# Install node and requirements
+RUN apt-get update && apt-get install -y nodejs npm
+RUN npm cache clean -f && npm install -g n && n stable
 
-# Copy scripts
-COPY app /home/web_user/app
-COPY app/default_config.yml /home/web_user/default_config.yml
-RUN chown -R web_user /home/web_user/app
-ENV PYTHONPATH="/home/web_user:/home/web_user/app:${PYTHONPATH}"
+# Build static files
+COPY app .
+RUN npm install && npm run prod && mv ./dist/* /usr/share/nginx/html/
 
-# Set up env
-ENV PYTHONDONTWRITEBYTECODE 1
-ENV PYTHONUNBUFFERED 1
-
-WORKDIR /home/web_user
-USER web_user
-EXPOSE 8080
-CMD [ "bash",  "app/run.sh" ]
+COPY ./nginx.conf /etc/nginx/nginx.conf
+COPY ./conf.d /etc/nginx/conf.d
