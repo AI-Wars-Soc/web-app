@@ -1,7 +1,7 @@
 import React from "react";
 
 import {
-  NavLink
+    NavLink
 } from "react-router-dom";
 
 
@@ -33,7 +33,7 @@ type NavbarState = {
     navbar: {
         l_nav: NavItemProps[],
         r_nav: NavItemProps[],
-        name: string
+        soc_name: string
     }
 }
 
@@ -42,27 +42,32 @@ export default class Navbar extends React.Component<any, NavbarState> {
         super(props);
         this.state = {
             isLoaded: false,
-            navbar: {l_nav: [], r_nav: [], name: ""}
+            navbar: {l_nav: [], r_nav: [], soc_name: ""}
         };
     }
 
     componentDidMount() {
-        fetch("http://lvh.me/api/get_navbar")
+        const requestOptions = {
+            method: 'POST'
+        };
+        fetch("http://lvh.me/api/get_navbar", requestOptions)
             .then(res => res.json())
             .then(
                 (result) => {
+                    console.log(result);
                     this.setState({
                         isLoaded: true,
                         navbar: result
                     });
                 },
                 (error) => {
+                    console.log(error);
                     this.setState({
                         isLoaded: true,
                         error: error
                     });
                 }
-            )
+            );
     }
 
     render() {
@@ -82,7 +87,7 @@ export default class Navbar extends React.Component<any, NavbarState> {
                 </ul>
             </div>
             <div className="mx-auto order-0">
-                <a className="navbar-brand mx-auto" href="/">{navbar.name}</a>
+                <a className="navbar-brand mx-auto" href="/">{navbar.soc_name}</a>
             </div>
             <div className="collapse navbar-collapse w-100 order-3 dual-collapse2">
                 <ul className="navbar-nav ml-auto">

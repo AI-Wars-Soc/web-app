@@ -8,7 +8,8 @@ RUN npm cache clean -f && npm install -g n && n stable
 
 # Build static files
 COPY app .
-RUN npm install && npm run prod && mv ./dist/* /usr/share/nginx/html/
+RUN npm install
+RUN npm run prod && mv ./dist/* /usr/share/nginx/html/
 
 COPY ./nginx.conf /etc/nginx/nginx.conf
 COPY ./conf.d /etc/nginx/conf.d
