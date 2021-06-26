@@ -5,15 +5,17 @@ import {
     Switch,
     Route
 } from "react-router-dom";
-import Navbar from "./navbar"
+import 'bootstrap/dist/css/bootstrap.min.css';
+import MyNavbar from "./navbar"
 import Footer from "./footer"
+require('bootstrap-icons/font/bootstrap-icons.css');
 
 function App() {
     return (
         <>
             <Router>
                 <div>
-                    <Navbar/>
+                    <MyNavbar/>
 
                     <Switch>
                         <Route path="/about">

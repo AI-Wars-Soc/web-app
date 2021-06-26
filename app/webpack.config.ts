@@ -2,6 +2,7 @@ import path from "path";
 import webpack from "webpack";
 import ForkTsCheckerWebpackPlugin from 'fork-ts-checker-webpack-plugin';
 import HtmlWebPackPlugin from "html-webpack-plugin";
+import MiniCssExtractPlugin from "mini-css-extract-plugin";
 
 const htmlPlugin = new HtmlWebPackPlugin({
     template: "./src/index.html",
@@ -15,6 +16,8 @@ const tsTypeCheckerPlugin = new ForkTsCheckerWebpackPlugin({
     },
 });
 
+const miniCss = new MiniCssExtractPlugin();
+
 const config: webpack.Configuration = {
     entry: "./src/index.tsx",
     output: {
@@ -22,24 +25,42 @@ const config: webpack.Configuration = {
         filename: "[name].js"
     },
     resolve: {
-        extensions: ['.tsx', '.ts', '.js'],
+        extensions: ['.tsx', '.ts', '.jsx', '.js'],
     },
-    plugins: [htmlPlugin, tsTypeCheckerPlugin],
+    plugins: [htmlPlugin, tsTypeCheckerPlugin, miniCss],
     module: {
         rules: [
             {
                 test: /\.(ts|js)x?$/,
                 exclude: /node_modules/,
-                use: {
-                    loader: "babel-loader",
-                    options: {
-                        presets: [
-                            "@babel/preset-env",
-                            "@babel/preset-react",
-                            "@babel/preset-typescript",
-                        ],
-                    },
-                },
+                use: [
+                    "babel-loader"
+                ],
+            },
+            {
+                test: /\.css$/,
+                use: [
+                    MiniCssExtractPlugin.loader,
+                    'css-loader',
+                    'postcss-loader'
+                ]
+            },
+            {
+                test: /\.(scss)$/,
+                use: [
+                    MiniCssExtractPlugin.loader,
+                    'css-loader',
+                    'postcss-loader',
+                    'sass-loader'
+                ]
+            },
+            {
+                test: /\.(png|svg|jpg|jpeg|gif)$/i,
+                type: 'asset/resource',
+            },
+            {
+                test: /\.(woff|woff2|eot|ttf|otf)$/i,
+                type: 'asset/resource',
             },
         ],
     },

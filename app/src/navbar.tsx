@@ -4,6 +4,8 @@ import {
     NavLink
 } from "react-router-dom";
 
+import Navbar from "react-bootstrap/Navbar"
+
 
 type NavItemProps = {
     active: boolean,
@@ -37,7 +39,7 @@ type NavbarState = {
     }
 }
 
-export default class Navbar extends React.Component<any, NavbarState> {
+export default class MyNavbar extends React.Component<any, NavbarState> {
     constructor(props: any) {
         super(props);
         this.state = {
@@ -73,32 +75,29 @@ export default class Navbar extends React.Component<any, NavbarState> {
     render() {
         let {error, navbar} = this.state;
 
-        if (error) {
-            return <div>Error: {error.message}</div>;
-        }
-
         const l_nav = navbar.l_nav.map(i => <NavItem {...i} />);
         const r_nav = navbar.r_nav.map(i => <NavItem {...i} />);
 
-        return <div id="navbar">
-            <nav className="navbar navbar-expand-md navbar-dark bg-primary">
-                <div className="navbar-collapse collapse w-100 order-1 order-md-0 dual-collapse2">
-                    <ul className="navbar-nav mr-auto">
-                        {l_nav}
-                    </ul>
-                </div>
-                <div className="mx-auto order-0">
-                    <a className="navbar-brand mx-auto" href="/">{navbar.soc_name}</a>
-                </div>
-                <div className="collapse navbar-collapse w-100 order-3 dual-collapse2">
-                    <ul className="navbar-nav ml-auto">
-                        {r_nav}
-                    </ul>
-                </div>
-                <button className="navbar-toggler" type="button" data-toggle="collapse" data-target=".dual-collapse2">
-                    <span className="navbar-toggler-icon"/>
-                </button>
-            </nav>
-        </div>;
+        let error_div = <></>;
+        if (error) {
+            error_div = <i className="bi bi-cloud-slash"/>;
+        }
+
+        return <Navbar bg="dark" variant="dark" expand="md">
+            <div className="navbar-collapse collapse w-100 order-1 order-md-0 dual-collapse2">
+                <ul className="navbar-nav mr-auto">
+                    {l_nav}
+                </ul>
+            </div>
+            <Navbar.Brand href="/" className="mx-auto">{ navbar.soc_name } { error_div }</Navbar.Brand>
+            <div className="collapse navbar-collapse w-100 order-3 dual-collapse2">
+                <ul className="navbar-nav ml-auto">
+                    {r_nav}
+                </ul>
+            </div>
+            <button className="navbar-toggler" type="button" data-toggle="collapse" data-target=".dual-collapse2">
+                <span className="navbar-toggler-icon"/>
+            </button>
+        </Navbar>;
     }
 }
