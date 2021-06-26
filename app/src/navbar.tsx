@@ -80,23 +80,25 @@ export default class Navbar extends React.Component<any, NavbarState> {
         const l_nav = navbar.l_nav.map(i => <NavItem {...i} />);
         const r_nav = navbar.r_nav.map(i => <NavItem {...i} />);
 
-        return <nav className="navbar navbar-expand-md navbar-dark bg-primary">
-            <div className="navbar-collapse collapse w-100 order-1 order-md-0 dual-collapse2">
-                <ul className="navbar-nav mr-auto">
-                    {l_nav}
-                </ul>
-            </div>
-            <div className="mx-auto order-0">
-                <a className="navbar-brand mx-auto" href="/">{navbar.soc_name}</a>
-            </div>
-            <div className="collapse navbar-collapse w-100 order-3 dual-collapse2">
-                <ul className="navbar-nav ml-auto">
-                    {r_nav}
-                </ul>
-            </div>
-            <button className="navbar-toggler" type="button" data-toggle="collapse" data-target=".dual-collapse2">
-                <span className="navbar-toggler-icon"/>
-            </button>
-        </nav>;
+        return <div id="navbar">
+            <nav className="navbar navbar-expand-md navbar-dark bg-primary">
+                <div className="navbar-collapse collapse w-100 order-1 order-md-0 dual-collapse2">
+                    <ul className="navbar-nav mr-auto">
+                        {l_nav}
+                    </ul>
+                </div>
+                <div className="mx-auto order-0">
+                    <a className="navbar-brand mx-auto" href="/">{navbar.soc_name}</a>
+                </div>
+                <div className="collapse navbar-collapse w-100 order-3 dual-collapse2">
+                    <ul className="navbar-nav ml-auto">
+                        {r_nav}
+                    </ul>
+                </div>
+                <button className="navbar-toggler" type="button" data-toggle="collapse" data-target=".dual-collapse2">
+                    <span className="navbar-toggler-icon"/>
+                </button>
+            </nav>
+        </div>;
     }
 }
