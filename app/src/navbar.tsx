@@ -4,7 +4,7 @@ import {
     NavLink
 } from "react-router-dom";
 
-import Navbar from "react-bootstrap/Navbar"
+import { Navbar } from "react-bootstrap"
 
 
 type NavItemProps = {
@@ -39,7 +39,7 @@ type NavbarState = {
     }
 }
 
-export default class MyNavbar extends React.Component<any, NavbarState> {
+export class MyNavbar extends React.Component<any, NavbarState> {
     constructor(props: any) {
         super(props);
         this.state = {

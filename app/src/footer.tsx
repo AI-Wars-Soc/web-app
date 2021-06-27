@@ -1,6 +1,6 @@
 import React from "react";
 
-export default class Footer extends React.Component {
+export class MyFooter extends React.Component {
     render() {
         return <div className="footer">
             <nav className="navbar navbar-light bg-secondary">

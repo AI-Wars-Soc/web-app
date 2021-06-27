@@ -1,14 +1,15 @@
 import React from 'react';
-import ReactDOM from 'react-dom';
+import { render } from 'react-dom';
 import {
     BrowserRouter as Router,
     Switch,
     Route
 } from "react-router-dom";
 import 'bootstrap/dist/css/bootstrap.min.css';
-import MyNavbar from "./navbar"
-import Footer from "./footer"
-require('bootstrap-icons/font/bootstrap-icons.css');
+import 'bootstrap-icons/font/bootstrap-icons.css';
+import './style.scss';
+import { MyNavbar } from "./navbar"
+import { MyFooter } from "./footer"
 
 function App() {
     return (
@@ -31,9 +32,9 @@ function App() {
                 </div>
             </Router>
 
-            <Footer/>
+            <MyFooter/>
         </>
     );
 }
 
-ReactDOM.render(<App/>, document.getElementById('app'));
+render(<App/>, document.getElementById('app'));
