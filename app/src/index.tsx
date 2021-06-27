@@ -11,7 +11,7 @@ import './style.scss';
 import { MyNavbar } from "./navbar"
 import { MyFooter } from "./footer"
 
-function App() {
+function App(): JSX.Element {
     return (
         <>
             <Router>

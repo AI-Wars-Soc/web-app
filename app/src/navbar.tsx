@@ -20,17 +20,18 @@ class NavItem extends React.Component<NavItemProps> {
         super(props);
     }
 
-    render() {
+    render(): JSX.Element {
+        const {link, text, icon, data_toggle} = this.props;
         return <li className="nav-item">
-            <NavLink to={this.props.link} data-toggle={this.props.data_toggle}>{this.props.text}&nbsp;
-                {this.props.icon !== null && <i className={this.props.icon}/>}</NavLink>
+            <NavLink to={link} data-toggle={data_toggle}>{text}&nbsp;
+                {icon !== null && <i className={icon}/>}</NavLink>
         </li>;
     }
 }
 
 
 type NavbarState = {
-    error?: any,
+    error: boolean,
     isLoaded: boolean,
     navbar: {
         l_nav: NavItemProps[],
@@ -39,16 +40,17 @@ type NavbarState = {
     }
 }
 
-export class MyNavbar extends React.Component<any, NavbarState> {
-    constructor(props: any) {
+export class MyNavbar extends React.Component<Record<string, never>, NavbarState> {
+    constructor(props: Record<string, never>) {
         super(props);
         this.state = {
+            error: false,
             isLoaded: false,
             navbar: {l_nav: [], r_nav: [], soc_name: ""}
         };
     }
 
-    componentDidMount() {
+    componentDidMount(): void {
         const requestOptions = {
             method: 'POST'
         };
@@ -66,17 +68,17 @@ export class MyNavbar extends React.Component<any, NavbarState> {
                     console.log(error);
                     this.setState({
                         isLoaded: true,
-                        error: error
+                        error: true
                     });
                 }
             );
     }
 
-    render() {
-        let {error, navbar} = this.state;
+    render(): JSX.Element {
+        const {error, navbar} = this.state;
 
-        const l_nav = navbar.l_nav.map(i => <NavItem {...i} />);
-        const r_nav = navbar.r_nav.map(i => <NavItem {...i} />);
+        const l_nav = navbar.l_nav.map(i => <NavItem {...i} key={i.link} />);
+        const r_nav = navbar.r_nav.map(i => <NavItem {...i} key={i.link} />);
 
         let error_div = <></>;
         if (error) {
