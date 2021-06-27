@@ -1,5 +1,5 @@
 import React from 'react';
-import { render } from 'react-dom';
+import {render} from 'react-dom';
 import {
     BrowserRouter as Router,
     Switch,
@@ -8,27 +8,28 @@ import {
 import 'bootstrap/dist/css/bootstrap.min.css';
 import 'bootstrap-icons/font/bootstrap-icons.css';
 import './style.scss';
-import { MyNavbar } from "./navbar"
-import { MyFooter } from "./footer"
+import {MyNavbar} from "./navbar"
+import {MyFooter} from "./footer"
 
 function App(): JSX.Element {
     return (
         <>
             <Router>
-                <div>
-                    <MyNavbar/>
-
-                    <Switch>
-                        <Route path="/about">
-                            About
-                        </Route>
-                        <Route path="/users">
-                            Users
-                        </Route>
-                        <Route path="/">
-                            Home
-                        </Route>
-                    </Switch>
+                <MyNavbar/>
+                <div className="content mx-lg-2 px-xl-5">
+                    <div className="d-flex flex-column mx-md-3 p-2 p-sm-5">
+                        <Switch>
+                            <Route path="/about">
+                                About
+                            </Route>
+                            <Route path="/users">
+                                Users
+                            </Route>
+                            <Route path="/">
+                                Home
+                            </Route>
+                        </Switch>
+                    </div>
                 </div>
             </Router>
 
@@ -37,4 +38,4 @@ function App(): JSX.Element {
     );
 }
 
-render(<App/>, document.getElementById('app'));
+render(<App/>, document.getElementById('body'));
