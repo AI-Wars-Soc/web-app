@@ -1,0 +1,4 @@
+venv
+app_old
+app/node_modules
+app/dist

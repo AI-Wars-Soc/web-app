@@ -16,15 +16,12 @@ type NavItemProps = {
 }
 
 class NavItem extends React.Component<NavItemProps> {
-    constructor(props: NavItemProps) {
-        super(props);
-    }
-
     render(): JSX.Element {
         const {link, text, icon, data_toggle} = this.props;
-        return <li className="nav-item">
-            <NavLink to={link} data-toggle={data_toggle}>{text}&nbsp;
-                {icon !== null && <i className={icon}/>}</NavLink>
+        const active = (link === window.location.pathname);
+        return <li className={ "nav-item" + (active ? " active" : "")}>
+            <a className="nav-link" href={link} data-toggle={data_toggle}>{text}&nbsp;
+                {icon !== null && <i className={icon}/>}</a>
         </li>;
     }
 }
