@@ -10,6 +10,7 @@ import 'bootstrap-icons/font/bootstrap-icons.css';
 import './style.scss';
 import {MyNavbar} from "./navbar"
 import {MyFooter} from "./footer"
+import {LeaderboardPage} from "./leaderboard"
 
 function App(): JSX.Element {
     return (
@@ -22,8 +23,11 @@ function App(): JSX.Element {
                             <Route path="/about">
                                 About
                             </Route>
-                            <Route path="/users">
-                                Users
+                            <Route path="/leaderboard">
+                                <LeaderboardPage/>
+                            </Route>
+                            <Route path="/submissions">
+                                Submissions
                             </Route>
                             <Route path="/">
                                 Home
