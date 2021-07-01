@@ -1,6 +1,9 @@
 {
   "name": "aiwarssoc-web-app",
-  "sideEffects": [ "*.css", "*.scss" ],
+  "sideEffects": [
+    "*.css",
+    "*.scss"
+  ],
   "version": "0.0.1",
   "description": "",
   "main": "index.js",
