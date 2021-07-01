@@ -1,0 +1,21 @@
+db_connection: "postgresql://debug:debug@database"
+debug: false
+profile: false
+soc_name: "cuwais"
+google_client_id: ""
+allowed_email_domain: ~
+max_repo_size_bytes: 10000000
+initial_score: 1000
+front_end:
+  server_name: "lvh.me"
+gamemode:
+  id: chess
+  options:
+    chess960: true
+localisation:
+  git_errors:
+    invalid-url: "Invalid GIT URL"
+    already-submitted: "GIT repo already submitted"
+    too-large: "GIT repo is too large!"
+    clone-fail: "Failed to clone! :("
+  submission_access_error: "You do not own that submission!"
