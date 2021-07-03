@@ -1,21 +1,21 @@
 import React from "react";
 
 import { Navbar, Nav } from "react-bootstrap"
+import {
+    Link
+} from "react-router-dom";
 
 
 type NavItemProps = {
-    data_toggle?: string,
     link: string,
-    text: string,
-    icon?: string
+    text: string
 }
 
 class NavItem extends React.Component<NavItemProps> {
     render(): JSX.Element {
-        const {link, text, icon, data_toggle} = this.props;
+        const {link, text} = this.props;
         const active = (link === window.location.pathname);
-        return <Nav.Link href={link} data-toggle={data_toggle} active={active}>{text}&nbsp;
-                {icon !== undefined && <i className={"bi bi-" + icon}/>}</Nav.Link>;
+        return <Link to={link} className={"nav-link" + (active ? " active" : "")}>{text}</Link>;
     }
 }
 
@@ -23,7 +23,9 @@ const lNavItems: [string, JSX.Element][] = [
     ['about', <NavItem link={'/about'} text={'About'} key={"navbar-about"}/>],
 ];
 const rNavItems: [string, JSX.Element][] = [
-    ['login', <NavItem link={'#loginModal'} text={'Login'} icon={'box-arrow-in-right'} key={"navbar-login"}/>],
+    ['login', <Nav.Link href={'#loginModal'} key={"navbar-login"}>
+        login&nbsp;<i className={"bi bi-box-arrow-in-right"}/>
+    </Nav.Link>],
 ];
 
 
