@@ -4,6 +4,7 @@ import { Navbar, Nav } from "react-bootstrap"
 import {
     Link
 } from "react-router-dom";
+import {LoginModal} from "./login";
 
 
 type NavItemProps = {
@@ -25,6 +26,7 @@ const lNavItems: [string, JSX.Element][] = [
 const rNavItems: [string, JSX.Element][] = [
     ['login', <Nav.Link href={'#loginModal'} key={"navbar-login"}>
         login&nbsp;<i className={"bi bi-box-arrow-in-right"}/>
+        <LoginModal/>
     </Nav.Link>],
 ];
 

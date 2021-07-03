@@ -1,24 +1,23 @@
 import {GoogleLogin, GoogleLoginResponse, GoogleLoginResponseOffline} from 'react-google-login';
 import React from "react";
+import { Modal, Button, Alert } from "react-bootstrap"
 
-type LoginModalState = {
+type GoogleLoginState = {
     error: string,
     isLoaded: boolean,
-    lockedOpen: boolean,
-    modal: {
+    data: {
         clientId: string
         hostedDomain: string | null
     }
 }
 
-export class LoginModal extends React.Component<Record<string, never>, LoginModalState> {
+class GoogleLoginButton extends React.Component<Record<string, never>, GoogleLoginState> {
     constructor(props: Record<string, never>) {
         super(props);
         this.state = {
             error: "",
             isLoaded: false,
-            lockedOpen: false,
-            modal: {clientId: "", hostedDomain: null}
+            data: {clientId: "", hostedDomain: null}
         };
     }
 
@@ -26,14 +25,14 @@ export class LoginModal extends React.Component<Record<string, never>, LoginModa
         const requestOptions = {
             method: 'POST'
         };
-        fetch("/api/get_login_modal_data", requestOptions)
+        fetch("/api/get_google_login_data", requestOptions)
             .then(res => res.json())
             .then(
                 (result) => {
                     console.log(result);
                     this.setState({
                         isLoaded: true,
-                        modal: result
+                        data: result
                     });
                 },
                 (error) => {
@@ -86,68 +85,74 @@ export class LoginModal extends React.Component<Record<string, never>, LoginModa
     }
 
     render(): JSX.Element {
-        let loginButton = <></>
-
-        if (this.state.isLoaded) {
-            const loginProps = {
-                hostedDomain: this.state.modal.hostedDomain === null ? undefined : this.state.modal.hostedDomain,
-                clientId: this.state.modal.clientId,
-                buttonText: "Login with Google",
-                onSuccess: this.onLoginSuccess,
-                onFailure: this.onLoginFail,
-                cookiePolicy: 'single_host_origin',
-            }
-            loginButton = <GoogleLogin theme='light' {...loginProps}/>
+        if (!this.state.isLoaded) {
+            return <></>;
         }
 
-        let xButton = <button id="modalButtonXClose" type="button" className="close" data-dismiss="modal"
-                              aria-label="Close"><span aria-hidden="true">&times;</span></button>
-        let bottomButton = <button id="modalButtonClose" type="button" className="btn btn-secondary"
-                                   data-dismiss="modal">Close</button>
-
-        if (this.state.lockedOpen) {
-            xButton = <button id="modalButtonXBack" type="button" className="close"
-                              onClick={() => templates.setWindowLoc('/')} aria-label="Back">
-                <span aria-hidden="true">&times;</span></button>
-            bottomButton = <button id="modalButtonBack" type="button" className="btn btn-primary"
-                                   onClick={() => templates.setWindowLoc('/')}>Back</button>
-        }
-
-        const errorMessage = this.state.error === "" ? <></> :
-            <div id="login-error-msg" className="p-2 bg-danger text-white text-center border border-danger rounded">
+        let errorMessage = <></>;
+        if (this.state.error !== ""){
+            errorMessage = <Alert variant={"danger"}>
                 Something went wrong. Please try again or let someone know. {this.state.error}
-            </div>
+            </Alert>
+        }
 
-        return <div className="modal fade" id="loginModal" role="dialog" aria-hidden="true">
-            <div className="modal-dialog" role="document">
-                <div className="modal-content">
-                    <div className="modal-header">
-                        <h5 className="modal-title" id="loginModalLabel">Login</h5>
-                        {xButton}
-                    </div>
-                    <div className="modal-body">
-                        <h4 className="card-title mb-4 mt-1">Sign in</h4>
-                        <div className="d-grid gap-3">
-                            <p>
-                                By logging in you agree to the rules on the about page,
-                                as well as allowing us to store your name and and email address.
-                                You can delete your account at any time.
-                            </p>
-                            {loginButton}
-                            <div className="d-flex justify-content-center">
-                                <div className="g-signin2" data-width="300" data-height="50" data-longtitle="true"
-                                     data-onsuccess="onGoogleSignIn" data-onfailure="onGoogleFail"
-                                     data-theme="light">
-                                </div>
-                            </div>
-                            {errorMessage}
-                        </div>
-                    </div>
-                    <div className="modal-footer">
-                        {bottomButton}
-                    </div>
-                </div>
-            </div>
-        </div>
+        const loginProps = {
+            hostedDomain: this.state.data.hostedDomain === null ? undefined : this.state.data.hostedDomain,
+            clientId: this.state.data.clientId,
+            buttonText: "Login with Google",
+            onSuccess: this.onLoginSuccess,
+            onFailure: this.onLoginFail,
+            cookiePolicy: 'single_host_origin',
+        }
+
+        return <>
+            <GoogleLogin theme='light' {...loginProps}/>
+            {errorMessage}
+        </>
+    }
+}
+
+type LoginModalProps = {
+    handleClose?: React.MouseEventHandler<HTMLElement>
+}
+
+type LoginModalState = {
+    show: boolean,
+    handleClose: React.MouseEventHandler<HTMLElement>
+}
+
+export class LoginModal extends React.Component<LoginModalProps, LoginModalState> {
+    constructor(props: LoginModalProps) {
+        super(props);
+        this.state = {
+            show: true,
+            handleClose: props.handleClose === undefined ? () => this.setState({show: false}) : props.handleClose
+        };
+    }
+
+    render(): JSX.Element {
+        return <Modal
+                show={this.state.show}
+                onHide={this.state.handleClose}
+                backdrop="static"
+                keyboard={false}
+            >
+                <Modal.Header closeButton>
+                    <Modal.Title>Sign in</Modal.Title>
+                </Modal.Header>
+                <Modal.Body>
+                    <p>
+                        By logging in you agree to the rules on the about page,
+                        as well as allowing us to store your name and and email address.
+                        You can delete your account at any time.
+                    </p>
+                    <GoogleLoginButton/>
+                </Modal.Body>
+                <Modal.Footer>
+                    <Button variant="secondary" onClick={this.props.handleClose}>
+                        Close
+                    </Button>
+                </Modal.Footer>
+            </Modal>
     }
 }
