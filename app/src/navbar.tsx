@@ -4,11 +4,10 @@ import { Navbar, Nav } from "react-bootstrap"
 
 
 type NavItemProps = {
-    active: boolean,
-    data_toggle: string | undefined,
+    data_toggle?: string,
     link: string,
     text: string,
-    icon: string
+    icon?: string
 }
 
 class NavItem extends React.Component<NavItemProps> {
@@ -16,17 +15,23 @@ class NavItem extends React.Component<NavItemProps> {
         const {link, text, icon, data_toggle} = this.props;
         const active = (link === window.location.pathname);
         return <Nav.Link href={link} data-toggle={data_toggle} active={active}>{text}&nbsp;
-                {icon !== null && <i className={"bi bi-" + icon}/>}</Nav.Link>;
+                {icon !== undefined && <i className={"bi bi-" + icon}/>}</Nav.Link>;
     }
 }
+
+const lNavItems: [string, JSX.Element][] = [
+    ['about', <NavItem link={'/about'} text={'About'} key={"navbar-about"}/>],
+];
+const rNavItems: [string, JSX.Element][] = [
+    ['login', <NavItem link={'#loginModal'} text={'Login'} icon={'box-arrow-in-right'} key={"navbar-login"}/>],
+];
 
 
 type NavbarState = {
     error: boolean,
     isLoaded: boolean,
     navbar: {
-        l_nav: NavItemProps[],
-        r_nav: NavItemProps[],
+        accessible: string[],
         soc_name: string
     }
 }
@@ -37,7 +42,7 @@ export class MyNavbar extends React.Component<Record<string, never>, NavbarState
         this.state = {
             error: false,
             isLoaded: false,
-            navbar: {l_nav: [], r_nav: [], soc_name: ""}
+            navbar: {accessible: [], soc_name: ""}
         };
     }
 
@@ -65,11 +70,16 @@ export class MyNavbar extends React.Component<Record<string, never>, NavbarState
             );
     }
 
+    private static filter(map: [string, JSX.Element][], accessible: string[]) {
+        return map.filter(([k, ]) => accessible.includes(k)).map(([, v]) => v);
+    }
+
     render(): JSX.Element {
         const {error, navbar} = this.state;
+        const {accessible, soc_name} = navbar;
 
-        const l_nav = navbar.l_nav.map(i => <NavItem {...i} key={i.link} />);
-        const r_nav = navbar.r_nav.map(i => <NavItem {...i} key={i.link} />);
+        const l_nav = MyNavbar.filter(lNavItems, accessible);
+        const r_nav = MyNavbar.filter(rNavItems, accessible);
 
         let error_div = <></>;
         if (error) {
@@ -82,7 +92,7 @@ export class MyNavbar extends React.Component<Record<string, never>, NavbarState
                     {l_nav}
                 </Nav>
             </Navbar.Collapse>
-            <Navbar.Brand href="/" className="mx-auto">{ navbar.soc_name } { error_div }</Navbar.Brand>
+            <Navbar.Brand href="/" className="mx-auto">{ soc_name } { error_div }</Navbar.Brand>
             <Navbar.Collapse id="basic-navbar-nav">
                 <Nav className="ml-auto">
                     {r_nav}

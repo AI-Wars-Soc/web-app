@@ -57,8 +57,8 @@ class LeaderboardEntry extends React.Component<LeaderboardEntryProps> {
 }
 
 
-class Leaderboard extends React.Component<any, any> {
-    render() {
+class Leaderboard extends React.Component<Record<string, never>> {
+    render(): JSX.Element {
         return <div className="d-flex flex-column py-2 flex-grow-1" id="leaderboard">
             <LeaderboardEntry position="Position" name="Name" is_real_name={false} nickname="" wins="Wins" losses="Losses" draws="Draws" score="Score" boarder_style="border-bottom"/>
             <div className="text-center">Loading the leaderboard...</div>
@@ -67,8 +67,8 @@ class Leaderboard extends React.Component<any, any> {
 }
 
 
-export class LeaderboardPage extends React.Component<any, any> {
-    render() {
+export class LeaderboardPage extends React.Component<Record<string, never>> {
+    render(): JSX.Element {
         return <>
             <div className="d-flex justify-content-center justify-content-sm-start">
                 <h1>Leaderboard</h1>
