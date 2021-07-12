@@ -1,9 +1,10 @@
-import React from 'react';
+import React, {Dispatch, SetStateAction, useState} from 'react';
 import {render} from 'react-dom';
 import {
     BrowserRouter as Router,
     Switch,
-    Route
+    Route,
+    Redirect
 } from "react-router-dom";
 import 'bootstrap/dist/css/bootstrap.min.css';
 import 'bootstrap-icons/font/bootstrap-icons.css';
@@ -11,12 +12,15 @@ import './style.scss';
 import {MyNavbar} from "./navbar"
 import {MyFooter} from "./footer"
 import {LeaderboardPage} from "./leaderboard"
+import {nullUser} from "./user"
 
 function App(): JSX.Element {
+    const [user, setUser] = useState(nullUser);
+
     return (
         <>
             <Router>
-                <MyNavbar/>
+                <MyNavbar user={user} setUser={setUser}/>
                 <div className="content mx-lg-2 px-xl-5">
                     <div className="d-flex flex-column mx-md-3 p-2 p-sm-5">
                         <Switch>
@@ -30,7 +34,7 @@ function App(): JSX.Element {
                                 Submissions
                             </Route>
                             <Route path="/">
-                                Home
+                                <Redirect to={"/about"}/>
                             </Route>
                         </Switch>
                     </div>

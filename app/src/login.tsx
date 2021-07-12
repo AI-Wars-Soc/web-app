@@ -1,6 +1,11 @@
 import {GoogleLogin, GoogleLoginResponse, GoogleLoginResponseOffline} from 'react-google-login';
-import React from "react";
+import React, {Dispatch, SetStateAction} from "react";
 import { Modal, Button, Alert } from "react-bootstrap"
+import {UserData} from "./user";
+
+type GoogleLoginProps = {
+    setUser: Dispatch<SetStateAction<UserData>>
+}
 
 type GoogleLoginState = {
     error: string,
@@ -8,17 +13,20 @@ type GoogleLoginState = {
     data: {
         clientId: string
         hostedDomain: string | null
-    }
+    },
 }
 
-class GoogleLoginButton extends React.Component<Record<string, never>, GoogleLoginState> {
-    constructor(props: Record<string, never>) {
+class GoogleLoginButton extends React.Component<GoogleLoginProps, GoogleLoginState> {
+    constructor(props: GoogleLoginProps) {
         super(props);
         this.state = {
             error: "",
             isLoaded: false,
             data: {clientId: "", hostedDomain: null}
         };
+
+        this.onLoginFail = this.onLoginFail.bind(this);
+        this.onLoginSuccess = this.onLoginSuccess.bind(this);
     }
 
     componentDidMount(): void {
@@ -73,7 +81,9 @@ class GoogleLoginButton extends React.Component<Record<string, never>, GoogleLog
             .then(res => res.json())
             .then(
                 (result) => {
+                    console.log("Key exchange result: ");
                     console.log(result);
+                    this.props.setUser(result.user);
                 },
                 (error) => {
                     console.log(error);
@@ -113,29 +123,23 @@ class GoogleLoginButton extends React.Component<Record<string, never>, GoogleLog
 }
 
 type LoginModalProps = {
-    handleClose?: React.MouseEventHandler<HTMLElement>
-}
-
-type LoginModalState = {
-    show: boolean,
     handleClose: React.MouseEventHandler<HTMLElement>
+    show: boolean,
+    static: boolean,
+    setUser: Dispatch<SetStateAction<UserData>>
 }
 
-export class LoginModal extends React.Component<LoginModalProps, LoginModalState> {
+export class LoginModal extends React.Component<LoginModalProps> {
     constructor(props: LoginModalProps) {
         super(props);
-        this.state = {
-            show: true,
-            handleClose: props.handleClose === undefined ? () => this.setState({show: false}) : props.handleClose
-        };
     }
 
     render(): JSX.Element {
         return <Modal
-                show={this.state.show}
-                onHide={this.state.handleClose}
-                backdrop="static"
-                keyboard={false}
+                show={this.props.show}
+                onHide={this.props.handleClose}
+                backdrop={this.props.static ? "static" : true}
+                keyboard={!this.props.static}
             >
                 <Modal.Header closeButton>
                     <Modal.Title>Sign in</Modal.Title>
@@ -146,7 +150,7 @@ export class LoginModal extends React.Component<LoginModalProps, LoginModalState
                         as well as allowing us to store your name and and email address.
                         You can delete your account at any time.
                     </p>
-                    <GoogleLoginButton/>
+                    <GoogleLoginButton setUser={this.props.setUser}/>
                 </Modal.Body>
                 <Modal.Footer>
                     <Button variant="secondary" onClick={this.props.handleClose}>

@@ -1,10 +1,11 @@
-import React from "react";
+import React, {Dispatch, SetStateAction} from "react";
 
 import { Navbar, Nav } from "react-bootstrap"
 import {
     Link
 } from "react-router-dom";
 import {LoginModal} from "./login";
+import {UserData} from "./user";
 
 
 type NavItemProps = {
@@ -20,34 +21,32 @@ class NavItem extends React.Component<NavItemProps> {
     }
 }
 
-const lNavItems: [string, JSX.Element][] = [
-    ['about', <NavItem link={'/about'} text={'About'} key={"navbar-about"}/>],
-];
-const rNavItems: [string, JSX.Element][] = [
-    ['login', <Nav.Link href={'#loginModal'} key={"navbar-login"}>
-        login&nbsp;<i className={"bi bi-box-arrow-in-right"}/>
-        <LoginModal/>
-    </Nav.Link>],
-];
-
+type NavbarProps = {
+    user: UserData,
+    setUser: Dispatch<SetStateAction<UserData>>
+}
 
 type NavbarState = {
     error: boolean,
     isLoaded: boolean,
+    loginModalShow: boolean,
     navbar: {
         accessible: string[],
-        soc_name: string
+        socName: string
     }
 }
 
-export class MyNavbar extends React.Component<Record<string, never>, NavbarState> {
-    constructor(props: Record<string, never>) {
+export class MyNavbar extends React.Component<NavbarProps, NavbarState> {
+    constructor(props: NavbarProps) {
         super(props);
         this.state = {
             error: false,
             isLoaded: false,
-            navbar: {accessible: [], soc_name: ""}
+            loginModalShow: false,
+            navbar: {accessible: [], socName: ""}
         };
+
+        this.onLoginSelect = this.onLoginSelect.bind(this);
     }
 
     componentDidMount(): void {
@@ -58,14 +57,13 @@ export class MyNavbar extends React.Component<Record<string, never>, NavbarState
             .then(res => res.json())
             .then(
                 (result) => {
-                    console.log(result);
                     this.setState({
                         isLoaded: true,
                         navbar: result
                     });
                 },
                 (error) => {
-                    console.log(error);
+                    console.error(error);
                     this.setState({
                         isLoaded: true,
                         error: true
@@ -78,31 +76,54 @@ export class MyNavbar extends React.Component<Record<string, never>, NavbarState
         return map.filter(([k, ]) => accessible.includes(k)).map(([, v]) => v);
     }
 
+    private onLoginSelect(_: string | null, e: React.SyntheticEvent<unknown>) {
+        e.preventDefault();
+        this.setState({loginModalShow: true});
+    }
+
     render(): JSX.Element {
-        const {error, navbar} = this.state;
-        const {accessible, soc_name} = navbar;
+        const {error, navbar, isLoaded} = this.state;
+        const {accessible, socName} = navbar;
 
-        const l_nav = MyNavbar.filter(lNavItems, accessible);
-        const r_nav = MyNavbar.filter(rNavItems, accessible);
-
-        let error_div = <></>;
+        let errorDiv = <></>;
         if (error) {
-            error_div = <i className="bi bi-cloud-slash" role="img" aria-label="Network Error"/>;
+            errorDiv = <i className="bi bi-cloud-slash" role="img" aria-label="Network Error"/>;
         }
 
-        return <Navbar bg="dark" variant="dark" expand="md">
-            <Navbar.Collapse id="basic-navbar-nav">
-                <Nav className="mr-auto">
-                    {l_nav}
-                </Nav>
-            </Navbar.Collapse>
-            <Navbar.Brand href="/" className="mx-auto">{ soc_name } { error_div }</Navbar.Brand>
-            <Navbar.Collapse id="basic-navbar-nav">
-                <Nav className="ml-auto">
-                    {r_nav}
-                </Nav>
-            </Navbar.Collapse>
-            <Navbar.Toggle aria-controls="basic-navbar-nav"/>
-        </Navbar>;
+        let lNav: JSX.Element[] = [];
+        let rNav: JSX.Element[] = [];
+        if (isLoaded) {
+            const lNavItems: [string, JSX.Element][] = [
+                ['about', <NavItem link={'/about'} text={'About'} key={"navbar-about"}/>],
+            ];
+            const rNavItems: [string, JSX.Element][] = [
+                ['login', <Nav.Link href={'#loginModal'} key={"navbar-login"} onSelect={this.onLoginSelect}>
+                    login&nbsp;<i className={"bi bi-box-arrow-in-right"}/>
+                    <LoginModal show={this.state.loginModalShow}
+                                handleClose={() => this.setState({loginModalShow: false})}
+                                static={false} setUser={this.props.setUser}/>
+                </Nav.Link>],
+            ];
+
+            lNav = MyNavbar.filter(lNavItems, accessible);
+            rNav = MyNavbar.filter(rNavItems, accessible);
+        }
+
+        return <>
+            <Navbar bg="dark" variant="dark" expand="md">
+                <Navbar.Collapse id="basic-navbar-nav">
+                    <Nav className="mr-auto">
+                        {lNav}
+                    </Nav>
+                </Navbar.Collapse>
+                <Navbar.Brand href="/" className="mx-auto">{ socName } { errorDiv }</Navbar.Brand>
+                <Navbar.Collapse id="basic-navbar-nav">
+                    <Nav className="ml-auto">
+                        {rNav}
+                    </Nav>
+                </Navbar.Collapse>
+                <Navbar.Toggle aria-controls="basic-navbar-nav"/>
+            </Navbar>
+        </>;
     }
 }
