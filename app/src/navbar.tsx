@@ -1,11 +1,12 @@
 import React, {Dispatch, SetStateAction} from "react";
 
-import { Navbar, Nav } from "react-bootstrap"
+import {Navbar, Nav} from "react-bootstrap"
 import {
     Link
 } from "react-router-dom";
 import {LoginModal} from "./login";
 import {nullUser, UserData} from "./user";
+import { BoxArrowInRight, BoxArrowRight, CloudSlash } from 'react-bootstrap-icons';
 
 
 type NavItemProps = {
@@ -32,7 +33,7 @@ type NavbarState = {
     loginModalShow: boolean,
     navbar: {
         accessible: string[],
-        socName: string
+        soc_name: string
     }
 }
 
@@ -43,11 +44,12 @@ export class MyNavbar extends React.Component<NavbarProps, NavbarState> {
             error: false,
             isLoaded: false,
             loginModalShow: false,
-            navbar: {accessible: [], socName: ""}
+            navbar: {accessible: [], soc_name: ""}
         };
 
         this.onLoginSelect = this.onLoginSelect.bind(this);
         this.onLogoutSelect = this.onLogoutSelect.bind(this);
+        this.closeModal = this.closeModal.bind(this);
     }
 
     updateNavbarItemData(): void {
@@ -58,6 +60,7 @@ export class MyNavbar extends React.Component<NavbarProps, NavbarState> {
             .then(res => res.json())
             .then(
                 (result) => {
+                    console.log(result);
                     this.setState({
                         isLoaded: true,
                         navbar: result,
@@ -86,7 +89,7 @@ export class MyNavbar extends React.Component<NavbarProps, NavbarState> {
     }
 
     private static filter(map: [string, JSX.Element][], accessible: string[]) {
-        return map.filter(([k, ]) => accessible.includes(k)).map(([, v]) => v);
+        return map.filter(([k,]) => accessible.includes(k)).map(([, v]) => v);
     }
 
     private onLoginSelect(_: string | null, e: React.SyntheticEvent<unknown>) {
@@ -100,13 +103,17 @@ export class MyNavbar extends React.Component<NavbarProps, NavbarState> {
         this.props.setUser(nullUser);
     }
 
+    private closeModal(): void {
+        this.setState({loginModalShow: false});
+    }
+
     render(): JSX.Element {
         const {error, navbar, isLoaded} = this.state;
-        const {accessible, socName} = navbar;
+        const {accessible, soc_name} = navbar;
 
         let errorDiv = <></>;
         if (error) {
-            errorDiv = <i className="bi bi-cloud-slash" role="img" aria-label="Network Error"/>;
+            errorDiv = <CloudSlash/>
         }
 
         let lNav: JSX.Element[] = [];
@@ -116,14 +123,18 @@ export class MyNavbar extends React.Component<NavbarProps, NavbarState> {
                 ['about', <NavItem link={'/about'} text={'About'} key={"navbar-about"}/>],
             ];
             const rNavItems: [string, JSX.Element][] = [
-                ['login', <Nav.Link href={'#loginModal'} key={"navbar-login"} onSelect={this.onLoginSelect}>
-                    login&nbsp;<i className={"bi bi-box-arrow-in-right"}/>
+                ['login', <React.Fragment key={"navbar-login"}>
+                    <Nav.Link href={'#loginModal'} onSelect={this.onLoginSelect}>
+                        login&nbsp;
+                        <BoxArrowInRight/>
+                    </Nav.Link>
                     <LoginModal show={this.state.loginModalShow}
-                                handleClose={() => this.setState({loginModalShow: false})}
+                                handleClose={this.closeModal}
                                 static={false} setUser={this.props.setUser}/>
-                </Nav.Link>],
+                </React.Fragment>],
                 ['logout', <Nav.Link href={'#logout'} key={"navbar-logout"} onSelect={this.onLogoutSelect}>
-                    logout&nbsp;<i className={"bi bi-box-arrow-right"}/>
+                    logout&nbsp;
+                    <BoxArrowRight/>
                 </Nav.Link>],
             ];
 
@@ -138,7 +149,7 @@ export class MyNavbar extends React.Component<NavbarProps, NavbarState> {
                         {lNav}
                     </Nav>
                 </Navbar.Collapse>
-                <Navbar.Brand href="/" className="mx-auto">{ socName } { errorDiv }</Navbar.Brand>
+                <Navbar.Brand href="/" className="mx-auto">{soc_name} {errorDiv}</Navbar.Brand>
                 <Navbar.Collapse id="basic-navbar-nav">
                     <Nav className="ml-auto">
                         {rNav}

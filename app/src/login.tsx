@@ -135,11 +135,18 @@ export class LoginModal extends React.Component<LoginModalProps> {
     }
 
     render(): JSX.Element {
+        const ps = !this.props.static ? {} : {
+                "aria-labelledby": "contained-modal-title-vcenter",
+                "centered": true
+            };
+
         return <Modal
                 show={this.props.show}
                 onHide={this.props.handleClose}
                 backdrop={this.props.static ? "static" : true}
                 keyboard={!this.props.static}
+                size="lg"
+                {...ps}
             >
                 <Modal.Header closeButton>
                     <Modal.Title>Sign in</Modal.Title>

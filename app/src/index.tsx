@@ -6,8 +6,6 @@ import {
     Route,
     Redirect
 } from "react-router-dom";
-import 'bootstrap/dist/css/bootstrap.min.css';
-import 'bootstrap-icons/font/bootstrap-icons.css';
 import './style.scss';
 import {MyNavbar} from "./navbar"
 import {MyFooter} from "./footer"
@@ -46,4 +44,4 @@ function App(): JSX.Element {
     );
 }
 
-render(<App/>, document.getElementById('body'));
+render(<App/>, document.getElementById('react-root'));
