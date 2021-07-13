@@ -113,7 +113,7 @@ export class MyNavbar extends React.Component<NavbarProps, NavbarState> {
 
         let errorDiv = <></>;
         if (error) {
-            errorDiv = <CloudSlash/>
+            errorDiv = <CloudSlash size={40}/>
         }
 
         let lNav: JSX.Element[] = [];
@@ -125,16 +125,16 @@ export class MyNavbar extends React.Component<NavbarProps, NavbarState> {
             const rNavItems: [string, JSX.Element][] = [
                 ['login', <React.Fragment key={"navbar-login"}>
                     <Nav.Link href={'#loginModal'} onSelect={this.onLoginSelect}>
-                        login&nbsp;
-                        <BoxArrowInRight/>
+                        Login&nbsp;
+                        <BoxArrowInRight size={21}/>
                     </Nav.Link>
                     <LoginModal show={this.state.loginModalShow}
                                 handleClose={this.closeModal}
                                 static={false} setUser={this.props.setUser}/>
                 </React.Fragment>],
                 ['logout', <Nav.Link href={'#logout'} key={"navbar-logout"} onSelect={this.onLogoutSelect}>
-                    logout&nbsp;
-                    <BoxArrowRight/>
+                    Logout&nbsp;
+                    <BoxArrowRight size={21}/>
                 </Nav.Link>],
             ];
 
