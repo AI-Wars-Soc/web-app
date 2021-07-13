@@ -5,7 +5,7 @@ import {
     Link
 } from "react-router-dom";
 import {LoginModal} from "./login";
-import {UserData} from "./user";
+import {nullUser, UserData} from "./user";
 
 
 type NavItemProps = {
@@ -47,9 +47,10 @@ export class MyNavbar extends React.Component<NavbarProps, NavbarState> {
         };
 
         this.onLoginSelect = this.onLoginSelect.bind(this);
+        this.onLogoutSelect = this.onLogoutSelect.bind(this);
     }
 
-    componentDidMount(): void {
+    updateNavbarItemData(): void {
         const requestOptions = {
             method: 'POST'
         };
@@ -59,17 +60,29 @@ export class MyNavbar extends React.Component<NavbarProps, NavbarState> {
                 (result) => {
                     this.setState({
                         isLoaded: true,
-                        navbar: result
+                        navbar: result,
+                        loginModalShow: false
                     });
                 },
                 (error) => {
                     console.error(error);
                     this.setState({
                         isLoaded: true,
-                        error: true
+                        error: true,
+                        loginModalShow: false
                     });
                 }
             );
+    }
+
+    componentDidMount(): void {
+        this.updateNavbarItemData();
+    }
+
+    componentDidUpdate(prevProps: NavbarProps/*, prevState: NavbarState*/): void {
+        if (prevProps.user !== this.props.user) {
+            this.updateNavbarItemData();
+        }
     }
 
     private static filter(map: [string, JSX.Element][], accessible: string[]) {
@@ -79,6 +92,12 @@ export class MyNavbar extends React.Component<NavbarProps, NavbarState> {
     private onLoginSelect(_: string | null, e: React.SyntheticEvent<unknown>) {
         e.preventDefault();
         this.setState({loginModalShow: true});
+    }
+
+    private onLogoutSelect(_: string | null, e: React.SyntheticEvent<unknown>) {
+        e.preventDefault();
+        document.cookie = "log_out=true; SameSite=Strict";
+        this.props.setUser(nullUser);
     }
 
     render(): JSX.Element {
@@ -102,6 +121,9 @@ export class MyNavbar extends React.Component<NavbarProps, NavbarState> {
                     <LoginModal show={this.state.loginModalShow}
                                 handleClose={() => this.setState({loginModalShow: false})}
                                 static={false} setUser={this.props.setUser}/>
+                </Nav.Link>],
+                ['logout', <Nav.Link href={'#logout'} key={"navbar-logout"} onSelect={this.onLogoutSelect}>
+                    logout&nbsp;<i className={"bi bi-box-arrow-right"}/>
                 </Nav.Link>],
             ];
 
