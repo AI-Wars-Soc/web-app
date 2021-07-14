@@ -1,12 +1,13 @@
-import React, {Dispatch, SetStateAction} from "react";
+import React from "react";
 
 import {Navbar, Nav} from "react-bootstrap"
 import {
-    Link
+    Link, withRouter, match, Redirect
 } from "react-router-dom";
 import {LoginModal} from "./login";
-import {nullUser, UserData} from "./user";
+import {UserData} from "./user";
 import { BoxArrowInRight, BoxArrowRight, CloudSlash } from 'react-bootstrap-icons';
+import { History as RouteHistory, Location as RouteLocation, LocationState } from "history";
 
 
 type NavItemProps = {
@@ -23,8 +24,11 @@ class NavItem extends React.Component<NavItemProps> {
 }
 
 type NavbarProps = {
+    history: RouteHistory<LocationState>,
+    location: RouteLocation<LocationState>,
+    match: match<Record<string, never>>,
     user: UserData,
-    setUser: Dispatch<SetStateAction<UserData>>
+    updateUser: () => unknown
 }
 
 type NavbarState = {
@@ -37,7 +41,7 @@ type NavbarState = {
     }
 }
 
-export class MyNavbar extends React.Component<NavbarProps, NavbarState> {
+class MyRoutableNavbar extends React.Component<NavbarProps, NavbarState> {
     constructor(props: NavbarProps) {
         super(props);
         this.state = {
@@ -56,7 +60,7 @@ export class MyNavbar extends React.Component<NavbarProps, NavbarState> {
         const requestOptions = {
             method: 'POST'
         };
-        fetch("/api/get_navbar", requestOptions)
+        fetch("/api/get_accessible_navbar", requestOptions)
             .then(res => res.json())
             .then(
                 (result) => {
@@ -100,7 +104,7 @@ export class MyNavbar extends React.Component<NavbarProps, NavbarState> {
     private onLogoutSelect(_: string | null, e: React.SyntheticEvent<unknown>) {
         e.preventDefault();
         document.cookie = "log_out=true; SameSite=Strict";
-        this.props.setUser(nullUser);
+        this.props.updateUser();
     }
 
     private closeModal(): void {
@@ -119,18 +123,39 @@ export class MyNavbar extends React.Component<NavbarProps, NavbarState> {
         let lNav: JSX.Element[] = [];
         let rNav: JSX.Element[] = [];
         if (isLoaded) {
+            const pageName = this.props.location.pathname.split('/')[1];
+            const pageAllowed = accessible.includes(pageName);
+            const pageKnowable = ["", "leaderboard", "submissions", "about", "me"].includes(pageName);
+
+            if (!pageAllowed && !pageKnowable) {
+                return <Redirect to={"/"}/>;
+            }
+
+            const forceShow = (!pageAllowed) && pageKnowable;
+
+            const onModalClose = () => {
+                if (forceShow) {
+                    this.props.history.goBack();
+                }
+                this.closeModal()
+            };
+
             const lNavItems: [string, JSX.Element][] = [
+                ['leaderboard', <NavItem link={'/leaderboard'} text={'Leaderboard'} key={"navbar-leaderboard"}/>],
+                ['submissions', <NavItem link={'/submissions'} text={'Submissions'} key={"navbar-submissions"}/>],
                 ['about', <NavItem link={'/about'} text={'About'} key={"navbar-about"}/>],
             ];
             const rNavItems: [string, JSX.Element][] = [
+                ['admin', <NavItem link={'/admin'} text={'Admin'} key={"navbar-admin"}/>],
+                ['me', <NavItem link={'/me'} text={'Me'} key={"navbar-me"}/>],
                 ['login', <React.Fragment key={"navbar-login"}>
                     <Nav.Link href={'#loginModal'} onSelect={this.onLoginSelect}>
                         Login&nbsp;
                         <BoxArrowInRight size={21}/>
                     </Nav.Link>
-                    <LoginModal show={this.state.loginModalShow}
-                                handleClose={this.closeModal}
-                                static={false} setUser={this.props.setUser}/>
+                    <LoginModal show={this.state.loginModalShow || forceShow}
+                                handleClose={onModalClose}
+                                static={forceShow} updateUser={this.props.updateUser}/>
                 </React.Fragment>],
                 ['logout', <Nav.Link href={'#logout'} key={"navbar-logout"} onSelect={this.onLogoutSelect}>
                     Logout&nbsp;
@@ -138,8 +163,8 @@ export class MyNavbar extends React.Component<NavbarProps, NavbarState> {
                 </Nav.Link>],
             ];
 
-            lNav = MyNavbar.filter(lNavItems, accessible);
-            rNav = MyNavbar.filter(rNavItems, accessible);
+            lNav = MyRoutableNavbar.filter(lNavItems, accessible);
+            rNav = MyRoutableNavbar.filter(rNavItems, accessible);
         }
 
         return <>
@@ -160,3 +185,5 @@ export class MyNavbar extends React.Component<NavbarProps, NavbarState> {
         </>;
     }
 }
+
+export const MyNavbar = withRouter(MyRoutableNavbar);

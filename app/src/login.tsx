@@ -1,10 +1,9 @@
 import {GoogleLogin, GoogleLoginResponse, GoogleLoginResponseOffline} from 'react-google-login';
-import React, {Dispatch, SetStateAction} from "react";
+import React from "react";
 import { Modal, Button, Alert } from "react-bootstrap"
-import {UserData} from "./user";
 
 type GoogleLoginProps = {
-    setUser: Dispatch<SetStateAction<UserData>>
+    updateUser: () => unknown
 }
 
 type GoogleLoginState = {
@@ -83,7 +82,7 @@ class GoogleLoginButton extends React.Component<GoogleLoginProps, GoogleLoginSta
                 (result) => {
                     console.log("Key exchange result: ");
                     console.log(result);
-                    this.props.setUser(result.user);
+                    this.props.updateUser();
                 },
                 (error) => {
                     console.log(error);
@@ -126,7 +125,7 @@ type LoginModalProps = {
     handleClose: React.MouseEventHandler<HTMLElement>
     show: boolean,
     static: boolean,
-    setUser: Dispatch<SetStateAction<UserData>>
+    updateUser: () => unknown
 }
 
 export class LoginModal extends React.Component<LoginModalProps> {
@@ -135,18 +134,11 @@ export class LoginModal extends React.Component<LoginModalProps> {
     }
 
     render(): JSX.Element {
-        const ps = !this.props.static ? {} : {
-                "aria-labelledby": "contained-modal-title-vcenter",
-                "centered": true
-            };
-
         return <Modal
                 show={this.props.show}
                 onHide={this.props.handleClose}
                 backdrop={this.props.static ? "static" : true}
                 keyboard={!this.props.static}
-                size="lg"
-                {...ps}
             >
                 <Modal.Header closeButton>
                     <Modal.Title>Sign in</Modal.Title>
@@ -157,7 +149,7 @@ export class LoginModal extends React.Component<LoginModalProps> {
                         as well as allowing us to store your name and and email address.
                         You can delete your account at any time.
                     </p>
-                    <GoogleLoginButton setUser={this.props.setUser}/>
+                    <GoogleLoginButton updateUser={this.props.updateUser}/>
                 </Modal.Body>
                 <Modal.Footer>
                     <Button variant="secondary" onClick={this.props.handleClose}>

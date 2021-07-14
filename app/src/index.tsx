@@ -10,15 +10,16 @@ import './style.scss';
 import {MyNavbar} from "./navbar"
 import {MyFooter} from "./footer"
 import {LeaderboardPage} from "./leaderboard"
-import {nullUser} from "./user"
+import {getUser, NULL_USER} from "./user"
 
 function App(): JSX.Element {
-    const [user, setUser] = useState(nullUser);
+    const [user, setUser] = useState(NULL_USER);
+    const updateUser = () => getUser(setUser);
 
     return (
         <>
             <Router>
-                <MyNavbar user={user} setUser={setUser}/>
+                <MyNavbar user={user} updateUser={updateUser}/>
                 <div className="content mx-lg-2 px-xl-5">
                     <div className="d-flex flex-column mx-md-3 p-2 p-sm-5">
                         <Switch>
