@@ -14,7 +14,8 @@ import {getUser, NULL_USER} from "./user"
 
 function App(): JSX.Element {
     const [user, setUser] = useState(NULL_USER);
-    const updateUser = () => getUser(setUser);
+    const updateUser = () => getUser(user, setUser);
+    updateUser();
 
     return (
         <>
@@ -27,7 +28,7 @@ function App(): JSX.Element {
                                 About
                             </Route>
                             <Route path="/leaderboard">
-                                <LeaderboardPage/>
+                                <LeaderboardPage user={user}/>
                             </Route>
                             <Route path="/submissions">
                                 Submissions

@@ -12,16 +12,36 @@ export type UserData = {
 
 export const NULL_USER: UserData = null;
 
-export function getUser(callback: (_:UserData) => unknown): void {
+export function usersEqual(u1: UserData, u2: UserData): boolean {
+    if (u1 === null && u2 === null) {
+        return true;
+    }
+
+    if (u1 === null || u2 === null) {
+        return false;
+    }
+
+    return u1.user_id === u2.user_id;
+}
+
+export function getUser(currentUser: UserData, setUser: (_:UserData) => unknown): void {
+    console.log("Getting user");
     fetch("/api/get_user", {method: 'POST'})
         .then(res => res.json())
         .then(
             (result) => {
-                callback(result);
+                return result;
             },
             (error) => {
                 console.error(error);
-                callback(NULL_USER);
+                return NULL_USER;
             }
-        );
+        )
+        .then(user => {
+            console.log("Got user");
+            if (!usersEqual(currentUser, user)) {
+                console.log("User is different");
+                setUser(user);
+            }
+        });
 }

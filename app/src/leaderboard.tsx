@@ -1,4 +1,5 @@
 import React from "react";
+import {NULL_USER, UserData} from "./user";
 
 
 type LeaderboardEntryProps = {
@@ -57,17 +58,76 @@ class LeaderboardEntry extends React.Component<LeaderboardEntryProps> {
 }
 
 
-class Leaderboard extends React.Component<Record<string, never>> {
+type LeaderboardProps = {
+    user: UserData
+}
+
+type LeaderboardState = {
+    error: boolean,
+    entries: LeaderboardEntryProps[] | null
+}
+
+
+class Leaderboard extends React.Component<LeaderboardProps, LeaderboardState> {
+    constructor(props: LeaderboardProps) {
+        super(props);
+        this.state = {
+            error: false,
+            entries: null
+        };
+
+        this.updateLeaderboardData = this.updateLeaderboardData.bind(this);
+    }
+
+    updateLeaderboardData(): void {
+        const requestOptions = {
+            method: 'POST'
+        };
+        fetch("/api/get_leaderboard", requestOptions)
+            .then(res => res.json())
+            .then(
+                (result) => {
+                    this.setState({
+                        entries: result.entries
+                    });
+                },
+                (error) => {
+                    console.error(error);
+                    this.setState({
+                        error: true,
+                    });
+                }
+            );
+    }
+
+    componentDidMount(): void {
+        this.updateLeaderboardData();
+    }
+
     render(): JSX.Element {
+        if (this.state.error || this.state.entries === null || this.props.user === NULL_USER) {
+            console.log(this.state, this.props);
+            return <></>;
+        }
+
+        console.log(this.state);
+        const entryDivs = this.state.entries.map(e => <LeaderboardEntry key={e.position} {...e}/>)
+
         return <div className="d-flex flex-column py-2 flex-grow-1" id="leaderboard">
-            <LeaderboardEntry position="Position" name="Name" is_real_name={false} nickname="" wins="Wins" losses="Losses" draws="Draws" score="Score" boarder_style="border-bottom"/>
-            <div className="text-center">Loading the leaderboard...</div>
+            <LeaderboardEntry position="Position" name="Name" is_real_name={false} nickname=""
+                              wins="Wins" losses="Losses" draws="Draws" score="Score" boarder_style="border-bottom"/>
+            {entryDivs}
         </div>;
     }
 }
 
 
-export class LeaderboardPage extends React.Component<Record<string, never>> {
+type LeaderboardPageProps = {
+    user: UserData
+}
+
+
+export class LeaderboardPage extends React.Component<LeaderboardPageProps> {
     render(): JSX.Element {
         return <>
             <div className="d-flex justify-content-center justify-content-sm-start">
@@ -85,7 +145,7 @@ export class LeaderboardPage extends React.Component<Record<string, never>> {
 
             </div>
             <div className="d-flex justify-content-center">
-                <Leaderboard/>
+                <Leaderboard user={this.props.user}/>
             </div>
         </>;
     }
