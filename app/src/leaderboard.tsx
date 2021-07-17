@@ -106,11 +106,9 @@ class Leaderboard extends React.Component<LeaderboardProps, LeaderboardState> {
 
     render(): JSX.Element {
         if (this.state.error || this.state.entries === null || this.props.user === NULL_USER) {
-            console.log(this.state, this.props);
             return <></>;
         }
 
-        console.log(this.state);
         const entryDivs = this.state.entries.map(e => <LeaderboardEntry key={e.position} {...e}/>)
 
         return <div className="d-flex flex-column py-2 flex-grow-1" id="leaderboard">

@@ -36,14 +36,13 @@ class GoogleLoginButton extends React.Component<GoogleLoginProps, GoogleLoginSta
             .then(res => res.json())
             .then(
                 (result) => {
-                    console.log(result);
                     this.setState({
                         isLoaded: true,
                         data: result
                     });
                 },
                 (error) => {
-                    console.log(error);
+                    console.error(error);
                     this.setState({
                         isLoaded: true,
                         error: error
@@ -53,8 +52,8 @@ class GoogleLoginButton extends React.Component<GoogleLoginProps, GoogleLoginSta
     }
     
     private onLoginFail(error: GoogleLoginResponse | GoogleLoginResponseOffline) {
-        console.log("Could not sign in");
-        console.log(error);
+        console.error("Could not sign in");
+        console.error(error);
 
         this.setState({
             error: "Could not sign in. Please try again later."
@@ -63,7 +62,7 @@ class GoogleLoginButton extends React.Component<GoogleLoginProps, GoogleLoginSta
 
     private onLoginSuccess(googleUser: GoogleLoginResponse | GoogleLoginResponseOffline) {
         if (!("getAuthResponse" in googleUser)) {
-            console.log("Got offline response - could not sign in");
+            console.error("Got offline response - could not sign in");
             return;
         }
 
@@ -79,13 +78,11 @@ class GoogleLoginButton extends React.Component<GoogleLoginProps, GoogleLoginSta
         fetch('/api/exchange_google_token', requestOptions)
             .then(res => res.json())
             .then(
-                (result) => {
-                    console.log("Key exchange result: ");
-                    console.log(result);
+                () => {
                     this.props.updateUser();
                 },
                 (error) => {
-                    console.log(error);
+                    console.error(error);
                     this.setState({
                         error: error
                     });

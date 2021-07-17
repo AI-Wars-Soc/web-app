@@ -25,7 +25,6 @@ export function usersEqual(u1: UserData, u2: UserData): boolean {
 }
 
 export function getUser(currentUser: UserData, setUser: (_:UserData) => unknown): void {
-    console.log("Getting user");
     fetch("/api/get_user", {method: 'POST'})
         .then(res => res.json())
         .then(
@@ -38,9 +37,7 @@ export function getUser(currentUser: UserData, setUser: (_:UserData) => unknown)
             }
         )
         .then(user => {
-            console.log("Got user");
             if (!usersEqual(currentUser, user)) {
-                console.log("User is different");
                 setUser(user);
             }
         });

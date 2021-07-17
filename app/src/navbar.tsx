@@ -64,7 +64,6 @@ class MyRoutableNavbar extends React.Component<NavbarProps, NavbarState> {
             .then(res => res.json())
             .then(
                 (result) => {
-                    console.log(result);
                     this.setState({
                         isLoaded: true,
                         navbar: result,
@@ -104,7 +103,6 @@ class MyRoutableNavbar extends React.Component<NavbarProps, NavbarState> {
     private onLogoutSelect(_: string | null, e: React.SyntheticEvent<unknown>) {
         e.preventDefault();
         document.cookie = "log_out=true; SameSite=Strict";
-        console.log("Logout selected")
         this.props.updateUser();
     }
 

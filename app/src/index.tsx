@@ -11,6 +11,7 @@ import {MyNavbar} from "./navbar"
 import {MyFooter} from "./footer"
 import {LeaderboardPage} from "./leaderboard"
 import {getUser, NULL_USER} from "./user"
+import {SubmissionsPage} from "./submissions/submissions";
 
 function App(): JSX.Element {
     const [user, setUser] = useState(NULL_USER);
@@ -31,7 +32,7 @@ function App(): JSX.Element {
                                 <LeaderboardPage user={user}/>
                             </Route>
                             <Route path="/submissions">
-                                Submissions
+                                <SubmissionsPage user={user}/>
                             </Route>
                             <Route path="/">
                                 <Redirect to={"/about"}/>
