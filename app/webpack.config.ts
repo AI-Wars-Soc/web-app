@@ -23,7 +23,9 @@ const config: webpack.Configuration = {
     entry: "./src/index.tsx",
     output: {
         path: path.join(__dirname, 'dist'),
-        filename: "[name].js"
+        publicPath: '',
+        filename: "[name].bundle.js",
+        chunkFilename: '[name].bundle.js',
     },
     resolve: {
         extensions: ['.tsx', '.ts', '.jsx', '.js'],

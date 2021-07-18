@@ -1,19 +1,22 @@
-import React, {ChangeEvent} from "react";
-import {SubmissionWinLossGraph} from "./submissionGraph";
+import React, {ChangeEvent, Suspense} from "react";
+import {Accordion, Card} from "react-bootstrap";
+const SubmissionWinLossGraph = React.lazy(() => import("./submissionGraph"));
 
-type SubmissionEntryProps = {
+export type SubmissionData = {
     submission_id: number,
     index: number,
-    status: string,
     submission_date: string,
     healthy: boolean,
+    tested: boolean,
     active: boolean,
-    enabled_status: string,
-    crashed: boolean,
+    selected: boolean,
     crash_reason: string,
     crash_reason_long: string,
     prints: string
 };
+export type SubmissionEntryProps = {
+    refreshSubmissions: () => unknown
+} & SubmissionData;
 
 export class SubmissionEntry extends React.Component<SubmissionEntryProps> {
     private submissionEnabledSwitch(e: ChangeEvent<HTMLInputElement>) {
@@ -36,6 +39,7 @@ export class SubmissionEntry extends React.Component<SubmissionEntryProps> {
                     this.setState({
                         entries: result.entries
                     });
+                    this.props.refreshSubmissions();
                 },
                 (error) => {
                     console.error(error);
@@ -51,20 +55,22 @@ export class SubmissionEntry extends React.Component<SubmissionEntryProps> {
             activeSwitch = <div className="p-1 submission-active-switch">
                 <div className="custom-control custom-switch">
                     <input type="checkbox" className="custom-control-input"
-                           id="enabledSwitch{{ submission_id }}"
+                           id={"enabledSwitch" + this.props.submission_id}
                            {...{checked: (this.props.active ? true : undefined)}}
                            onChange={this.submissionEnabledSwitch}/>
                     <label className="custom-control-label"
-                           htmlFor="enabledSwitch{{ submission_id }}">{this.props.enabled_status}</label>
+                           htmlFor={"enabledSwitch" + this.props.submission_id}>{this.props.active ? "Enabled" : "Disabled"}</label>
 
                 </div>
             </div>;
-
-            winLossGraph = <SubmissionWinLossGraph/>;
+            winLossGraph = <Suspense fallback={<div>Loading Graph...</div>}>
+                <SubmissionWinLossGraph submission_id={this.props.submission_id}/>
+            </Suspense>;
         }
 
+        const crashed = this.props.tested && !this.props.healthy;
         let crashedDiv = <></>;
-        if (this.props.crashed) {
+        if (crashed) {
             crashedDiv = <div className="submission-crash-report p-1 px-3">
                 <div>
                     <b>Crash Reason:</b>
@@ -85,45 +91,65 @@ export class SubmissionEntry extends React.Component<SubmissionEntryProps> {
             </div>
         }
 
+        let status = "";
+        if (this.props.selected) {
+            status = "Selected";
+        } else if (!this.props.tested) {
+            status = "Testing";
+        } else if (crashed) {
+            status = "Invalid";
+        }
 
-        return <div className="d-flex justify-content-center w-100 flex-row p-1 p-md-2 px-lg-5">
-            <div className="card max-width-center submission-entry {{ div_class }}">
-                <div className="{{ subdiv_class }} card-header submission-rounded" id="submission-heading-{{ index }}"
-                     data-toggle="collapse"
-                     data-target="#submission-collapse-{{ index }}" aria-expanded="false"
-                     aria-controls="submission-collapse-{{ index }}">
+        const class_names = ["max-width-center", "submission-entry"];
+        if (this.props.active) {
+            class_names.push('submission-entry-active');
+        }
+        if (crashed) {
+            class_names.push('invalid-stripes');
+        }
+        if (this.props.tested) {
+            class_names.push('testing-stripes');
+        }
+        if (this.props.selected) {
+            class_names.push('submission-entry-selected');
+        }
+        const div_class = class_names.join(" ");
+
+        let subdiv_class = "submission-rounded";
+        if (!this.props.tested) {
+            subdiv_class += ' submission-entry-testing';
+        } else if (!this.props.healthy) {
+            subdiv_class += ' submission-entry-invalid';
+        }
+
+        return <Card className={div_class}>
+                <Card.Header className={subdiv_class} >
                     <div className="mb-0 panel-title">
                         <span className="h5">
                             Submission {this.props.index}
                         </span>
                         <span className="h6 font-weight-bold mx-1 mx-md-3">
-                            {this.props.status}
+                            {status}
                         </span>
                     </div>
-                </div>
+                </Card.Header>
 
-                <div id="submission-collapse-{{ index }}" className="collapse submission-collapse"
-                     aria-labelledby="submission-heading-{{ index }}"
-                     aria-expanded="false" data-parent="#submissions-accordion"
-                     data-submission-id="{{ submission_id }}">
-                    <div className="card-body">
-                        <div className="container">
-                            <div className="row justify-content-center">
-                                <div className="col-11 col-md-6">
-                                    <div className="p-1 submission-date">
-                                        {this.props.submission_date}
-                                    </div>
-                                    {activeSwitch}
+                <Accordion.Collapse eventKey={"" + this.props.index}>
+                    <div className="container">
+                        <div className="row justify-content-center">
+                            <div className="col-11 col-md-6">
+                                <div className="p-1 submission-date">
+                                    {this.props.submission_date}
                                 </div>
-                                <div className="col-11 col-md-6">
-                                    {winLossGraph}
-                                    {crashedDiv}
-                                </div>
+                                {activeSwitch}
+                            </div>
+                            <div className="col-11 col-md-6">
+                                {winLossGraph}
+                                {crashedDiv}
                             </div>
                         </div>
                     </div>
-                </div>
-            </div>
-        </div>;
+                </Accordion.Collapse>
+            </Card>;
     }
 }
