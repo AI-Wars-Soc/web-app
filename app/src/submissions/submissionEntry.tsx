@@ -1,5 +1,6 @@
 import React, {ChangeEvent, Suspense} from "react";
 import {Accordion, Card} from "react-bootstrap";
+import {ChevronDown} from "react-bootstrap-icons";
 const SubmissionWinLossGraph = React.lazy(() => import("./submissionGraph"));
 
 export type SubmissionData = {
@@ -18,7 +19,36 @@ export type SubmissionEntryProps = {
     refreshSubmissions: () => unknown
 } & SubmissionData;
 
-export class SubmissionEntry extends React.Component<SubmissionEntryProps> {
+export type SubmissionEntryState = {
+    winLossGraph: JSX.Element | null
+}
+
+export class SubmissionEntry extends React.Component<SubmissionEntryProps, SubmissionEntryState> {
+    constructor(props: SubmissionEntryProps) {
+        super(props);
+        this.state = {
+            winLossGraph: null,
+        };
+
+        this.submissionEnabledSwitch = this.submissionEnabledSwitch.bind(this);
+        this.toggleGraph = this.toggleGraph.bind(this);
+    }
+
+    private toggleGraph(): void {
+        if (this.state.winLossGraph !== null) {
+            this.setState({
+                winLossGraph: null
+            })
+            return;
+        }
+
+        this.setState({
+            winLossGraph: <Suspense fallback={<div>Loading Graph...</div>}>
+                <SubmissionWinLossGraph submission_id={this.props.submission_id}/>
+            </Suspense>
+        });
+    }
+
     private submissionEnabledSwitch(e: ChangeEvent<HTMLInputElement>) {
         const v = e.target.checked;
 
@@ -35,10 +65,7 @@ export class SubmissionEntry extends React.Component<SubmissionEntryProps> {
         fetch("/api/set_submission_active", requestOptions)
             .then(res => res.json())
             .then(
-                (result) => {
-                    this.setState({
-                        entries: result.entries
-                    });
+                () => {
                     this.props.refreshSubmissions();
                 },
                 (error) => {
@@ -50,7 +77,6 @@ export class SubmissionEntry extends React.Component<SubmissionEntryProps> {
 
     render(): JSX.Element {
         let activeSwitch = <></>;
-        let winLossGraph = <></>;
         if (this.props.healthy) {
             activeSwitch = <div className="p-1 submission-active-switch">
                 <div className="custom-control custom-switch">
@@ -63,9 +89,6 @@ export class SubmissionEntry extends React.Component<SubmissionEntryProps> {
 
                 </div>
             </div>;
-            winLossGraph = <Suspense fallback={<div>Loading Graph...</div>}>
-                <SubmissionWinLossGraph submission_id={this.props.submission_id}/>
-            </Suspense>;
         }
 
         const crashed = this.props.tested && !this.props.healthy;
@@ -101,54 +124,52 @@ export class SubmissionEntry extends React.Component<SubmissionEntryProps> {
         }
 
         const class_names = ["max-width-center", "submission-entry"];
+        const subdiv_class_names = ["submission-rounded", "w-100"];
         if (this.props.active) {
             class_names.push('submission-entry-active');
         }
         if (crashed) {
             class_names.push('invalid-stripes');
+            subdiv_class_names.push("submission-entry-invalid");
         }
-        if (this.props.tested) {
+        if (!this.props.tested) {
             class_names.push('testing-stripes');
+            subdiv_class_names.push("submission-entry-testing");
         }
         if (this.props.selected) {
             class_names.push('submission-entry-selected');
         }
         const div_class = class_names.join(" ");
-
-        let subdiv_class = "submission-rounded";
-        if (!this.props.tested) {
-            subdiv_class += ' submission-entry-testing';
-        } else if (!this.props.healthy) {
-            subdiv_class += ' submission-entry-invalid';
-        }
+        const subdiv_class = subdiv_class_names.join(" ");
 
         return <Card className={div_class}>
-                <Card.Header className={subdiv_class} >
-                    <div className="mb-0 panel-title">
-                        <span className="h5">
-                            Submission {this.props.index}
-                        </span>
-                        <span className="h6 font-weight-bold mx-1 mx-md-3">
-                            {status}
-                        </span>
-                    </div>
-                </Card.Header>
+                <Accordion.Toggle as={Card.Header} variant="link" eventKey={"" + this.props.index} className={subdiv_class} onClick={this.toggleGraph}>
+                    <span className="h5">
+                        Submission {this.props.index}
+                    </span>
+                    <span className="h6 font-weight-bold mx-1 mx-md-3">
+                        {status}
+                    </span>
+                    <ChevronDown size={21} style={{float: "right"}}/>
+                </Accordion.Toggle>
 
                 <Accordion.Collapse eventKey={"" + this.props.index}>
-                    <div className="container">
-                        <div className="row justify-content-center">
-                            <div className="col-11 col-md-6">
-                                <div className="p-1 submission-date">
-                                    {this.props.submission_date}
+                    <Card.Body>
+                        <div className="container">
+                            <div className="row justify-content-center">
+                                <div className="col-11 col-md-6">
+                                    <div className="p-1 submission-date">
+                                        {this.props.submission_date}
+                                    </div>
+                                    {activeSwitch}
                                 </div>
-                                {activeSwitch}
-                            </div>
-                            <div className="col-11 col-md-6">
-                                {winLossGraph}
-                                {crashedDiv}
+                                <div className="col-11 col-md-6">
+                                    {this.state.winLossGraph}
+                                    {crashedDiv}
+                                </div>
                             </div>
                         </div>
-                    </div>
+                    </Card.Body>
                 </Accordion.Collapse>
             </Card>;
     }

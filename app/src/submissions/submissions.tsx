@@ -18,7 +18,7 @@ export class SubmissionsPage extends React.Component<SubmissionsPageProps, Submi
         super(props);
         this.state = {
             error: false,
-            submissions: []
+            submissions: null
         }
 
         this.updateSubmissionsData = this.updateSubmissionsData.bind(this);
@@ -64,7 +64,7 @@ export class SubmissionsPage extends React.Component<SubmissionsPageProps, Submi
                     </div>
                 </div>
             } else {
-                submissions =  <Accordion>
+                submissions =  <Accordion className="w-100">
                     {this.state.submissions.map((v, i) => <SubmissionEntry key={i} refreshSubmissions={this.updateSubmissionsData} {...v}/>)}
                 </Accordion>
             }

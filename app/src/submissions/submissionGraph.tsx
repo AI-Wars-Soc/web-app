@@ -1,5 +1,7 @@
 import React from "react";
-import {Chart, ChartConfiguration, LegendItem} from "chart.js";
+import {Chart, ChartConfiguration, LegendItem, registerables} from "chart.js";
+
+Chart.register(...registerables);
 
 type SubmissionWinLossGraphProps = {
     submission_id: number
@@ -19,19 +21,30 @@ type ResponseType = {
 }
 
 export default class SubmissionWinLossGraph extends React.Component<SubmissionWinLossGraphProps, SubmissionWinLossGraphState> {
+    private canvasElement: HTMLCanvasElement | null;
+
     constructor(props: SubmissionWinLossGraphProps) {
         super(props);
         this.state = {
             centre_hidden: true
         };
+        this.canvasElement = null;
 
         this.activateDraw = this.activateDraw.bind(this);
         this.parseData = this.parseData.bind(this);
         this.drawData = this.drawData.bind(this);
     }
 
-    private activateDraw(ref: HTMLCanvasElement): void {
-        const ctx = ref.getContext('2d');
+    componentDidMount(): void {
+        this.activateDraw();
+    }
+
+    private activateDraw(): void {
+        if (this.canvasElement === null) {
+            return;
+        }
+
+        const ctx = this.canvasElement.getContext('2d');
         if (ctx === null) {
             console.error("Null canvas context");
             return;
@@ -132,6 +145,6 @@ export default class SubmissionWinLossGraph extends React.Component<SubmissionWi
     }
 
     render(): JSX.Element {
-        return <canvas ref={this.activateDraw} width="100" height="100" className="w-100"/>;
+        return <canvas ref={c => {this.canvasElement = c;}} width="100" height="100" className="w-100"/>;
     }
 }
