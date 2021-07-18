@@ -36,9 +36,6 @@ export class SubmissionEntry extends React.Component<SubmissionEntryProps, Submi
 
     private toggleGraph(): void {
         if (this.state.winLossGraph !== null) {
-            this.setState({
-                winLossGraph: null
-            })
             return;
         }
 
@@ -50,6 +47,7 @@ export class SubmissionEntry extends React.Component<SubmissionEntryProps, Submi
     }
 
     private submissionEnabledSwitch(e: ChangeEvent<HTMLInputElement>) {
+        e.preventDefault();
         const v = e.target.checked;
 
         const requestOptions = {
@@ -82,7 +80,7 @@ export class SubmissionEntry extends React.Component<SubmissionEntryProps, Submi
                 <div className="custom-control custom-switch">
                     <input type="checkbox" className="custom-control-input"
                            id={"enabledSwitch" + this.props.submission_id}
-                           {...{checked: (this.props.active ? true : undefined)}}
+                           checked={this.props.active}
                            onChange={this.submissionEnabledSwitch}/>
                     <label className="custom-control-label"
                            htmlFor={"enabledSwitch" + this.props.submission_id}>{this.props.active ? "Enabled" : "Disabled"}</label>
