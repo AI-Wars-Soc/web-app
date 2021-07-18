@@ -1,6 +1,7 @@
 import React, {ChangeEvent, Suspense} from "react";
 import {Accordion, Card} from "react-bootstrap";
 import {ChevronDown} from "react-bootstrap-icons";
+
 const SubmissionWinLossGraph = React.lazy(() => import("./submissionGraph"));
 
 export type SubmissionData = {
@@ -35,7 +36,7 @@ export class SubmissionEntry extends React.Component<SubmissionEntryProps, Submi
     }
 
     private toggleGraph(): void {
-        if (this.state.winLossGraph !== null) {
+        if (this.state.winLossGraph !== null || !this.props.healthy) {
             return;
         }
 
@@ -140,8 +141,10 @@ export class SubmissionEntry extends React.Component<SubmissionEntryProps, Submi
         const div_class = class_names.join(" ");
         const subdiv_class = subdiv_class_names.join(" ");
 
-        return <Card className={div_class}>
-                <Accordion.Toggle as={Card.Header} variant="link" eventKey={"" + this.props.index} className={subdiv_class} onClick={this.toggleGraph}>
+        return <Card className={"border-0"}>
+            <div className={div_class}>
+                <Accordion.Toggle as={Card.Header} variant="link" eventKey={"" + this.props.index}
+                                  className={subdiv_class} onClick={this.toggleGraph}>
                     <span className="h5">
                         Submission {this.props.index}
                     </span>
@@ -169,6 +172,7 @@ export class SubmissionEntry extends React.Component<SubmissionEntryProps, Submi
                         </div>
                     </Card.Body>
                 </Accordion.Collapse>
-            </Card>;
+            </div>
+        </Card>;
     }
 }
