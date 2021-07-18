@@ -64,7 +64,7 @@ export class SubmissionsPage extends React.Component<SubmissionsPageProps, Submi
                     </div>
                 </div>
             } else {
-                submissions =  <Accordion className="w-100">
+                submissions =  <Accordion className="max-width-center">
                     {this.state.submissions.map((v, i) => <SubmissionEntry key={i} refreshSubmissions={this.updateSubmissionsData} {...v}/>)}
                 </Accordion>
             }

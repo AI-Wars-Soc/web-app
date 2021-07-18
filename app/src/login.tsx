@@ -112,7 +112,7 @@ class GoogleLoginButton extends React.Component<GoogleLoginProps, GoogleLoginSta
         }
 
         return <>
-            <GoogleLogin theme='light' {...loginProps}/>
+            <GoogleLogin {...loginProps}/>
             {errorMessage}
         </>
     }

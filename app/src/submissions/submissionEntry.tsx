@@ -122,7 +122,7 @@ export class SubmissionEntry extends React.Component<SubmissionEntryProps, Submi
             status = "Invalid";
         }
 
-        const class_names = ["max-width-center", "submission-entry"];
+        const class_names = ["submission-entry"];
         const subdiv_class_names = ["submission-rounded", "w-100"];
         if (this.props.active) {
             class_names.push('submission-entry-active');

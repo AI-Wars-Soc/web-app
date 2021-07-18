@@ -134,7 +134,7 @@ class MyRoutableNavbar extends React.Component<NavbarProps, NavbarState> {
 
             const onModalClose = () => {
                 if (forceShow) {
-                    this.props.history.goBack();
+                    this.props.history.push("/");
                 }
                 this.closeModal()
             };
@@ -150,7 +150,7 @@ class MyRoutableNavbar extends React.Component<NavbarProps, NavbarState> {
                 ['login', <React.Fragment key={"navbar-login"}>
                     <Nav.Link href={'#loginModal'} onSelect={this.onLoginSelect}>
                         Login&nbsp;
-                        <BoxArrowInRight size={21}/>
+                        <BoxArrowInRight size={19}/>
                     </Nav.Link>
                     <LoginModal show={this.state.loginModalShow || forceShow}
                                 handleClose={onModalClose}
@@ -158,7 +158,7 @@ class MyRoutableNavbar extends React.Component<NavbarProps, NavbarState> {
                 </React.Fragment>],
                 ['logout', <Nav.Link href={'#logout'} key={"navbar-logout"} onSelect={this.onLogoutSelect}>
                     Logout&nbsp;
-                    <BoxArrowRight size={21}/>
+                    <BoxArrowRight size={19}/>
                 </Nav.Link>],
             ];
 
@@ -168,13 +168,13 @@ class MyRoutableNavbar extends React.Component<NavbarProps, NavbarState> {
 
         return <>
             <Navbar bg="dark" variant="dark" expand="md">
-                <Navbar.Collapse id="basic-navbar-nav">
+                <Navbar.Collapse id="basic-navbar-nav" style={{flexGrow: 0}} className="order-1 order-md-0">
                     <Nav className="mr-auto">
                         {lNav}
                     </Nav>
                 </Navbar.Collapse>
-                <Navbar.Brand href="/" className="mx-auto">{soc_name} {errorDiv}</Navbar.Brand>
-                <Navbar.Collapse id="basic-navbar-nav">
+                <Navbar.Brand href="/" className="mx-auto order-0">{soc_name} {errorDiv}</Navbar.Brand>
+                <Navbar.Collapse id="basic-navbar-nav" style={{flexGrow: 0}} className="order-3">
                     <Nav className="ml-auto">
                         {rNav}
                     </Nav>
