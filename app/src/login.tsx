@@ -111,10 +111,10 @@ class GoogleLoginButton extends React.Component<GoogleLoginProps, GoogleLoginSta
             cookiePolicy: 'single_host_origin',
         }
 
-        return <>
+        return <div className="d-flex justify-content-center">
             <GoogleLogin {...loginProps}/>
             {errorMessage}
-        </>
+        </div>
     }
 }
 

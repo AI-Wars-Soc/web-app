@@ -25,18 +25,21 @@ export type SubmissionEntryState = {
 }
 
 export class SubmissionEntry extends React.Component<SubmissionEntryProps, SubmissionEntryState> {
+    private testingCheckInterval: NodeJS.Timeout | null;
     constructor(props: SubmissionEntryProps) {
         super(props);
         this.state = {
             winLossGraph: null,
         };
+        this.testingCheckInterval = null;
 
         this.submissionEnabledSwitch = this.submissionEnabledSwitch.bind(this);
         this.toggleGraph = this.toggleGraph.bind(this);
+        this.checkStillTesting = this.checkStillTesting.bind(this);
     }
 
     private toggleGraph(): void {
-        if (this.state.winLossGraph !== null || !this.props.healthy) {
+        if (this.state.winLossGraph !== null || !this.props.healthy || !this.props.tested) {
             return;
         }
 
@@ -72,6 +75,42 @@ export class SubmissionEntry extends React.Component<SubmissionEntryProps, Submi
                     e.target.checked = !e.target.checked;
                 }
             );
+    }
+
+    private checkStillTesting(): void {
+        const requestOptions = {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json; charset=utf-8'
+            },
+            body: JSON.stringify({
+                submission_id: this.props.submission_id
+            })
+        };
+        fetch("/api/is_submission_testing", requestOptions)
+            .then(res => res.json())
+            .then(
+                (result) => {
+                    if (result === false) {
+                        this.props.refreshSubmissions();
+                    }
+                },
+                (error) => {
+                    console.error(error);
+                    this.clearIntervals();
+                }
+            );
+    }
+
+    private clearIntervals(): void {
+        if (this.testingCheckInterval !== null) {
+            clearInterval(this.testingCheckInterval);
+            this.testingCheckInterval = null
+        }
+    }
+
+    componentWillUnmount(): void {
+        this.clearIntervals();
     }
 
     render(): JSX.Element {
@@ -111,6 +150,12 @@ export class SubmissionEntry extends React.Component<SubmissionEntryProps, Submi
                         </>}
                 </div>
             </div>
+        }
+
+        // Ping every 2s when testing
+        this.clearIntervals();
+        if (!this.props.tested) {
+            this.testingCheckInterval = setInterval(this.checkStillTesting, 2000);
         }
 
         let status = "";

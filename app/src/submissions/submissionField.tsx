@@ -45,6 +45,13 @@ export class SubmissionField extends React.Component<SubmissionFieldProps, Submi
                     if (response.status === "resent") { // Ignore resent requests
                         return;
                     }
+                    if (response.status === "fail") {
+                        this.setState({
+                            loading: false,
+                            error: true
+                        });
+                        return;
+                    }
                     this.setState({
                         loading: false,
                         error: false
@@ -67,8 +74,7 @@ export class SubmissionField extends React.Component<SubmissionFieldProps, Submi
                 <div className="d-flex justify-content-center w-100">
                     <div className="d-flex max-width-center row">
                         <div className="col-md-2 d-none d-md-block my-auto">
-                            <label htmlFor="repo" className="my-auto text-right">Your Repository
-                                URL:</label>
+                            <label htmlFor="repo" className="my-auto text-right">Repository URL:</label>
                         </div>
                         <div className="col-12 col-md-8 my-auto">
                             <input type="url" className="form-control" id="repo" ref={node => (this.urlNode = node)}
@@ -79,10 +85,9 @@ export class SubmissionField extends React.Component<SubmissionFieldProps, Submi
                                 className="d-flex w-100 justify-content-center justify-content-md-left">
                                 <button type="submit"
                                         className="btn btn-primary submission-submit-button">
-                                    Submit
                                     {this.state.loading ?
                                         <span className="spinner-border spinner-border-sm" role="status"
-                                              id="submit-spinner"/> : <></>}
+                                              id="submit-spinner"/> : <>Submit</>}
                                 </button>
                             </div>
                         </div>

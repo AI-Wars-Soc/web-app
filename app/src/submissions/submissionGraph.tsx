@@ -113,10 +113,7 @@ export default class SubmissionWinLossGraph extends React.Component<SubmissionWi
                         position: 'top',
                         labels: {
                             filter: (legendItem: LegendItem) => {
-                                if (legendItem.datasetIndex >= 9) {
-                                    return !this.state.centre_hidden;
-                                }
-                                return (legendItem.datasetIndex % 3) === 0;
+                                return !legendItem.text.includes("Healthy") && !legendItem.text.includes("Crashed");
                             },
                         },
                         onClick: () => {
