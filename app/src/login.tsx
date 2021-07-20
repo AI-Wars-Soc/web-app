@@ -16,6 +16,8 @@ type GoogleLoginState = {
 }
 
 class GoogleLoginButton extends React.Component<GoogleLoginProps, GoogleLoginState> {
+    tokenTimeout: NodeJS.Timeout | null;
+
     constructor(props: GoogleLoginProps) {
         super(props);
         this.state = {
@@ -23,6 +25,7 @@ class GoogleLoginButton extends React.Component<GoogleLoginProps, GoogleLoginSta
             isLoaded: false,
             data: {clientId: "", hostedDomain: null}
         };
+        this.tokenTimeout = null;
 
         this.onLoginFail = this.onLoginFail.bind(this);
         this.onLoginSuccess = this.onLoginSuccess.bind(this);
@@ -88,6 +91,12 @@ class GoogleLoginButton extends React.Component<GoogleLoginProps, GoogleLoginSta
                     });
                 }
             );
+    }
+
+    componentWillUnmount() {
+        if (this.tokenTimeout !== null) {
+            clearTimeout(this.tokenTimeout);
+        }
     }
 
     render(): JSX.Element {

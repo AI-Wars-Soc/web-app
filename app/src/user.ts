@@ -24,21 +24,37 @@ export function usersEqual(u1: UserData, u2: UserData): boolean {
     return u1.user_id === u2.user_id;
 }
 
-export function getUser(currentUser: UserData, setUser: (_:UserData) => unknown): void {
-    fetch("/api/get_user", {method: 'POST'})
-        .then(res => res.json())
-        .then(
-            (result) => {
-                return result;
-            },
-            (error) => {
+// Cache promise
+let getUserPromise: Promise<void> | null = null;
+// Cache timeout
+let tokenTimeout: NodeJS.Timeout | null = null;
+
+export function getUser(currentUser: UserData, setUser: (_:UserData) => unknown): Promise<void> {
+    if (getUserPromise === null) {
+        getUserPromise = fetch("/api/get_user", {method: 'POST'})
+            .then(res => res.json())
+            .catch((error: Response) => {
                 console.error(error);
                 return NULL_USER;
-            }
-        )
-        .then(user => {
-            if (!usersEqual(currentUser, user)) {
-                setUser(user);
-            }
-        });
+            })
+            .then((data: {user: UserData, expiry: number}) => {
+                const user = data.user
+                const expiry = (data.expiry * 1000) - Date.now();
+                console.log(expiry);
+                if (!usersEqual(currentUser, user)) {
+                    setUser(user);
+
+                    if (tokenTimeout !== null) {
+                        clearTimeout(tokenTimeout);
+                        tokenTimeout = null;
+                    }
+                    if (expiry >= 0) {
+                        tokenTimeout = setTimeout(() => getUser(currentUser, setUser), expiry);
+                    }
+                }
+                getUserPromise = null;
+            });
+    }
+
+    return getUserPromise
 }

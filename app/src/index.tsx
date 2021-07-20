@@ -13,6 +13,7 @@ import {LeaderboardPage} from "./leaderboard"
 import {getUser, NULL_USER} from "./user"
 import {SubmissionsPage} from "./submissions/submissions";
 
+
 function App(): JSX.Element {
     const [user, setUser] = useState(NULL_USER);
     const updateUser = () => getUser(user, setUser);
