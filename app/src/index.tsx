@@ -1,4 +1,4 @@
-import React, {useState} from 'react';
+import React, {Suspense, useState} from 'react';
 import {render} from 'react-dom';
 import {
     BrowserRouter as Router,
@@ -9,9 +9,10 @@ import {
 import './style.scss';
 import {MyNavbar} from "./navbar"
 import {MyFooter} from "./footer"
-import {LeaderboardPage} from "./leaderboard"
 import {getUser, NULL_USER} from "./user"
-import {SubmissionsPage} from "./submissions/submissions";
+
+const SubmissionsPage = React.lazy(() => import("./submissions/submissionsPage"));
+const LeaderboardPage = React.lazy(() => import("./leaderboard/leaderboardPage"));
 
 
 function App(): JSX.Element {
@@ -30,10 +31,14 @@ function App(): JSX.Element {
                                 About
                             </Route>
                             <Route path="/leaderboard">
-                                <LeaderboardPage user={user}/>
+                                <Suspense fallback={<div>Loading Leaderboard...</div>}>
+                                    <LeaderboardPage user={user}/>
+                                </Suspense>
                             </Route>
                             <Route path="/submissions">
-                                <SubmissionsPage user={user}/>
+                                <Suspense fallback={<div>Loading Submissions...</div>}>
+                                    <SubmissionsPage user={user}/>
+                                </Suspense>
                             </Route>
                             <Route path="/">
                                 <Redirect to={"/about"}/>

@@ -13,7 +13,7 @@ type SubmissionsPageState = {
     submissions: SubmissionData[] | null
 }
 
-export class SubmissionsPage extends React.Component<SubmissionsPageProps, SubmissionsPageState> {
+export default class SubmissionsPage extends React.Component<SubmissionsPageProps, SubmissionsPageState> {
     constructor(props: SubmissionsPageProps) {
         super(props);
         this.state = {

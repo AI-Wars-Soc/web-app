@@ -1,6 +1,7 @@
-import React, {ChangeEvent, Suspense} from "react";
+import React, {Suspense} from "react";
 import {Accordion, Card} from "react-bootstrap";
 import {ChevronDown} from "react-bootstrap-icons";
+import {SubmissionEnabledSwitch} from "./SubmissionEnabledSwitch";
 
 const SubmissionWinLossGraph = React.lazy(() => import("./submissionGraph"));
 
@@ -33,7 +34,6 @@ export class SubmissionEntry extends React.Component<SubmissionEntryProps, Submi
         };
         this.testingCheckInterval = null;
 
-        this.submissionEnabledSwitch = this.submissionEnabledSwitch.bind(this);
         this.toggleGraph = this.toggleGraph.bind(this);
         this.checkStillTesting = this.checkStillTesting.bind(this);
     }
@@ -48,33 +48,6 @@ export class SubmissionEntry extends React.Component<SubmissionEntryProps, Submi
                 <SubmissionWinLossGraph submission_id={this.props.submission_id}/>
             </Suspense>
         });
-    }
-
-    private submissionEnabledSwitch(e: ChangeEvent<HTMLInputElement>) {
-        e.preventDefault();
-        const v = e.target.checked;
-
-        const requestOptions = {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/json; charset=utf-8'
-            },
-            body: JSON.stringify({
-                submission_id: this.props.submission_id,
-                enabled: v
-            })
-        };
-        fetch("/api/set_submission_active", requestOptions)
-            .then(res => res.json())
-            .then(
-                () => {
-                    this.props.refreshSubmissions();
-                },
-                (error) => {
-                    console.error(error);
-                    e.target.checked = !e.target.checked;
-                }
-            );
     }
 
     private checkStillTesting(): void {
@@ -116,17 +89,7 @@ export class SubmissionEntry extends React.Component<SubmissionEntryProps, Submi
     render(): JSX.Element {
         let activeSwitch = <></>;
         if (this.props.healthy) {
-            activeSwitch = <div className="p-1 submission-active-switch">
-                <div className="custom-control custom-switch">
-                    <input type="checkbox" className="custom-control-input"
-                           id={"enabledSwitch" + this.props.submission_id}
-                           checked={this.props.active}
-                           onChange={this.submissionEnabledSwitch}/>
-                    <label className="custom-control-label"
-                           htmlFor={"enabledSwitch" + this.props.submission_id}>{this.props.active ? "Enabled" : "Disabled"}</label>
-
-                </div>
-            </div>;
+            activeSwitch = <SubmissionEnabledSwitch {...this.props} /> ;
         }
 
         const crashed = this.props.tested && !this.props.healthy;
