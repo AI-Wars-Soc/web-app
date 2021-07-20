@@ -1,6 +1,6 @@
-import {GoogleLogin, GoogleLoginResponse, GoogleLoginResponseOffline} from 'react-google-login';
 import React from "react";
-import { Modal, Button, Alert } from "react-bootstrap"
+import {GoogleLogin, GoogleLoginResponse, GoogleLoginResponseOffline} from "react-google-login";
+import {Alert} from "react-bootstrap";
 
 type GoogleLoginProps = {
     updateUser: () => unknown
@@ -15,7 +15,7 @@ type GoogleLoginState = {
     },
 }
 
-class GoogleLoginButton extends React.Component<GoogleLoginProps, GoogleLoginState> {
+export class GoogleLoginButton extends React.Component<GoogleLoginProps, GoogleLoginState> {
     tokenTimeout: NodeJS.Timeout | null;
 
     constructor(props: GoogleLoginProps) {
@@ -53,7 +53,7 @@ class GoogleLoginButton extends React.Component<GoogleLoginProps, GoogleLoginSta
                 }
             );
     }
-    
+
     private onLoginFail(error: GoogleLoginResponse | GoogleLoginResponseOffline) {
         console.error("Could not sign in");
         console.error(error);
@@ -93,7 +93,7 @@ class GoogleLoginButton extends React.Component<GoogleLoginProps, GoogleLoginSta
             );
     }
 
-    componentWillUnmount() {
+    componentWillUnmount(): void {
         if (this.tokenTimeout !== null) {
             clearTimeout(this.tokenTimeout);
         }
@@ -122,46 +122,7 @@ class GoogleLoginButton extends React.Component<GoogleLoginProps, GoogleLoginSta
 
         return <div className="d-flex justify-content-center">
             <GoogleLogin {...loginProps}/>
-            {errorMessage}
+        {errorMessage}
         </div>
-    }
-}
-
-type LoginModalProps = {
-    handleClose: React.MouseEventHandler<HTMLElement>
-    show: boolean,
-    static: boolean,
-    updateUser: () => unknown
-}
-
-export class LoginModal extends React.Component<LoginModalProps> {
-    constructor(props: LoginModalProps) {
-        super(props);
-    }
-
-    render(): JSX.Element {
-        return <Modal
-                show={this.props.show}
-                onHide={this.props.handleClose}
-                backdrop={this.props.static ? "static" : true}
-                keyboard={!this.props.static}
-            >
-                <Modal.Header closeButton>
-                    <Modal.Title>Sign in</Modal.Title>
-                </Modal.Header>
-                <Modal.Body>
-                    <p>
-                        By logging in you agree to the rules on the about page,
-                        as well as allowing us to store your name and and email address.
-                        You can delete your account at any time.
-                    </p>
-                    <GoogleLoginButton updateUser={this.props.updateUser}/>
-                </Modal.Body>
-                <Modal.Footer>
-                    <Button variant="secondary" onClick={this.props.handleClose}>
-                        Close
-                    </Button>
-                </Modal.Footer>
-            </Modal>
     }
 }

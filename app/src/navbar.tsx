@@ -4,10 +4,11 @@ import {Navbar, Nav} from "react-bootstrap"
 import {
     Link, withRouter, match, Redirect
 } from "react-router-dom";
-import {LoginModal} from "./login";
 import {UserData} from "./user";
 import { BoxArrowInRight, BoxArrowRight, CloudSlash } from 'react-bootstrap-icons';
 import { History as RouteHistory, Location as RouteLocation, LocationState } from "history";
+
+const LoginModal = React.lazy(() => import("./login/loginModal"));
 
 
 type NavItemProps = {
