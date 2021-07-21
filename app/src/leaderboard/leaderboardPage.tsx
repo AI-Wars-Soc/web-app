@@ -1,6 +1,8 @@
-import React from "react";
+import React, {Suspense} from "react";
 import {UserData} from "../user";
 import {Leaderboard} from "./leaderboard";
+
+const LeaderboardOverTimeGraph = React.lazy(() => import("./leaderboardOverTimeGraph"));
 
 
 type LeaderboardPageProps = {
@@ -21,7 +23,9 @@ export default class LeaderboardPage extends React.Component<LeaderboardPageProp
 
             <div className="d-none d-sm-flex justify-content-center py-3 px-lg-2 mx-lg-3 mx-xl-5"
                  id="overTimeChartContainer">
-
+                <Suspense fallback={<div/>}>
+                    <LeaderboardOverTimeGraph/>
+                </Suspense>
             </div>
             <div className="d-flex justify-content-center">
                 <Leaderboard user={this.props.user}/>
