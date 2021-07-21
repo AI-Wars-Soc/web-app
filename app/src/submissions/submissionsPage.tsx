@@ -49,6 +49,12 @@ export default class SubmissionsPage extends React.Component<SubmissionsPageProp
         this.updateSubmissionsData();
     }
 
+    componentDidUpdate(prevProps: SubmissionsPageProps): void {
+        if (prevProps.user !== this.props.user) {
+            this.updateSubmissionsData();
+        }
+    }
+
     render(): JSX.Element {
         let submissions = <></>
         if (this.state.error) {

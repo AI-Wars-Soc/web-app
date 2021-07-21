@@ -7,12 +7,12 @@ import {
     Redirect
 } from "react-router-dom";
 import './style.scss';
-import {MyNavbar} from "./navbar"
-import {MyFooter} from "./footer"
+import {MyNavbar} from "./navbar/navbar"
 import {getUser, NULL_USER} from "./user"
 
 const SubmissionsPage = React.lazy(() => import("./submissions/submissionsPage"));
 const LeaderboardPage = React.lazy(() => import("./leaderboard/leaderboardPage"));
+const MyFooter = React.lazy(() => import("./footer"));
 
 
 function App(): JSX.Element {
@@ -48,7 +48,9 @@ function App(): JSX.Element {
                 </div>
             </Router>
 
-            <MyFooter/>
+            <Suspense fallback={<></>}>
+                <MyFooter/>
+            </Suspense>
         </>
     );
 }

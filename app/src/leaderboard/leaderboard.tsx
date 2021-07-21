@@ -49,6 +49,12 @@ export class Leaderboard extends React.Component<LeaderboardProps, LeaderboardSt
         this.updateLeaderboardData();
     }
 
+    componentDidUpdate(prevProps: LeaderboardProps): void {
+        if (prevProps.user !== this.props.user) {
+            this.updateLeaderboardData();
+        }
+    }
+
     render(): JSX.Element {
         if (this.state.error || this.state.entries === null || this.props.user === NULL_USER) {
             return <></>;

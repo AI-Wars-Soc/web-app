@@ -6,7 +6,7 @@ type SubmissionEnabledSwitchProps = {
     refreshSubmissions: () => unknown
 }
 
-export class SubmissionEnabledSwitch extends React.Component<SubmissionEnabledSwitchProps> {
+export default class SubmissionEnabledSwitch extends React.Component<SubmissionEnabledSwitchProps> {
     constructor(props: SubmissionEnabledSwitchProps) {
         super(props);
 

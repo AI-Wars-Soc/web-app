@@ -1,9 +1,10 @@
 import React, {Suspense} from "react";
 import {Accordion, Card} from "react-bootstrap";
 import {ChevronDown} from "react-bootstrap-icons";
-import {SubmissionEnabledSwitch} from "./SubmissionEnabledSwitch";
 
 const SubmissionWinLossGraph = React.lazy(() => import("./submissionGraph"));
+const SubmissionEnabledSwitch = React.lazy(() => import("./submissionEnabledSwitch"));
+const SubmissionDeleteButton = React.lazy(() => import("./submissionDeleteButton"));
 
 export type SubmissionData = {
     submission_id: number,
@@ -89,7 +90,9 @@ export class SubmissionEntry extends React.Component<SubmissionEntryProps, Submi
     render(): JSX.Element {
         let activeSwitch = <></>;
         if (this.props.healthy) {
-            activeSwitch = <SubmissionEnabledSwitch {...this.props} /> ;
+            activeSwitch = <Suspense fallback={<div/>}>
+                    <SubmissionEnabledSwitch {...this.props} />
+                </Suspense>;
         }
 
         const crashed = this.props.tested && !this.props.healthy;
@@ -171,6 +174,9 @@ export class SubmissionEntry extends React.Component<SubmissionEntryProps, Submi
                                         {this.props.submission_date}
                                     </div>
                                     {activeSwitch}
+                                    <Suspense fallback={<div/>}>
+                                        <SubmissionDeleteButton {...this.props}/>
+                                    </Suspense>
                                 </div>
                                 <div className="col-11 col-md-6">
                                     {this.state.winLossGraph}

@@ -1,28 +1,16 @@
-import React from "react";
+import React, {Suspense} from "react";
 
 import {Navbar, Nav} from "react-bootstrap"
 import {
-    Link, withRouter, match, Redirect
+    withRouter, match, Redirect
 } from "react-router-dom";
-import {UserData} from "./user";
+import {UserData} from "../user";
 import { BoxArrowInRight, BoxArrowRight, CloudSlash } from 'react-bootstrap-icons';
 import { History as RouteHistory, Location as RouteLocation, LocationState } from "history";
+import {NavItem} from "./navItem";
 
-const LoginModal = React.lazy(() => import("./login/loginModal"));
+const LoginModal = React.lazy(() => import("../login/loginModal"));
 
-
-type NavItemProps = {
-    link: string,
-    text: string
-}
-
-class NavItem extends React.Component<NavItemProps> {
-    render(): JSX.Element {
-        const {link, text} = this.props;
-        const active = (link === window.location.pathname);
-        return <Link to={link} className={"nav-link" + (active ? " active" : "")}>{text}</Link>;
-    }
-}
 
 type NavbarProps = {
     history: RouteHistory<LocationState>,
@@ -153,9 +141,12 @@ class MyRoutableNavbar extends React.Component<NavbarProps, NavbarState> {
                         Login&nbsp;
                         <BoxArrowInRight size={19}/>
                     </Nav.Link>
-                    <LoginModal show={this.state.loginModalShow || forceShow}
-                                handleClose={onModalClose}
-                                static={forceShow} updateUser={this.props.updateUser}/>
+
+                    <Suspense fallback={<></>}>
+                        <LoginModal show={this.state.loginModalShow || forceShow}
+                                    handleClose={onModalClose}
+                                    static={forceShow} updateUser={this.props.updateUser}/>
+                    </Suspense>
                 </React.Fragment>],
                 ['logout', <Nav.Link href={'#logout'} key={"navbar-logout"} onSelect={this.onLogoutSelect}>
                     Logout&nbsp;
