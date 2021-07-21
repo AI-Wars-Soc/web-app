@@ -170,13 +170,22 @@ export class SubmissionEntry extends React.Component<SubmissionEntryProps, Submi
                         <div className="container">
                             <div className="row justify-content-center">
                                 <div className="col-11 col-md-6">
-                                    <div className="p-1 submission-date">
-                                        {this.props.submission_date}
+                                    <div className="row justify-content-center h-100">
+                                        <div className="col-6 col-md-11">
+                                            <div className="p-1 submission-date">
+                                                {this.props.submission_date}
+                                            </div>
+                                            {activeSwitch}
+                                        </div>
+
+                                        <div className="col-6 col-md-11">
+                                            <div className="absolute-top-right absolute-md-bottom-left hand">
+                                                <Suspense fallback={<div/>}>
+                                                    <SubmissionDeleteButton {...this.props}/>
+                                                </Suspense>
+                                            </div>
+                                        </div>
                                     </div>
-                                    {activeSwitch}
-                                    <Suspense fallback={<div/>}>
-                                        <SubmissionDeleteButton {...this.props}/>
-                                    </Suspense>
                                 </div>
                                 <div className="col-11 col-md-6">
                                     {this.state.winLossGraph}

@@ -32,6 +32,41 @@ body {
   flex: 1 0 auto;
 }
 
+@each $breakpoint in map-keys($grid-breakpoints) {
+  @include media-breakpoint-up($breakpoint) {
+    $infix: breakpoint-infix($breakpoint, $grid-breakpoints);
+
+    .absolute#{$infix}-bottom-left {
+      position: absolute;
+      top: auto;
+      left: 0;
+      bottom: 0;
+      right: auto;
+    }
+    .absolute#{$infix}-bottom-right {
+      position: absolute;
+      top: auto;
+      left: auto;
+      bottom: 0;
+      right: 0;
+    }
+    .absolute#{$infix}-top-left {
+      position: absolute;
+      top: 0;
+      left: 0;
+      bottom: auto;
+      right: auto;
+    }
+    .absolute#{$infix}-top-right {
+      position: absolute;
+      top: 0;
+      left: auto;
+      bottom: auto;
+      right: 0;
+    }
+  }
+}
+
 .footer {
   flex-shrink: 0;
 }
