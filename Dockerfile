@@ -1,8 +1,7 @@
 FROM nginx
 
-# Set up user
-RUN useradd --create-home --shell /bin/bash web_user
-WORKDIR /home/web_user
+# Copy root serve files
+COPY root-serve /usr/share/nginx/html/
 
 # Install node and requirements
 RUN apt-get update && apt-get install -y nodejs npm
