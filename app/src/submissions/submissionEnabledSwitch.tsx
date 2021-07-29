@@ -1,4 +1,5 @@
 import React, {ChangeEvent} from "react";
+import {Post} from "../apiBoundComponent";
 
 type SubmissionEnabledSwitchProps = {
     submission_id: number,
@@ -17,22 +18,15 @@ export default class SubmissionEnabledSwitch extends React.Component<SubmissionE
         e.preventDefault();
         const v = e.target.checked;
 
-        const requestOptions = {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/json; charset=utf-8'
-            },
-            body: JSON.stringify({
-                submission_id: this.props.submission_id,
-                enabled: v
-            })
-        };
-        fetch("/api/set_submission_active", requestOptions)
-            .then(res => res.json())
+        Post("set_submission_active", {
+            submission_id: this.props.submission_id,
+            enabled: v
+        })
             .then(
                 () => {
                     this.props.refreshSubmissions();
-                },
+                })
+            .catch(
                 (error) => {
                     console.error(error);
                     e.target.checked = !e.target.checked;

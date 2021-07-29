@@ -1,5 +1,6 @@
 import React, { Suspense } from "react";
 import {TrashFill} from "react-bootstrap-icons";
+import {Post} from "../apiBoundComponent";
 
 const ConfirmModal = React.lazy(() => import("../confirmModal"))
 
@@ -40,21 +41,12 @@ export default class SubmissionDeleteButton extends React.Component<SubmissionDe
     private onConfirm() {
         this.onClose();
 
-        const requestOptions = {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/json; charset=utf-8'
-            },
-            body: JSON.stringify({
-                submission_id: this.props.submission_id,
-            })
-        };
-        fetch("/api/delete_submission", requestOptions)
-            .then(res => res.json())
+        Post("delete_submission", {submission_id: this.props.submission_id})
             .then(
                 () => {
                     this.props.refreshSubmissions();
-                },
+                })
+            .catch(
                 (error) => {
                     console.error(error);
                 }

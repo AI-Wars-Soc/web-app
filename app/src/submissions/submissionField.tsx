@@ -1,4 +1,5 @@
 import React, {FormEvent} from "react";
+import {Post} from "../apiBoundComponent";
 
 type SubmissionFieldProps = {
     refreshSubmissions: () => unknown
@@ -31,33 +32,16 @@ export class SubmissionField extends React.Component<SubmissionFieldProps, Submi
         }
         this.setState({loading: true});
 
-        const requestOptions = {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/json; charset=utf-8'
-            },
-            body: JSON.stringify({url: url})
-        };
-        fetch("/api/add_submission", requestOptions)
-            .then(res => res.json())
+        Post("add_submission", {url: url})
             .then(
-                (response) => {
-                    if (response.status === "resent") { // Ignore resent requests
-                        return;
-                    }
-                    if (response.status === "fail") {
-                        this.setState({
-                            loading: false,
-                            error: true
-                        });
-                        return;
-                    }
+                () => {
                     this.setState({
                         loading: false,
                         error: false
                     });
                     this.props.refreshSubmissions();
-                },
+                })
+            .catch(
                 (error) => {
                     console.error(error);
                     this.setState({
@@ -65,7 +49,7 @@ export class SubmissionField extends React.Component<SubmissionFieldProps, Submi
                         error: true
                     });
                 }
-            );
+            )
     }
 
     render(): JSX.Element {

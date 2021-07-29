@@ -3,6 +3,11 @@ import {SubmissionField} from "./submissionField";
 import {UserData} from "../user";
 import {Accordion} from "react-bootstrap";
 import {SubmissionEntry, SubmissionData} from "./submissionEntry";
+import {ApiBoundComponent} from "../apiBoundComponent";
+
+type SubmissionsPageData = {
+    submissions: SubmissionData[]
+};
 
 type SubmissionsPageProps = {
     user: UserData
@@ -10,70 +15,37 @@ type SubmissionsPageProps = {
 
 type SubmissionsPageState = {
     error: boolean,
-    submissions: SubmissionData[] | null
+    data: SubmissionsPageData | null
 }
 
-export default class SubmissionsPage extends React.Component<SubmissionsPageProps, SubmissionsPageState> {
+export default class SubmissionsPage extends ApiBoundComponent<SubmissionsPageProps, SubmissionsPageData, SubmissionsPageState> {
     constructor(props: SubmissionsPageProps) {
-        super(props);
+        super("get_submissions", props);
         this.state = {
             error: false,
-            submissions: null
-        }
-
-        this.updateSubmissionsData = this.updateSubmissionsData.bind(this);
-    }
-
-    private updateSubmissionsData(): void {
-        const requestOptions = {
-            method: 'POST'
-        };
-        fetch("/api/get_submissions", requestOptions)
-            .then(res => res.json())
-            .then(
-                (result) => {
-                    this.setState({
-                        submissions: result.submissions
-                    });
-                },
-                (error) => {
-                    console.error(error);
-                    this.setState({
-                        error: true,
-                    });
-                }
-            );
-    }
-
-    componentDidMount(): void {
-        this.updateSubmissionsData();
-    }
-
-    componentDidUpdate(prevProps: SubmissionsPageProps): void {
-        if (prevProps.user !== this.props.user) {
-            this.updateSubmissionsData();
+            data: null
         }
     }
 
-    render(): JSX.Element {
-        let submissions = <></>
-        if (this.state.error) {
-            submissions = <div>Your submissions could not be loaded</div>;
-        }
-        if (this.state.submissions != null) {
-            if (this.state.submissions.length == 0) {
-                submissions = <div className="d-flex my-3 justify-content-center">
-                    <div className="p-2 text-center border border-info rounded">
-                        To begin, clone the <a href="https://github.com/AI-Wars-Soc/chess-ai">Github
-                        Repository</a> for
-                        the signatures of the method that you need to implement.
-                    </div>
+    protected renderError(): JSX.Element {
+        return <div>Your submissions could not be loaded</div>;
+    }
+
+    protected renderLoaded(data: SubmissionsPageData): JSX.Element {
+        let submissions;
+        if (data.submissions.length == 0) {
+            submissions = <div className="d-flex my-3 justify-content-center">
+                <div className="p-2 text-center border border-info rounded">
+                    To begin, clone the <a href="https://github.com/AI-Wars-Soc/chess-ai">Github
+                    Repository</a> for
+                    the signatures of the method that you need to implement.
                 </div>
-            } else {
-                submissions =  <Accordion className="max-width-center">
-                    {this.state.submissions.map((v, i) => <SubmissionEntry key={i} refreshSubmissions={this.updateSubmissionsData} {...v}/>)}
-                </Accordion>
-            }
+            </div>
+        } else {
+            submissions =  <Accordion className="max-width-center">
+                {data.submissions.map((v, i) =>
+                    <SubmissionEntry key={i} user={this.props.user} refreshSubmissions={this.fetch} {...v}/>)}
+            </Accordion>
         }
 
         return <>
@@ -88,7 +60,7 @@ export default class SubmissionsPage extends React.Component<SubmissionsPageProp
             <div className="my-2 my-md-4 d-flex flex-row">
                 <div className="d-flex justify-content-center w-100 w-lg-50">
                     <div className="d-flex flex-column mx-lg-4 flex-grow-1" id="submissions">
-                        <SubmissionField refreshSubmissions={this.updateSubmissionsData}/>
+                        <SubmissionField refreshSubmissions={this.fetch}/>
                         <div className="p-1 p-md-2">
                             <div className="d-flex justify-content-center w-100 flex-row p-1 p-md-2 px-lg-5">
                                 {submissions}

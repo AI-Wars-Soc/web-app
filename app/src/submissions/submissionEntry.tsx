@@ -1,8 +1,9 @@
 import React, {Suspense} from "react";
 import {Accordion, Card} from "react-bootstrap";
 import {ChevronDown} from "react-bootstrap-icons";
+import {UserData} from "../user";
 
-const SubmissionWinLossGraph = React.lazy(() => import("./submissionGraph"));
+const SubmissionWinLossGraph = React.lazy(() => import("./submissionWinLossGraph"));
 const SubmissionEnabledSwitch = React.lazy(() => import("./submissionEnabledSwitch"));
 const SubmissionDeleteButton = React.lazy(() => import("./submissionDeleteButton"));
 
@@ -19,6 +20,7 @@ export type SubmissionData = {
     prints: string
 };
 export type SubmissionEntryProps = {
+    user: UserData,
     refreshSubmissions: () => unknown
 } & SubmissionData;
 
@@ -46,7 +48,7 @@ export class SubmissionEntry extends React.Component<SubmissionEntryProps, Submi
 
         this.setState({
             winLossGraph: <Suspense fallback={<div>Loading Graph...</div>}>
-                <SubmissionWinLossGraph submission_id={this.props.submission_id}/>
+                <SubmissionWinLossGraph user={this.props.user} submission_id={this.props.submission_id}/>
             </Suspense>
         });
     }
@@ -65,7 +67,7 @@ export class SubmissionEntry extends React.Component<SubmissionEntryProps, Submi
             .then(res => res.json())
             .then(
                 (result) => {
-                    if (result === false) {
+                    if (result.data === false) {
                         this.props.refreshSubmissions();
                     }
                 },

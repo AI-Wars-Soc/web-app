@@ -8,9 +8,14 @@ import {UserData} from "../user";
 import { BoxArrowInRight, BoxArrowRight, CloudSlash } from 'react-bootstrap-icons';
 import { History as RouteHistory, Location as RouteLocation, LocationState } from "history";
 import {NavItem} from "./navItem";
+import {ApiBoundComponent} from "../apiBoundComponent";
 
 const LoginModal = React.lazy(() => import("../login/loginModal"));
 
+type NavbarData = {
+    accessible: string[],
+    soc_name: string
+}
 
 type NavbarProps = {
     history: RouteHistory<LocationState>,
@@ -24,60 +29,22 @@ type NavbarState = {
     error: boolean,
     isLoaded: boolean,
     loginModalShow: boolean,
-    navbar: {
-        accessible: string[],
-        soc_name: string
-    }
+    data: NavbarData | null
 }
 
-class MyRoutableNavbar extends React.Component<NavbarProps, NavbarState> {
+class MyRoutableNavbar extends ApiBoundComponent<NavbarProps, NavbarData, NavbarState> {
     constructor(props: NavbarProps) {
-        super(props);
+        super("get_accessible_navbar", props);
         this.state = {
             error: false,
             isLoaded: false,
             loginModalShow: false,
-            navbar: {accessible: [], soc_name: ""}
+            data: null
         };
 
         this.onLoginSelect = this.onLoginSelect.bind(this);
         this.onLogoutSelect = this.onLogoutSelect.bind(this);
         this.closeModal = this.closeModal.bind(this);
-    }
-
-    updateNavbarItemData(): void {
-        const requestOptions = {
-            method: 'POST'
-        };
-        fetch("/api/get_accessible_navbar", requestOptions)
-            .then(res => res.json())
-            .then(
-                (result) => {
-                    this.setState({
-                        isLoaded: true,
-                        navbar: result,
-                        loginModalShow: false
-                    });
-                },
-                (error) => {
-                    console.error(error);
-                    this.setState({
-                        isLoaded: true,
-                        error: true,
-                        loginModalShow: false
-                    });
-                }
-            );
-    }
-
-    componentDidMount(): void {
-        this.updateNavbarItemData();
-    }
-
-    componentDidUpdate(prevProps: NavbarProps/*, prevState: NavbarState*/): void {
-        if (prevProps.user !== this.props.user) {
-            this.updateNavbarItemData();
-        }
     }
 
     private static filter(map: [string, JSX.Element][], accessible: string[]) {
@@ -99,63 +66,10 @@ class MyRoutableNavbar extends React.Component<NavbarProps, NavbarState> {
         this.setState({loginModalShow: false});
     }
 
-    render(): JSX.Element {
-        const {error, navbar, isLoaded} = this.state;
-        const {accessible, soc_name} = navbar;
-
+    private static renderNavbar(error: boolean, soc_name = ".", lNav: JSX.Element[] = [], rNav: JSX.Element[] = []): JSX.Element {
         let errorDiv = <></>;
         if (error) {
             errorDiv = <CloudSlash size={40}/>
-        }
-
-        let lNav: JSX.Element[] = [];
-        let rNav: JSX.Element[] = [];
-        if (isLoaded) {
-            const pageName = this.props.location.pathname.split('/')[1];
-            const pageAllowed = accessible.includes(pageName);
-            const pageKnowable = ["", "leaderboard", "submissions", "about", "me"].includes(pageName);
-
-            if (!pageAllowed && !pageKnowable) {
-                return <Redirect to={"/"}/>;
-            }
-
-            const forceShow = (!pageAllowed) && pageKnowable;
-
-            const onModalClose = () => {
-                if (forceShow) {
-                    this.props.history.push("/");
-                }
-                this.closeModal()
-            };
-
-            const lNavItems: [string, JSX.Element][] = [
-                ['leaderboard', <NavItem link={'/leaderboard'} text={'Leaderboard'} key={"navbar-leaderboard"}/>],
-                ['submissions', <NavItem link={'/submissions'} text={'Submissions'} key={"navbar-submissions"}/>],
-                ['about', <NavItem link={'/about'} text={'About'} key={"navbar-about"}/>],
-            ];
-            const rNavItems: [string, JSX.Element][] = [
-                ['admin', <NavItem link={'/admin'} text={'Admin'} key={"navbar-admin"}/>],
-                ['me', <NavItem link={'/me'} text={'Me'} key={"navbar-me"}/>],
-                ['login', <React.Fragment key={"navbar-login"}>
-                    <Nav.Link href={'#loginModal'} onSelect={this.onLoginSelect}>
-                        Login&nbsp;
-                        <BoxArrowInRight size={19}/>
-                    </Nav.Link>
-
-                    <Suspense fallback={<></>}>
-                        <LoginModal show={this.state.loginModalShow || forceShow}
-                                    handleClose={onModalClose}
-                                    static={forceShow} updateUser={this.props.updateUser}/>
-                    </Suspense>
-                </React.Fragment>],
-                ['logout', <Nav.Link href={'#logout'} key={"navbar-logout"} onSelect={this.onLogoutSelect}>
-                    Logout&nbsp;
-                    <BoxArrowRight size={19}/>
-                </Nav.Link>],
-            ];
-
-            lNav = MyRoutableNavbar.filter(lNavItems, accessible);
-            rNav = MyRoutableNavbar.filter(rNavItems, accessible);
         }
 
         return <>
@@ -174,6 +88,67 @@ class MyRoutableNavbar extends React.Component<NavbarProps, NavbarState> {
                 <Navbar.Toggle aria-controls="basic-navbar-nav"/>
             </Navbar>
         </>;
+    }
+
+    protected renderLoading(): JSX.Element {
+        return MyRoutableNavbar.renderNavbar(false);
+    }
+
+    protected renderError(): JSX.Element {
+        return MyRoutableNavbar.renderNavbar(true);
+    }
+
+    protected renderLoaded(data: NavbarData): JSX.Element {
+        const {accessible, soc_name} = data;
+
+        const pageName = this.props.location.pathname.split('/')[1];
+        const pageAllowed = accessible.includes(pageName);
+        const pageKnowable = ["", "leaderboard", "submissions", "about", "me"].includes(pageName);
+
+        if (!pageAllowed && !pageKnowable) {
+            return <Redirect to={"/"}/>;
+        }
+
+        const forceShow = (!pageAllowed) && pageKnowable;
+
+        const onModalClose = () => {
+            if (forceShow) {
+                this.props.history.push("/");
+            }
+            this.closeModal()
+        };
+
+        const lNavItems: [string, JSX.Element][] = [
+            ['leaderboard', <NavItem link={'/leaderboard'} text={'Leaderboard'} key={"navbar-leaderboard"}/>],
+            ['submissions', <NavItem link={'/submissions'} text={'Submissions'} key={"navbar-submissions"}/>],
+            ['about', <NavItem link={'/about'} text={'About'} key={"navbar-about"}/>],
+        ];
+        const rNavItems: [string, JSX.Element][] = [
+            ['admin', <NavItem link={'/admin'} text={'Admin'} key={"navbar-admin"}/>],
+            ['me', <NavItem link={'/me'} text={'Me'} key={"navbar-me"}/>],
+            ['login', <React.Fragment key={"navbar-login"}>
+                <Nav.Link href={'#loginModal'} onSelect={this.onLoginSelect}>
+                    Login&nbsp;
+                    <BoxArrowInRight size={19}/>
+                </Nav.Link>
+
+                <Suspense fallback={<></>}>
+                    <LoginModal show={this.state.loginModalShow || forceShow}
+                                user={this.props.user}
+                                handleClose={onModalClose}
+                                static={forceShow} updateUser={this.props.updateUser}/>
+                </Suspense>
+            </React.Fragment>],
+            ['logout', <Nav.Link href={'#logout'} key={"navbar-logout"} onSelect={this.onLogoutSelect}>
+                Logout&nbsp;
+                <BoxArrowRight size={19}/>
+            </Nav.Link>],
+        ];
+
+        const lNav = MyRoutableNavbar.filter(lNavItems, accessible);
+        const rNav = MyRoutableNavbar.filter(rNavItems, accessible);
+
+        return MyRoutableNavbar.renderNavbar(false, soc_name, lNav, rNav);
     }
 }
 

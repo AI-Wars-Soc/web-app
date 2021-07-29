@@ -24,7 +24,7 @@ export default class LeaderboardPage extends React.Component<LeaderboardPageProp
             <div className="d-none d-sm-flex justify-content-center py-3 px-lg-2 mx-lg-3 mx-xl-5"
                  id="overTimeChartContainer">
                 <Suspense fallback={<div/>}>
-                    <LeaderboardOverTimeGraph/>
+                    <LeaderboardOverTimeGraph user={this.props.user}/>
                 </Suspense>
             </div>
             <div className="d-flex justify-content-center">

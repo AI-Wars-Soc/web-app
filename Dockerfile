@@ -8,8 +8,8 @@ RUN apt-get update && apt-get install -y nodejs npm
 RUN npm cache clean -f && npm install -g n && n latest
 
 # Build static files
-COPY app ./app
-WORKDIR /home/web_user/app
+COPY app /tmp/app
+WORKDIR /tmp/app
 RUN npm install
 
 # USER web_user

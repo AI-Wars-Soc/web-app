@@ -1,17 +1,11 @@
 import React from "react";
 import {Chart, ChartConfiguration, LegendItem, registerables} from "chart.js";
+import {ApiBoundComponent} from "../apiBoundComponent";
+import {UserData} from "../user";
 
 Chart.register(...registerables);
 
-type SubmissionWinLossGraphProps = {
-    submission_id: number
-}
-
-type SubmissionWinLossGraphState = {
-    centre_hidden: boolean
-}
-
-type ResponseType = {
+type SubmissionWinLossGraphData = {
     wins: number,
     losses: number,
     draws: number,
@@ -20,57 +14,52 @@ type ResponseType = {
     draws_healthy: number,
 }
 
-export default class SubmissionWinLossGraph extends React.Component<SubmissionWinLossGraphProps, SubmissionWinLossGraphState> {
-    private canvasElement: HTMLCanvasElement | null;
+type SubmissionWinLossGraphProps = {
+    user: UserData,
+    submission_id: number
+}
 
+type SubmissionWinLossGraphState = {
+    error: boolean,
+    centre_hidden: boolean,
+    data: SubmissionWinLossGraphData | null
+}
+
+export default class SubmissionWinLossGraph
+    extends ApiBoundComponent<SubmissionWinLossGraphProps, SubmissionWinLossGraphData, SubmissionWinLossGraphState>
+{
     constructor(props: SubmissionWinLossGraphProps) {
-        super(props);
+        super("get_submission_win_loss_data", props);
         this.state = {
-            centre_hidden: true
+            error: false,
+            centre_hidden: true,
+            data: null
         };
-        this.canvasElement = null;
 
         this.activateDraw = this.activateDraw.bind(this);
         this.parseData = this.parseData.bind(this);
         this.drawData = this.drawData.bind(this);
     }
 
-    componentDidMount(): void {
-        this.activateDraw();
+    getDataToSend(): {submission_id: number} {
+        return {submission_id: this.props.submission_id};
     }
 
-    private activateDraw(): void {
-        if (this.canvasElement === null) {
+    private activateDraw(canvas: HTMLCanvasElement | null, data: SubmissionWinLossGraphData): void {
+        if (canvas === null) {
             return;
         }
 
-        const ctx = this.canvasElement.getContext('2d');
+        const ctx = canvas.getContext('2d');
         if (ctx === null) {
             console.error("Null canvas context");
             return;
         }
 
-        // Get data
-        const requestOptions = {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/json; charset=utf-8'
-            },
-            body: JSON.stringify({submission_id: this.props.submission_id})
-        };
-        fetch('/api/get_submission_win_loss_data', requestOptions)
-            .then(res => res.json())
-            .then(
-                (data) => {
-                    this.drawData(ctx, data);
-                },
-                (error) => {
-                    console.error(error);
-                }
-            );
+        this.drawData(ctx, data);
     }
 
-    private parseData(response: ResponseType) {
+    private parseData(response: SubmissionWinLossGraphData) {
         const color_healthy = "#36e5eb";
         const color_crash = "#b536eb";
         const colors = ["#73eb37", color_healthy, color_crash, "#eb3636", color_healthy, color_crash, "#718579", color_healthy, color_crash, color_healthy, color_crash];
@@ -98,7 +87,7 @@ export default class SubmissionWinLossGraph extends React.Component<SubmissionWi
         };
     }
 
-    private drawData(ctx: CanvasRenderingContext2D, response: ResponseType): void {
+    private drawData(ctx: CanvasRenderingContext2D, response: SubmissionWinLossGraphData): void {
         let chart: Chart<"pie"> | null = null;
 
         const data = this.parseData(response);
@@ -141,7 +130,7 @@ export default class SubmissionWinLossGraph extends React.Component<SubmissionWi
         chart = new Chart(ctx, config);
     }
 
-    render(): JSX.Element {
-        return <canvas ref={c => {this.canvasElement = c;}} width="100" height="100" className="w-100"/>;
+    protected renderLoaded(data: SubmissionWinLossGraphData): JSX.Element {
+        return <canvas ref={c => this.activateDraw(c, data)} width="100" height="100" className="w-100"/>;
     }
 }

@@ -1,3 +1,5 @@
+import {Post} from "./apiBoundComponent";
+
 export type UserData = {
     _cuwais_type: "user",
     display_name: string,
@@ -31,14 +33,17 @@ let tokenTimeout: NodeJS.Timeout | null = null;
 
 export function getUser(currentUser: UserData, setUser: (_:UserData) => unknown): Promise<void> {
     if (getUserPromise === null) {
-        getUserPromise = fetch("/api/get_user", {method: 'POST'})
-            .then(res => res.json())
+        getUserPromise = Post<{user: UserData, expiry: number}>("get_user")
             .catch((error: Response) => {
                 console.error(error);
-                return NULL_USER;
+                return {user: NULL_USER, expiry: -1};
             })
-            .then((data: {user: UserData, expiry: number}) => {
-                const user = data.user
+            .then((data) => {
+                if (data === undefined) {
+                    return;
+                }
+
+                const user = data.user;
                 const expiry = (data.expiry * 1000) - Date.now();
                 console.log(expiry);
                 if (!usersEqual(currentUser, user)) {

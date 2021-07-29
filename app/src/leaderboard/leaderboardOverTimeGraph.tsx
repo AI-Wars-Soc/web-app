@@ -1,6 +1,7 @@
 import React from "react";
 import {Chart, ChartConfiguration, ChartData, ChartDataset, registerables} from "chart.js";
 import {UserData} from "../user";
+import {ApiBoundComponent} from "../apiBoundComponent";
 
 Chart.register(...registerables);
 
@@ -155,54 +156,49 @@ function get_graph_config(data: LeaderboardOverTimeGraphData): ChartConfiguratio
 }
 
 type LeaderboardOverTimeGraphProps = {
-
+    user: UserData
 }
 
-export default class LeaderboardOverTimeGraph extends React.Component<LeaderboardOverTimeGraphProps> {
-    private canvasElement: HTMLCanvasElement | null;
+type LeaderboardOverTimeGraphState = {
+    error: boolean,
+    data: LeaderboardOverTimeGraphData | null
+}
 
+export default class LeaderboardOverTimeGraph
+    extends ApiBoundComponent<LeaderboardOverTimeGraphProps, LeaderboardOverTimeGraphData, LeaderboardOverTimeGraphState>
+{
     constructor(props: LeaderboardOverTimeGraphProps) {
-        super(props);
+        super("get_leaderboard_over_time", props);
 
-        this.canvasElement = null;
+        this.state = {
+            error: false,
+            data: null
+        };
     }
 
-    componentDidMount(): void {
-        this.activateDraw();
+    renderError(): JSX.Element {
+        return <>Error loading graph</>;
     }
 
-    private activateDraw(): void {
-        if (this.canvasElement === null) {
+    renderLoading(): JSX.Element {
+        return <></>;
+    }
+
+    private static drawChart(canvasElement: HTMLCanvasElement | null, data: LeaderboardOverTimeGraphData): void {
+        if (canvasElement === null) {
             return;
         }
 
-        const ctx = this.canvasElement.getContext('2d');
+        const ctx = canvasElement.getContext('2d');
         if (ctx === null) {
             console.error("Null canvas context");
             return;
         }
-
-        // Get data
-        const requestOptions = {
-            method: 'POST',
-        };
-        fetch('/api/get_leaderboard_over_time', requestOptions)
-            .then(res => res.json())
-            .then((response: { status: string, data: LeaderboardOverTimeGraphData }) => {
-                if (response.status !== "success") {
-                    return Promise.reject(response);
-                }
-                const config = get_graph_config(response.data);
-                new Chart(ctx, config);
-            })
-            .catch((error) => {
-                console.error(error);
-            })
+        const config = get_graph_config(data);
+        new Chart(ctx, config);
     }
 
-    render(): JSX.Element {
-        return <canvas ref={c => {
-            this.canvasElement = c;
-        }} id="overTimeChart"/>;
+    renderLoaded(data: LeaderboardOverTimeGraphData): JSX.Element {
+        return <canvas ref={c => LeaderboardOverTimeGraph.drawChart(c, data)} id="overTimeChart"/>;
     }
 }
