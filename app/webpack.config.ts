@@ -1,9 +1,9 @@
-import path from "path";
-import webpack from "webpack";
-import ForkTsCheckerWebpackPlugin from 'fork-ts-checker-webpack-plugin';
-import HtmlWebPackPlugin from "html-webpack-plugin";
-import MiniCssExtractPlugin from "mini-css-extract-plugin";
-import CssMinimizerPlugin from "css-minimizer-webpack-plugin";
+const path = require("path");
+//const webpack = require("webpack");
+const ForkTsCheckerWebpackPlugin = require('fork-ts-checker-webpack-plugin');
+const HtmlWebPackPlugin = require("html-webpack-plugin");
+const MiniCssExtractPlugin = require("mini-css-extract-plugin");
+const CssMinimizerPlugin = require("css-minimizer-webpack-plugin");
 
 const htmlPlugin = new HtmlWebPackPlugin({
     template: "./src/index.html",
@@ -19,7 +19,7 @@ const tsTypeCheckerPlugin = new ForkTsCheckerWebpackPlugin({
 
 const miniCss = new MiniCssExtractPlugin();
 
-const config: webpack.Configuration = {
+module.exports  = {
     entry: "./src/index.tsx",
     output: {
         path: path.join(__dirname, 'dist'),
@@ -37,7 +37,13 @@ const config: webpack.Configuration = {
                 test: /\.(ts|js)x?$/,
                 exclude: /node_modules/,
                 use: [
-                    "babel-loader"
+                    {
+                        loader: 'babel-loader',
+                        //options: babelOptions
+                    },
+                    {
+                        loader: 'ts-loader'
+                    }
                 ],
             },
             {
@@ -66,5 +72,3 @@ const config: webpack.Configuration = {
         ],
     },
 };
-
-export default config;
