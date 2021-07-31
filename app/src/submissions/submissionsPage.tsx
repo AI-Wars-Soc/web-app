@@ -27,27 +27,7 @@ export default class SubmissionsPage extends ApiBoundComponent<SubmissionsPagePr
         }
     }
 
-    protected renderError(): JSX.Element {
-        return <div>Your submissions could not be loaded</div>;
-    }
-
-    protected renderLoaded(data: SubmissionsPageData): JSX.Element {
-        let submissions;
-        if (data.submissions.length == 0) {
-            submissions = <div className="d-flex my-3 justify-content-center">
-                <div className="p-2 text-center border border-info rounded">
-                    To begin, clone the <a href="https://github.com/AI-Wars-Soc/chess-ai">Github
-                    Repository</a> for
-                    the signatures of the method that you need to implement.
-                </div>
-            </div>
-        } else {
-            submissions =  <Accordion className="max-width-center">
-                {data.submissions.map((v, i) =>
-                    <SubmissionEntry key={i} user={this.props.user} refreshSubmissions={this.fetch} {...v}/>)}
-            </Accordion>
-        }
-
+    private getPage(submissions: JSX.Element): JSX.Element {
         return <>
             <div className="d-flex justify-content-start">
                 <h1>Submissions</h1>
@@ -70,5 +50,33 @@ export default class SubmissionsPage extends ApiBoundComponent<SubmissionsPagePr
                 </div>
             </div>
         </>;
+    }
+
+    protected renderLoading(): JSX.Element {
+        return this.getPage(<div/>);
+    }
+
+    protected renderError(): JSX.Element {
+        return this.getPage(<div>Your submissions could not be loaded</div>);
+    }
+
+    protected renderLoaded(data: SubmissionsPageData): JSX.Element {
+        let submissions;
+        if (data.submissions.length == 0) {
+            submissions = <div className="d-flex my-3 justify-content-center">
+                <div className="p-2 text-center border border-info rounded">
+                    To begin, clone the <a href="https://github.com/AI-Wars-Soc/chess-ai">Github
+                    Repository</a> for
+                    the signatures of the method that you need to implement.
+                </div>
+            </div>
+        } else {
+            submissions =  <Accordion className="max-width-center">
+                {data.submissions.map((v, i) =>
+                    <SubmissionEntry key={i} user={this.props.user} refreshSubmissions={this.fetch} {...v}/>)}
+            </Accordion>
+        }
+
+        return this.getPage(submissions);
     }
 }
