@@ -48,7 +48,7 @@ function App(): JSX.Element {
                             </Route>
                             <Route path="/me">
                                 <Suspense fallback={<div>Loading Your Page...</div>}>
-                                    <MePage user={user} logOut={logOut}/>
+                                    <MePage user={user} logOut={logOut} updateUser={updateUser}/>
                                 </Suspense>
                             </Route>
                             <Route path="/">

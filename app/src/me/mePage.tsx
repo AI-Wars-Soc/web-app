@@ -5,6 +5,7 @@ import {DeleteAccountButton} from "./deleteAccountButton";
 
 type MePageProps = {
     user: UserData,
+    updateUser: () => unknown,
     logOut: () => unknown
 };
 
@@ -29,16 +30,7 @@ export default class MePage extends React.Component<MePageProps, MePageState> {
                 </p>
             </div>
             <div className="flex-column justify-content-center justify-content-sm-start px-3 m-lg-3">
-                {controls.forEach((c, i) => <div className="flex-row" key={"userControl" + i}>{c}</div>)}
-                <div className="flex-row">
-                    <RealNameSwitch active={false}/>
-                </div>
-                <div className="flex-row">
-                    <button type="button" className="btn btn-danger" data-toggle="modal"
-                            data-target="#deleteAccountModal">
-                        Delete My Account
-                    </button>
-                </div>
+                {controls.map((c, i) => <div className="flex-row" key={"userControl" + i}>{c}</div>)}
             </div>
         </>;
     }
@@ -50,7 +42,7 @@ export default class MePage extends React.Component<MePageProps, MePageState> {
         }
 
         return MePage.getPage(user.real_name, user.nickname, [
-            <RealNameSwitch key={"displayRealNameSwitch"} active={user.display_real_name}/>,
+            <RealNameSwitch key={"displayRealNameSwitch"} active={user.display_real_name} updateUser={this.props.updateUser}/>,
             <DeleteAccountButton key={"deleteAccountButton"} onDeleteAccount={this.props.logOut}/>
         ]);
     }

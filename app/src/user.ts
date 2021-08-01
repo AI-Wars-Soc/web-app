@@ -51,17 +51,17 @@ export function getUser(currentUser: UserData, setUser: (_:UserData) => unknown)
                 const user = data.user;
                 const expiry = (data.expiry * 1000) - Date.now();
                 console.log(expiry);
-                if (!usersEqual(currentUser, user)) {
-                    setUser(user);
 
-                    if (tokenTimeout !== null) {
-                        clearTimeout(tokenTimeout);
-                        tokenTimeout = null;
-                    }
-                    if (expiry >= 0) {
-                        tokenTimeout = setTimeout(() => getUser(currentUser, setUser), expiry);
-                    }
+                setUser(user);
+
+                if (tokenTimeout !== null) {
+                    clearTimeout(tokenTimeout);
+                    tokenTimeout = null;
                 }
+                if (expiry >= 0) {
+                    tokenTimeout = setTimeout(() => getUser(currentUser, setUser), expiry);
+                }
+
                 getUserPromise = null;
             });
     }

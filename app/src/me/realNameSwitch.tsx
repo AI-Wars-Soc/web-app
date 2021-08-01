@@ -2,7 +2,8 @@ import React, {ChangeEvent} from "react";
 import {Post} from "../apiBoundComponent";
 
 type RealNameSwitchProps = {
-    active: boolean
+    active: boolean,
+    updateUser: () => unknown
 }
 
 export default class RealNameSwitch extends React.Component<RealNameSwitchProps> {
@@ -20,6 +21,7 @@ export default class RealNameSwitch extends React.Component<RealNameSwitchProps>
             .then(
                 () => {
                     e.target.checked = v;
+                    this.props.updateUser();
                 })
             .catch(
                 (error) => {
