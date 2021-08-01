@@ -2,6 +2,7 @@ import React from "react";
 import { Modal, Button } from "react-bootstrap"
 
 type LoginModalProps = {
+    title?: string,
     handleClose: React.MouseEventHandler<HTMLElement>,
     handleConfirm: React.MouseEventHandler<HTMLElement>,
     show: boolean,
@@ -22,7 +23,7 @@ export default class ConfirmModal extends React.Component<LoginModalProps> {
             keyboard={!this.props.static}
         >
             <Modal.Header closeButton>
-                <Modal.Title>Sign in</Modal.Title>
+                <Modal.Title>{this.props.title || "Confirm Action"}</Modal.Title>
             </Modal.Header>
             <Modal.Body>
                 <p>

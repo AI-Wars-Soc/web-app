@@ -57,7 +57,7 @@ export default class SubmissionDeleteButton extends React.Component<SubmissionDe
         return <>
             <TrashFill color="brown" size={32} onClick={this.onClick}/>
             <Suspense fallback={<div/>}>
-                <ConfirmModal handleClose={this.onClose} handleConfirm={this.onConfirm} show={this.state.showConfirm}>
+                <ConfirmModal title={"Delete Submission"} handleClose={this.onClose} handleConfirm={this.onConfirm} show={this.state.showConfirm}>
                     Are you sure you want to delete Submission {this.props.index}?
                 </ConfirmModal>
             </Suspense>

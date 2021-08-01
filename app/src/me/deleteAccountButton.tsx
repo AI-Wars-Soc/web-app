@@ -55,9 +55,9 @@ export class DeleteAccountButton extends React.Component<DeleteAccountButtonProp
         return <>
             <Button variant={'danger'} onClick={this.onClick}>Delete Account</Button>
             <Suspense fallback={<div/>}>
-                <ConfirmModal handleClose={this.onClose} handleConfirm={this.onConfirm} show={this.state.showConfirm}>
+                <ConfirmModal title={"Delete Account"} handleClose={this.onClose} handleConfirm={this.onConfirm} show={this.state.showConfirm}>
                     Are you sure you want to delete your account?
-                    This will remove all of your submissions, and wipe all of your progress on the leaderboard.
+                    This will remove all of your submissions and wipe all of your progress on the leaderboard.
                 </ConfirmModal>
             </Suspense>
         </>;
