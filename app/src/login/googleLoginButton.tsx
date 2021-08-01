@@ -3,6 +3,7 @@ import {GoogleLogin, GoogleLoginResponse, GoogleLoginResponseOffline} from "reac
 import {Alert} from "react-bootstrap";
 import {ApiBoundComponent, Post} from "../apiBoundComponent";
 import {UserData} from "../user";
+import {isA} from "ts-type-checked";
 
 type GoogleLoginData = {
     clientId: string
@@ -88,5 +89,9 @@ export class GoogleLoginButton extends ApiBoundComponent<GoogleLoginProps, Googl
             <GoogleLogin {...loginProps}/>
         {errorMessage}
         </div>
+    }
+
+    protected typeCheck(data: unknown): data is GoogleLoginData {
+        return isA<GoogleLoginData>(data);
     }
 }

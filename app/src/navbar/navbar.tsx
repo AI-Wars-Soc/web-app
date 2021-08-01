@@ -9,6 +9,7 @@ import { BoxArrowInRight, BoxArrowRight, CloudSlash } from 'react-bootstrap-icon
 import { History as RouteHistory, Location as RouteLocation, LocationState } from "history";
 import {NavItem} from "./navItem";
 import {ApiBoundComponent} from "../apiBoundComponent";
+import {isA} from "ts-type-checked";
 
 const LoginModal = React.lazy(() => import("../login/loginModal"));
 
@@ -149,6 +150,10 @@ class MyRoutableNavbar extends ApiBoundComponent<NavbarProps, NavbarData, Navbar
         const rNav = MyRoutableNavbar.filter(rNavItems, accessible);
 
         return MyRoutableNavbar.renderNavbar(false, soc_name, lNav, rNav);
+    }
+
+    protected typeCheck(data: unknown): data is NavbarData {
+        return isA<NavbarData>(data);
     }
 }
 

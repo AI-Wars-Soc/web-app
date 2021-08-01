@@ -2,6 +2,7 @@ import React from "react";
 import {Chart, ChartConfiguration, ChartData, ChartDataset, registerables} from "chart.js";
 import {UserData} from "../user";
 import {ApiBoundComponent} from "../apiBoundComponent";
+import {isA} from "ts-type-checked";
 
 Chart.register(...registerables);
 
@@ -200,5 +201,9 @@ export default class LeaderboardOverTimeGraph
 
     renderLoaded(data: LeaderboardOverTimeGraphData): JSX.Element {
         return <canvas ref={c => LeaderboardOverTimeGraph.drawChart(c, data)} id="overTimeChart"/>;
+    }
+
+    protected typeCheck(data: unknown): data is LeaderboardOverTimeGraphData {
+        return isA<LeaderboardOverTimeGraphData>(data);
     }
 }

@@ -2,6 +2,7 @@ import {UserData} from "../user";
 import {LeaderboardEntry, LeaderboardEntryProps} from "./leaderboardEntry";
 import React from "react";
 import {ApiBoundComponent} from "../apiBoundComponent";
+import {isA} from "ts-type-checked";
 
 
 type LeaderboardData = {
@@ -35,5 +36,9 @@ export class Leaderboard extends ApiBoundComponent<LeaderboardProps, Leaderboard
                               wins="Wins" losses="Losses" draws="Draws" score="Score" boarder_style="border-bottom"/>
             {entryDivs}
         </div>;
+    }
+
+    protected typeCheck(data: unknown): data is LeaderboardData {
+        return isA<LeaderboardData>(data);
     }
 }

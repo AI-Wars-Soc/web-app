@@ -10,13 +10,13 @@ type ApiBoundComponentState<D> = {
     data: D | null
 };
 
-export function Post<T>(apiEndpoint: string, data: Record<string, unknown> = {}): Promise<T | undefined> {
+export function Post<T>(apiEndpoint: string, sentData: Record<string, unknown> = {}, typeCheck: ((a: unknown) => a is T) | null = null): Promise<T | undefined> {
     const requestOptions = {
         method: 'POST',
         headers: {
             'Content-Type': 'application/json; charset=utf-8'
         },
-        body: JSON.stringify(data)
+        body: JSON.stringify(sentData)
     };
     return fetch('/api/' + apiEndpoint, requestOptions)
         .then(res => res.json())
@@ -27,7 +27,12 @@ export function Post<T>(apiEndpoint: string, data: Record<string, unknown> = {})
             if (response.status !== "success") {
                 return Promise.reject(response);
             }
-            return data as T;
+            const returnedData = response.data;
+            if (typeCheck !== null && !typeCheck(returnedData)) {
+                console.error("Endpoint gave wrong data shape");
+                return Promise.reject(response);
+            }
+            return returnedData as T;
         });
 }
 
@@ -47,7 +52,7 @@ export abstract class ApiBoundComponent<P extends ApiBoundComponentProps, D, S e
     }
 
     fetch(): void {
-        Post<D>(this.apiEndpoint, this.getDataToSend())
+        Post<D>(this.apiEndpoint, this.getDataToSend(), this.typeCheck)
             .then((data: D | undefined) => {
                 if (data === undefined) {
                     return Promise.reject("Data field not present");
@@ -90,6 +95,7 @@ export abstract class ApiBoundComponent<P extends ApiBoundComponentProps, D, S e
         return this.renderLoaded(this.state.data as D);
     }
 
+    protected abstract typeCheck(data: unknown): data is D;
     protected renderError(): JSX.Element { return <>Failed to load endpoint {this.apiEndpoint.replace("_", " ")} </>; }
     protected renderLoading(): JSX.Element { return <></>; }
     protected abstract renderLoaded(data: D): JSX.Element;

@@ -4,6 +4,7 @@ import {UserData} from "../user";
 import {Accordion} from "react-bootstrap";
 import {SubmissionEntry, SubmissionData} from "./submissionEntry";
 import {ApiBoundComponent} from "../apiBoundComponent";
+import {isA} from "ts-type-checked";
 
 type SubmissionsPageData = {
     submissions: SubmissionData[]
@@ -78,5 +79,9 @@ export default class SubmissionsPage extends ApiBoundComponent<SubmissionsPagePr
         }
 
         return this.getPage(submissions);
+    }
+
+    protected typeCheck(data: unknown): data is SubmissionsPageData {
+        return isA<SubmissionsPageData>(data);
     }
 }

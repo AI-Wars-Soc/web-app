@@ -1,14 +1,14 @@
 import React from "react";
 
 export type LeaderboardEntryProps = {
-    position: string,
+    position: number | string,
     name: string,
     is_real_name: boolean,
     nickname: string,
-    wins: string,
-    losses: string,
-    draws: string,
-    score: string,
+    wins: number | string,
+    losses: number | string,
+    draws: number | string,
+    score: number | string,
     boarder_style: string
 }
 

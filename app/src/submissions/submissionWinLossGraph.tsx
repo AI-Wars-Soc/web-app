@@ -2,6 +2,7 @@ import React from "react";
 import {Chart, ChartConfiguration, LegendItem, registerables} from "chart.js";
 import {ApiBoundComponent} from "../apiBoundComponent";
 import {UserData} from "../user";
+import {isA} from "ts-type-checked";
 
 Chart.register(...registerables);
 
@@ -132,5 +133,9 @@ export default class SubmissionWinLossGraph
 
     protected renderLoaded(data: SubmissionWinLossGraphData): JSX.Element {
         return <canvas ref={c => this.activateDraw(c, data)} width="100" height="100" className="w-100"/>;
+    }
+
+    protected typeCheck(data: unknown): data is SubmissionWinLossGraphData {
+        return isA<SubmissionWinLossGraphData>(data);
     }
 }
