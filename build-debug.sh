@@ -7,5 +7,5 @@ rsync -av --progress "$SCRIPT_DIR"/app/ /tmp/web-app_build/ --exclude dist --exc
 
 (cd /tmp/web-app_build/ || exit; npm i; npm run dev)
 
-rm -r "$SCRIPT_DIR"/app/dist/
+rm "$SCRIPT_DIR"/app/dist/*
 rsync -av --progress /tmp/web-app_build/dist/ "$SCRIPT_DIR"/app/dist/
