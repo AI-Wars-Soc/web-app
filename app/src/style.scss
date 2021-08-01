@@ -2,11 +2,9 @@
 @import "~bootstrap/scss/bootstrap";
 @import "~bootswatch/dist/lux/bootswatch";
 
-:root {
-  --bg-main: 255, 255, 255;
-  --text-color: #333;
-  --footer-link-color: #084036;
-}
+$bg-main: #FFFFFF;
+$text-color: #333;
+$footer-link-color: #084036;
 
 html, body {
   height: 100%;
@@ -82,7 +80,7 @@ body {
 
 .footer-link {
   max-height: 24px;
-  color: var(--footer-link-color);
+  color: $footer-link-color;
 }
 
 .footer-link:hover {
@@ -90,7 +88,7 @@ body {
 }
 
 .nickname-text {
-  color: var(--gray);
+  color: $gray-600;
 }
 
 #leaderboard {
@@ -157,7 +155,7 @@ body {
 }
 
 .leaderboard-other-submission {
-  border-color: var(--bs-secondary);
+  border-color: $secondary;
 }
 
 #overTimeChartContainer {
@@ -203,7 +201,7 @@ body {
   border-radius: 20px;
   border-width: 6px;
   border-style: double;
-  border-color: var(--bs-secondary);
+
   margin: 0;
 }
 
@@ -212,7 +210,7 @@ body {
 }
 
 .submission-crash-report {
-  background: rgba(var(--bg-main), 0.5);
+  background: rgba($bg-main, 0.5);
   border-radius: 20px;
 }
 
