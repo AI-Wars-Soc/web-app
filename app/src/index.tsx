@@ -4,7 +4,7 @@ import {
     BrowserRouter as Router,
     Switch,
     Route,
-    Redirect
+    Redirect,
 } from "react-router-dom";
 import './style.scss';
 import {MyNavbar} from "./navbar/navbar"
@@ -27,6 +27,12 @@ function App(): JSX.Element {
         updateUser();
     };
 
+    const GamesPageWrapper = (props: {match: {params: { submissionId: number }}}) => {
+        return <Suspense fallback={<div>Loading Game Engine...</div>}>
+            <GamesPage user={user} submission_id={props.match.params.submissionId}/>
+        </Suspense>
+    };
+
     return (
         <>
             <Router>
@@ -47,11 +53,7 @@ function App(): JSX.Element {
                                     <SubmissionsPage user={user}/>
                                 </Suspense>
                             </Route>
-                            <Route path="/play">
-                                <Suspense fallback={<div>Loading Game Engine...</div>}>
-                                    <GamesPage user={user} submission_id={0}/>
-                                </Suspense>
-                            </Route>
+                            <Route path="/play/:submissionId" component={GamesPageWrapper}/>
                             <Route path="/me">
                                 <Suspense fallback={<div>Loading Your Page...</div>}>
                                     <MePage user={user} logOut={logOut} updateUser={updateUser}/>
