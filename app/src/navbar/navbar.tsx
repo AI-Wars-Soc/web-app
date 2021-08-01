@@ -104,7 +104,7 @@ class MyRoutableNavbar extends ApiBoundComponent<NavbarProps, NavbarData, Navbar
 
         const pageName = this.props.location.pathname.split('/')[1];
         const pageAllowed = accessible.includes(pageName);
-        const pageKnowable = ["", "leaderboard", "submissions", "about", "me"].includes(pageName);
+        const pageKnowable = ["", "leaderboard", "submissions", "about", "me", "play"].includes(pageName);
 
         if (!pageAllowed && !pageKnowable) {
             return <Redirect to={"/"}/>;

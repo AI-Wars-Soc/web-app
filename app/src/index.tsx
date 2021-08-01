@@ -12,6 +12,7 @@ import {getUser, UserData} from "./user"
 
 const SubmissionsPage = React.lazy(() => import("./submissions/submissionsPage"));
 const LeaderboardPage = React.lazy(() => import("./leaderboard/leaderboardPage"));
+const GamesPage = React.lazy(() => import("./games/gamesPage"));
 const MePage = React.lazy(() => import("./me/mePage"));
 const MyFooter = React.lazy(() => import("./footer"));
 
@@ -44,6 +45,11 @@ function App(): JSX.Element {
                             <Route path="/submissions">
                                 <Suspense fallback={<div>Loading Submissions...</div>}>
                                     <SubmissionsPage user={user}/>
+                                </Suspense>
+                            </Route>
+                            <Route path="/play">
+                                <Suspense fallback={<div>Loading Game Engine...</div>}>
+                                    <GamesPage user={user} submission_id={0}/>
                                 </Suspense>
                             </Route>
                             <Route path="/me">
