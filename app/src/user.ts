@@ -1,4 +1,5 @@
 import {Post} from "./apiBoundComponent";
+import {isA} from "ts-type-checked";
 
 export type UserData = {
     _cuwais_type: "user",
@@ -12,7 +13,7 @@ export type UserData = {
     user_id: number
 } | null;
 
-export const NULL_USER: UserData = null;
+type UserDataResponse = {user: UserData, expiry: number};
 
 export function usersEqual(u1: UserData, u2: UserData): boolean {
     if (u1 === null && u2 === null) {
@@ -31,12 +32,16 @@ let getUserPromise: Promise<void> | null = null;
 // Cache timeout
 let tokenTimeout: NodeJS.Timeout | null = null;
 
+function userDataTypeCheck(data: unknown): data is UserDataResponse {
+    return isA<UserDataResponse>(data);
+}
+
 export function getUser(currentUser: UserData, setUser: (_:UserData) => unknown): Promise<void> {
     if (getUserPromise === null) {
-        getUserPromise = Post<{user: UserData, expiry: number}>("get_user")
+        getUserPromise = Post<{user: UserData, expiry: number}>("get_user", {}, userDataTypeCheck)
             .catch((error: Response) => {
                 console.error(error);
-                return {user: NULL_USER, expiry: -1};
+                return {user: null, expiry: -1};
             })
             .then((data) => {
                 if (data === undefined) {
