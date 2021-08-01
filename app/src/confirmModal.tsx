@@ -6,7 +6,7 @@ type LoginModalProps = {
     handleConfirm: React.MouseEventHandler<HTMLElement>,
     show: boolean,
     static?: boolean,
-    children: (string|number)[]
+    children: (string|number)[]|string|number
 }
 
 export default class ConfirmModal extends React.Component<LoginModalProps> {

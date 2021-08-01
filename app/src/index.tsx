@@ -8,22 +8,28 @@ import {
 } from "react-router-dom";
 import './style.scss';
 import {MyNavbar} from "./navbar/navbar"
-import {getUser, NULL_USER} from "./user"
+import {getUser, UserData} from "./user"
 
 const SubmissionsPage = React.lazy(() => import("./submissions/submissionsPage"));
 const LeaderboardPage = React.lazy(() => import("./leaderboard/leaderboardPage"));
+const MePage = React.lazy(() => import("./me/mePage"));
 const MyFooter = React.lazy(() => import("./footer"));
 
 
 function App(): JSX.Element {
-    const [user, setUser] = useState(NULL_USER);
+    const [user, setUser] = useState(null as UserData);
     const updateUser = () => getUser(user, setUser);
     updateUser();
+
+    const logOut = () => {
+        document.cookie = "log_out=true; SameSite=Strict";
+        updateUser();
+    };
 
     return (
         <>
             <Router>
-                <MyNavbar user={user} updateUser={updateUser}/>
+                <MyNavbar user={user} updateUser={updateUser} logOut={logOut}/>
                 <div className="content mx-lg-2 px-xl-5">
                     <div className="d-flex flex-column mx-md-3 p-2 p-sm-5">
                         <Switch>
@@ -38,6 +44,11 @@ function App(): JSX.Element {
                             <Route path="/submissions">
                                 <Suspense fallback={<div>Loading Submissions...</div>}>
                                     <SubmissionsPage user={user}/>
+                                </Suspense>
+                            </Route>
+                            <Route path="/me">
+                                <Suspense fallback={<div>Loading Your Page...</div>}>
+                                    <MePage user={user} logOut={logOut}/>
                                 </Suspense>
                             </Route>
                             <Route path="/">

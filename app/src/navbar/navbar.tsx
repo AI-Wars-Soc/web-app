@@ -23,7 +23,8 @@ type NavbarProps = {
     location: RouteLocation<LocationState>,
     match: match<Record<string, never>>,
     user: UserData,
-    updateUser: () => unknown
+    updateUser: () => unknown,
+    logOut: () => unknown
 }
 
 type NavbarState = {
@@ -59,8 +60,7 @@ class MyRoutableNavbar extends ApiBoundComponent<NavbarProps, NavbarData, Navbar
 
     private onLogoutSelect(_: string | null, e: React.SyntheticEvent<unknown>) {
         e.preventDefault();
-        document.cookie = "log_out=true; SameSite=Strict";
-        this.props.updateUser();
+        this.props.logOut();
     }
 
     private closeModal(): void {
@@ -126,7 +126,7 @@ class MyRoutableNavbar extends ApiBoundComponent<NavbarProps, NavbarData, Navbar
         ];
         const rNavItems: [string, JSX.Element][] = [
             ['admin', <NavItem link={'/admin'} text={'Admin'} key={"navbar-admin"}/>],
-            ['me', <NavItem link={'/me'} text={'Me'} key={"navbar-me"}/>],
+            ['me', <NavItem link={'/me'} text={this.props.user?.real_name || "You"} key={"navbar-me"}/>],
             ['login', <React.Fragment key={"navbar-login"}>
                 <Nav.Link href={'#loginModal'} onSelect={this.onLoginSelect}>
                     Login&nbsp;
