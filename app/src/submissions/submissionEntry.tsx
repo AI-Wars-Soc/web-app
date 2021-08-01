@@ -2,6 +2,7 @@ import React, {Suspense} from "react";
 import {Accordion, Card} from "react-bootstrap";
 import {ChevronDown} from "react-bootstrap-icons";
 import {UserData} from "../user";
+import {Post} from "../apiBoundComponent";
 
 const SubmissionWinLossGraph = React.lazy(() => import("./submissionWinLossGraph"));
 const SubmissionEnabledSwitch = React.lazy(() => import("./submissionEnabledSwitch"));
@@ -54,20 +55,13 @@ export class SubmissionEntry extends React.Component<SubmissionEntryProps, Submi
     }
 
     private checkStillTesting(): void {
-        const requestOptions = {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/json; charset=utf-8'
-            },
-            body: JSON.stringify({
-                submission_id: this.props.submission_id
-            })
-        };
-        fetch("/api/is_submission_testing", requestOptions)
-            .then(res => res.json())
+        Post<{is_testing: boolean}>("/is_submission_testing", {
+            submission_id: this.props.submission_id
+        })
             .then(
                 (result) => {
-                    if (result.data === false) {
+                    if (result === undefined || !result.is_testing) {
+                        this.clearIntervals();
                         this.props.refreshSubmissions();
                     }
                 },
@@ -120,10 +114,10 @@ export class SubmissionEntry extends React.Component<SubmissionEntryProps, Submi
             </div>
         }
 
-        // Ping every 2s when testing
+        // Ping when testing
         this.clearIntervals();
         if (!this.props.tested) {
-            this.testingCheckInterval = setInterval(this.checkStillTesting, 2000);
+            this.testingCheckInterval = setInterval(this.checkStillTesting, 5000);
         }
 
         let status = "";
