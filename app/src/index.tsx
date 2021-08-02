@@ -37,8 +37,8 @@ function App(): JSX.Element {
         <>
             <Router>
                 <MyNavbar user={user} updateUser={updateUser} logOut={logOut}/>
-                <div className="content mx-lg-2 px-xl-5">
-                    <div className="d-flex flex-column mx-md-3 p-2 p-sm-5">
+                <div className="d-flex content mx-lg-2 px-xl-5">
+                    <div className="fill flex-column mx-md-3 p-2 p-sm-5">
                         <Switch>
                             <Route path="/about">
                                 About
