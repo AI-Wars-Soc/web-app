@@ -2,7 +2,7 @@ import React, {Suspense} from "react";
 import {UserData} from "../user";
 import {ApiBoundComponent} from "../apiBoundComponent";
 import {isA} from "ts-type-checked";
-import {ChessGameProps} from "./chessGame";
+import {ChessGameProps} from "./chess/chessGame";
 
 type GamesPageProps = {
     user: UserData,
@@ -41,35 +41,43 @@ export default class GamesPage extends ApiBoundComponent<GamesPageProps, GamesPa
     }
 
     protected renderLoading(): JSX.Element {
-        return <div>Setting up your game...</div>;
+        return <>
+            <div>Setting up your game...</div>
+        </>;
     }
 
     protected renderError(): JSX.Element {
-        return <div>Could not initialise game. Please try again later</div>;
+        return <>
+            <div>Could not initialise game. Please try again later</div>
+        </>;
     }
 
     protected renderLoaded(data: GamesPageData): JSX.Element {
         if (!data.allowed) {
-            return <div>Submission not found.</div>;
+            return <>
+                <div>Submission not found.</div>
+            </>;
         }
 
         let lazyElement: JSX.Element;
 
         switch (data.gamemode.id) {
             case "chess":
-                const ChessGame = React.lazy(() => import("./chessGame"));
-                if (!isA<ChessGameProps>(data.gamemode.options))
-                {
+                const ChessGame = React.lazy(() => import("./chess/chessGame"));
+                if (!isA<ChessGameProps>(data.gamemode.options)) {
                     return this.renderError();
                 }
-                lazyElement = <ChessGame {...data.gamemode.options}/>
+                lazyElement = <Suspense fallback={this.renderLoading()}>
+                    <ChessGame {...data.gamemode.options}/>
+                </Suspense>
                 break;
             default:
                 return <div>Unknown game ID</div>;
         }
 
-        return <Suspense fallback={this.renderLoading()}>
+        return <>
+            Playing {data.gamemode.id}
             {lazyElement}
-        </Suspense>
+        </>
     }
 }
