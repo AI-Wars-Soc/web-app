@@ -130,12 +130,17 @@ export default class ChessGame extends Game<ChessGameProps, ChessGameState> {
         }
     }
 
-    private static highlightSquares(squaresToHighlight: Square[], intensity = 0.4): SquareStyles {
+    private static highlightSquares(squaresToHighlight: Square[], intensity: number, width: number): SquareStyles {
+        const shadow = "inset 0 0 " + width + "px #f5d742";
         const highlightStyles: SquareStyles = {};
         squaresToHighlight.forEach((square: Square) => {
+            let s = shadow;
+            for (let i = 1; i < intensity; i++) {
+                s += ", " + shadow;
+            }
+
             highlightStyles[square] = {
-                background: "radial-gradient(circle, #fffc00 36%, transparent " + (intensity * 100) + "%)",
-                borderRadius: "50%"
+                boxShadow: s
             };
         });
 
@@ -147,18 +152,28 @@ export default class ChessGame extends Game<ChessGameProps, ChessGameState> {
             return <></>
         }
 
-        let squareStyles: SquareStyles = {};
+        const size = Math.min(maxWidth, maxHeight);
+        const cellSize = size / 8;
+
+        let square = null;
+        let intensity = 2;
         if (this.state.selectedSquare !== null) {
-            const options = this.game.moves({verbose: true, square: this.state.selectedSquare});
-            squareStyles = ChessGame.highlightSquares(options.map(m => m.to));
+            square = this.state.selectedSquare;
+            intensity = 4;
         } else if (this.state.hoveredSquare !== null) {
-            const options = this.game.moves({verbose: true, square: this.state.hoveredSquare});
-            squareStyles = ChessGame.highlightSquares(options.map(m => m.to), 0.2);
+            square = this.state.hoveredSquare;
+            intensity = 2;
+        }
+
+        let squareStyles: SquareStyles = {};
+        if (square !== null) {
+            const options = this.game.moves({verbose: true, square: square});
+            squareStyles = ChessGame.highlightSquares(options.map(m => m.to), intensity, cellSize / 4);
         }
 
         return <>
             <Chessboard
-                width={Math.min(maxWidth, maxHeight)}
+                width={size}
                 position={this.game.fen()}
                 squareStyles={squareStyles}
 
