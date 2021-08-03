@@ -5,6 +5,7 @@ const HtmlWebPackPlugin = require("html-webpack-plugin");
 const MiniCssExtractPlugin = require("mini-css-extract-plugin");
 const CssMinimizerPlugin = require("css-minimizer-webpack-plugin");
 const transformer = require('ts-type-checked/transformer');
+const WorkboxPlugin = require('workbox-webpack-plugin');
 
 const htmlPlugin = new HtmlWebPackPlugin({
     template: "./src/index.html",
@@ -12,13 +13,18 @@ const htmlPlugin = new HtmlWebPackPlugin({
 });
 
 const tsTypeCheckerPlugin = new ForkTsCheckerWebpackPlugin({
-    async: false,
+    async: true,
     eslint: {
         files: ["./src/**.tsx"],
     },
 });
 
 const miniCss = new MiniCssExtractPlugin();
+
+const workerBox = new WorkboxPlugin.GenerateSW({
+    clientsClaim: true,
+    skipWaiting: true,
+});
 
 module.exports  = {
     entry: "./src/index.tsx",
@@ -31,7 +37,7 @@ module.exports  = {
     resolve: {
         extensions: ['.tsx', '.ts', '.jsx', '.js'],
     },
-    plugins: [htmlPlugin, tsTypeCheckerPlugin, miniCss],
+    plugins: [htmlPlugin, workerBox, tsTypeCheckerPlugin, miniCss],
     module: {
         rules: [
             {
