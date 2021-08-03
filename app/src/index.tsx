@@ -10,6 +10,7 @@ import './style.scss';
 import {MyNavbar} from "./navbar/navbar"
 import {getUser, UserData} from "./user"
 
+const AboutPage = React.lazy(() => import("./aboutPage"));
 const SubmissionsPage = React.lazy(() => import("./submissions/submissionsPage"));
 const LeaderboardPage = React.lazy(() => import("./leaderboard/leaderboardPage"));
 const GamesPage = React.lazy(() => import("./games/gamesPage"));
@@ -50,7 +51,9 @@ function App(): JSX.Element {
                     <div className="fill flex-column mx-md-3 p-2 p-sm-5">
                         <Switch>
                             <Route path="/about">
-                                About
+                                <Suspense fallback={<div/>}>
+                                    <AboutPage/>
+                                </Suspense>
                             </Route>
                             <Route path="/leaderboard">
                                 <Suspense fallback={<div>Loading Leaderboard...</div>}>
