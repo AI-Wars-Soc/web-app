@@ -2,7 +2,7 @@ import {UserData} from "./user";
 import React from "react";
 
 interface ApiBoundComponentProps {
-    user: UserData;
+    userData: UserData;
 }
 
 type ApiBoundComponentState<D> = {
@@ -78,7 +78,7 @@ export abstract class ApiBoundComponent<P extends ApiBoundComponentProps, D, S e
     }
 
     componentDidUpdate(prevProps: P): void {
-        if (prevProps.user !== this.props.user) {
+        if (prevProps.userData !== this.props.userData) {
             this.fetch();
         }
     }

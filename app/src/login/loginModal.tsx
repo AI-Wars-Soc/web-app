@@ -7,7 +7,7 @@ type LoginModalProps = {
     handleClose: React.MouseEventHandler<HTMLElement>
     show: boolean,
     static: boolean,
-    user: UserData,
+    userData: UserData,
     updateUser: () => unknown
 }
 
@@ -32,7 +32,7 @@ export default class LoginModal extends React.Component<LoginModalProps> {
                         as well as allowing us to store your name and and email address.
                         You can delete your account at any time.
                     </p>
-                    <GoogleLoginButton user={this.props.user} updateUser={this.props.updateUser}/>
+                    <GoogleLoginButton userData={this.props.userData} updateUser={this.props.updateUser}/>
                 </Modal.Body>
                 <Modal.Footer>
                     <Button variant="secondary" onClick={this.props.handleClose}>

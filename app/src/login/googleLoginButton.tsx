@@ -11,7 +11,7 @@ type GoogleLoginData = {
 }
 
 type GoogleLoginProps = {
-    user: UserData
+    userData: UserData
     updateUser: () => unknown
 }
 
@@ -20,8 +20,6 @@ type GoogleLoginState = {
     loginErrorString: string | null;
     data: GoogleLoginData | null,
 }
-
-
 
 export class GoogleLoginButton extends ApiBoundComponent<GoogleLoginProps, GoogleLoginData, GoogleLoginState> {
     constructor(props: GoogleLoginProps) {

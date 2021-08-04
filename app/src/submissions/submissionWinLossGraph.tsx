@@ -16,7 +16,7 @@ type SubmissionWinLossGraphData = {
 }
 
 type SubmissionWinLossGraphProps = {
-    user: UserData,
+    userData: UserData,
     submission_id: number
 }
 

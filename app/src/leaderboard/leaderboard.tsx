@@ -10,7 +10,7 @@ type LeaderboardData = {
 };
 
 type LeaderboardProps = {
-    user: UserData
+    userData: UserData
 }
 
 type LeaderboardState = {

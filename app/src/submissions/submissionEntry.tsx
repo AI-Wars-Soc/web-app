@@ -21,7 +21,7 @@ export type SubmissionData = {
     prints: string
 };
 export type SubmissionEntryProps = {
-    user: UserData,
+    userData: UserData,
     refreshSubmissions: () => unknown
 } & SubmissionData;
 
@@ -49,7 +49,7 @@ export class SubmissionEntry extends React.Component<SubmissionEntryProps, Submi
 
         this.setState({
             winLossGraph: <Suspense fallback={<div>Loading Graph...</div>}>
-                <SubmissionWinLossGraph user={this.props.user} submission_id={this.props.submission_id}/>
+                <SubmissionWinLossGraph userData={this.props.userData} submission_id={this.props.submission_id}/>
             </Suspense>
         });
     }

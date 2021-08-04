@@ -22,7 +22,7 @@ type NavbarProps = {
     history: RouteHistory<LocationState>,
     location: RouteLocation<LocationState>,
     match: match<Record<string, never>>,
-    user: UserData,
+    userData: UserData,
     updateUser: () => unknown,
     logOut: () => unknown
 }
@@ -126,7 +126,7 @@ class MyRoutableNavbar extends ApiBoundComponent<NavbarProps, NavbarData, Navbar
         ];
         const rNavItems: [string, JSX.Element][] = [
             ['admin', <NavItem link={'/admin'} text={'Admin'} key={"navbar-admin"}/>],
-            ['me', <NavItem link={'/me'} text={this.props.user?.real_name || "You"} key={"navbar-me"}/>],
+            ['me', <NavItem link={'/me'} text={this.props.userData.user?.real_name || "You"} key={"navbar-me"}/>],
             ['login', <React.Fragment key={"navbar-login"}>
                 <Nav.Link href={'#loginModal'} onSelect={this.onLoginSelect}>
                     Login&nbsp;
@@ -135,7 +135,7 @@ class MyRoutableNavbar extends ApiBoundComponent<NavbarProps, NavbarData, Navbar
 
                 <Suspense fallback={<></>}>
                     <LoginModal show={this.state.loginModalShow || forceShow}
-                                user={this.props.user}
+                                userData={this.props.userData}
                                 handleClose={onModalClose}
                                 static={forceShow} updateUser={this.props.updateUser}/>
                 </Suspense>

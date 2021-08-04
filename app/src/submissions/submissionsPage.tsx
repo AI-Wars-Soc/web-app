@@ -11,7 +11,7 @@ type SubmissionsPageData = {
 };
 
 type SubmissionsPageProps = {
-    user: UserData
+    userData: UserData
 };
 
 type SubmissionsPageState = {
@@ -74,7 +74,7 @@ export default class SubmissionsPage extends ApiBoundComponent<SubmissionsPagePr
         } else {
             submissions =  <Accordion className="max-width-center">
                 {data.submissions.map((v, i) =>
-                    <SubmissionEntry key={i} user={this.props.user} refreshSubmissions={this.fetch} {...v}/>)}
+                    <SubmissionEntry key={i} userData={this.props.userData} refreshSubmissions={this.fetch} {...v}/>)}
             </Accordion>
         }
 

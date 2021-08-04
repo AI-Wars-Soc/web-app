@@ -1,7 +1,7 @@
 import {Post} from "./apiBoundComponent";
 import {isA} from "ts-type-checked";
 
-export type UserData = {
+export type User = {
     _cuwais_type: "user",
     display_name: string,
     display_real_name: boolean,
@@ -13,18 +13,24 @@ export type UserData = {
     user_id: number
 } | null;
 
-type UserDataResponse = {user: UserData, expiry: number};
+export type UserResponse = {user: User, expiry: number};
+
+export type UserData = {user: User, request_time: number};
 
 export function usersEqual(u1: UserData, u2: UserData): boolean {
-    if (u1 === null && u2 === null) {
-        return true;
-    }
-
-    if (u1 === null || u2 === null) {
+    if (u1.request_time !== u2.request_time) {
         return false;
     }
 
-    return u1.user_id === u2.user_id;
+    if (u1.user === null && u2.user === null) {
+        return true;
+    }
+
+    if (u1.user === null || u2.user === null) {
+        return false;
+    }
+
+    return u1.user.user_id === u2.user.user_id;
 }
 
 // Cache promise
@@ -32,13 +38,13 @@ let getUserPromise: Promise<void> | null = null;
 // Cache timeout
 let tokenTimeout: NodeJS.Timeout | null = null;
 
-function userDataTypeCheck(data: unknown): data is UserDataResponse {
-    return isA<UserDataResponse>(data);
+function userResponseTypeCheck(data: unknown): data is UserResponse {
+    return isA<UserResponse>(data);
 }
 
 export function getUser(currentUser: UserData, setUser: (_:UserData) => unknown): Promise<void> {
     if (getUserPromise === null) {
-        getUserPromise = Post<{user: UserData, expiry: number}>("get_user", {}, userDataTypeCheck)
+        getUserPromise = Post<UserResponse>("get_user", {}, userResponseTypeCheck)
             .catch((error: Response) => {
                 console.error(error);
                 return {user: null, expiry: -1};
@@ -48,19 +54,26 @@ export function getUser(currentUser: UserData, setUser: (_:UserData) => unknown)
                     return;
                 }
 
-                const user = data.user;
                 const expiry = (data.expiry * 1000) - Date.now();
-                console.log(expiry);
 
-                setUser(user);
+                if (expiry <= 0) {
+                    setUser({
+                        user: null,
+                        request_time: Date.now()
+                    });
+                    return;
+                }
+
+                setUser({
+                    user: data.user,
+                    request_time: Date.now()
+                });
 
                 if (tokenTimeout !== null) {
                     clearTimeout(tokenTimeout);
                     tokenTimeout = null;
                 }
-                if (expiry >= 0) {
-                    tokenTimeout = setTimeout(() => getUser(currentUser, setUser), expiry);
-                }
+                tokenTimeout = setTimeout(() => getUser(currentUser, setUser), expiry);
 
                 getUserPromise = null;
             });
