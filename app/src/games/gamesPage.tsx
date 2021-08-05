@@ -1,16 +1,16 @@
 import React, {Suspense} from "react";
-import {UserData} from "../user";
+import {User} from "../user";
 import {ApiBoundComponent} from "../apiBoundComponent";
 import {isA} from "ts-type-checked";
-import {ChessGameProps} from "./chess/chessGame";
+import {ChessGameOptions} from "./chess/chessGame";
 
 type GamesPageProps = {
-    user: UserData,
+    user: User,
     submission_id: number
 };
 
 type GamesPageData = {
-    allowed: boolean,
+    allowed: boolean
     gamemode: {
         id: string,
         options: Record<string, unknown>
@@ -33,7 +33,7 @@ export default class GamesPage extends ApiBoundComponent<GamesPageProps, GamesPa
     }
 
     getDataToSend(): Record<string, unknown> {
-        return {submission_id: this.props.submission_id};
+        return {submission_ids: [this.props.submission_id]};
     }
 
     protected typeCheck(data: unknown): data is GamesPageData {
@@ -64,11 +64,11 @@ export default class GamesPage extends ApiBoundComponent<GamesPageProps, GamesPa
         switch (data.gamemode.id) {
             case "chess":
                 const ChessGame = React.lazy(() => import("./chess/chessGame"));
-                if (!isA<ChessGameProps>(data.gamemode.options)) {
+                if (!isA<ChessGameOptions>(data.gamemode.options)) {
                     return this.renderError();
                 }
                 lazyElement = <Suspense fallback={this.renderLoading()}>
-                    <ChessGame {...data.gamemode.options}/>
+                    <ChessGame submissionID={this.props.submission_id} {...data.gamemode.options}/>
                 </Suspense>
                 break;
             default:

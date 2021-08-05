@@ -2,12 +2,17 @@ import React, {CSSProperties} from "react";
 import {Game} from "../game";
 import Chessboard, {Piece} from "chessboardjsx";
 import Chess, {ChessInstance, Move, Square} from "chess.js";
+import {ChessConnection} from "./chessConnection";
 
 type SquareStyles = { [square in Square]?: CSSProperties };
 
-export type ChessGameProps = {
+export type ChessGameOptions = {
 
-}
+};
+
+type ChessGameProps = {
+    submissionID: number
+} & ChessGameOptions;
 
 type ChessGameState = {
     maxWidth: number,
@@ -18,7 +23,8 @@ type ChessGameState = {
 };
 
 export default class ChessGame extends Game<ChessGameProps, ChessGameState> {
-    private game: ChessInstance | null = null;
+    private readonly game: ChessInstance;
+    private readonly connection: ChessConnection;
 
     constructor(props: ChessGameProps) {
         super(props);
@@ -31,6 +37,9 @@ export default class ChessGame extends Game<ChessGameProps, ChessGameState> {
             history: []
         }
 
+        this.connection = new ChessConnection(props.submissionID);
+        this.game = new Chess();
+
         this.playMove = this.playMove.bind(this);
         this.onDrop = this.onDrop.bind(this);
         this.onMouseOutSquare = this.onMouseOutSquare.bind(this);
@@ -38,15 +47,7 @@ export default class ChessGame extends Game<ChessGameProps, ChessGameState> {
         this.onSquareClick = this.onSquareClick.bind(this);
     }
 
-    componentDidMount(): void {
-        this.game = new Chess();
-    }
-
     private playMove(sourceSquare: Square, targetSquare: Square): void {
-        if (this.game === null) {
-            return;
-        }
-
         this.setState({
             selectedSquare: null
         });
@@ -68,13 +69,10 @@ export default class ChessGame extends Game<ChessGameProps, ChessGameState> {
         });
 
         // Send move to server
+        this.connection.makeMove(move);
     }
 
     private selectSquare(square: Square | null): void {
-        if (this.game === null) {
-            return;
-        }
-
         if (square === null) {
             this.setState({
                 selectedSquare: null
@@ -91,10 +89,6 @@ export default class ChessGame extends Game<ChessGameProps, ChessGameState> {
     }
 
     private onSquareClick(square: Square): void {
-        if (this.game === null) {
-            return;
-        }
-
         if (square === this.state.selectedSquare) {
             this.selectSquare(null);
             return;
@@ -148,10 +142,6 @@ export default class ChessGame extends Game<ChessGameProps, ChessGameState> {
     }
 
     renderBoard(maxWidth: number, maxHeight: number): JSX.Element {
-        if (this.game === null) {
-            return <></>
-        }
-
         const size = Math.min(maxWidth, maxHeight);
         const cellSize = size / 8;
 
