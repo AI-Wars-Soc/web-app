@@ -34,6 +34,10 @@ module.exports  = {
         filename: "[name].bundle.js",
         chunkFilename: '[name].bundle.js',
     },
+    cache: {
+        type: 'filesystem',
+        allowCollectingMemory: true,
+    },
     resolve: {
         extensions: ['.tsx', '.ts', '.jsx', '.js'],
     },
