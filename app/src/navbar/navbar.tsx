@@ -4,7 +4,7 @@ import {Navbar, Nav} from "react-bootstrap"
 import {
     withRouter, match, Redirect
 } from "react-router-dom";
-import {UserData} from "../user";
+import {User} from "../user";
 import { BoxArrowInRight, BoxArrowRight, CloudSlash } from 'react-bootstrap-icons';
 import { History as RouteHistory, Location as RouteLocation, LocationState } from "history";
 import {NavItem} from "./navItem";
@@ -22,7 +22,7 @@ type NavbarProps = {
     history: RouteHistory<LocationState>,
     location: RouteLocation<LocationState>,
     match: match<Record<string, never>>,
-    userData: UserData,
+    user: User,
     updateUser: () => unknown,
     logOut: () => unknown
 }
@@ -36,7 +36,7 @@ type NavbarState = {
 
 class MyRoutableNavbar extends ApiBoundComponent<NavbarProps, NavbarData, NavbarState> {
     constructor(props: NavbarProps) {
-        super("get_accessible_navbar", props);
+        super("get_accessible_navbar", props, false);
         this.state = {
             error: false,
             isLoaded: false,
@@ -126,7 +126,7 @@ class MyRoutableNavbar extends ApiBoundComponent<NavbarProps, NavbarData, Navbar
         ];
         const rNavItems: [string, JSX.Element][] = [
             ['admin', <NavItem link={'/admin'} text={'Admin'} key={"navbar-admin"}/>],
-            ['me', <NavItem link={'/me'} text={this.props.userData.user?.real_name || "You"} key={"navbar-me"}/>],
+            ['me', <NavItem link={'/me'} text={this.props.user.getUserOrNull()?.real_name || "You"} key={"navbar-me"}/>],
             ['login', <React.Fragment key={"navbar-login"}>
                 <Nav.Link href={'#loginModal'} onSelect={this.onLoginSelect}>
                     Login&nbsp;
@@ -135,7 +135,7 @@ class MyRoutableNavbar extends ApiBoundComponent<NavbarProps, NavbarData, Navbar
 
                 <Suspense fallback={<></>}>
                     <LoginModal show={this.state.loginModalShow || forceShow}
-                                userData={this.props.userData}
+                                user={this.props.user}
                                 handleClose={onModalClose}
                                 static={forceShow} updateUser={this.props.updateUser}/>
                 </Suspense>

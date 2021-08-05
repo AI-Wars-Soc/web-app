@@ -1,13 +1,13 @@
 import React from "react";
 import {Chart, ChartConfiguration, ChartData, ChartDataset, registerables} from "chart.js";
-import {User, UserData} from "../user";
+import {User} from "../user";
 import {ApiBoundComponent} from "../apiBoundComponent";
 import {isA} from "ts-type-checked";
 
 Chart.register(...registerables);
 
 type LeaderboardOverTimeGraphData = {
-    users: { [userId: string]: User & { is_you: boolean } }
+    users: { [userId: string]: { is_you: boolean, is_bot: boolean, display_name: string } }
     deltas: { user_id: number, "time": number, "delta": number }[]
     initial_score: number
 }
@@ -157,7 +157,7 @@ function get_graph_config(data: LeaderboardOverTimeGraphData): ChartConfiguratio
 }
 
 type LeaderboardOverTimeGraphProps = {
-    userData: UserData
+    user: User
 }
 
 type LeaderboardOverTimeGraphState = {

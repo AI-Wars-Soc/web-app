@@ -1,8 +1,8 @@
-import {UserData} from "./user";
+import {User} from "./user";
 import React from "react";
 
 interface ApiBoundComponentProps {
-    userData: UserData;
+    user: User;
 }
 
 type ApiBoundComponentState<D> = {
@@ -39,10 +39,12 @@ export function Post<T>(apiEndpoint: string, sentData: Record<string, unknown> =
 export abstract class ApiBoundComponent<P extends ApiBoundComponentProps, D, S extends ApiBoundComponentState<D>> extends React.Component<P, S>
 {
     private readonly apiEndpoint: string;
+    private readonly requiresUser: boolean;
 
-    protected constructor(apiEndpoint: string, props: P) {
+    protected constructor(apiEndpoint: string, props: P, requiresUser = true) {
         super(props);
         this.apiEndpoint = apiEndpoint;
+        this.requiresUser = requiresUser
 
         this.fetch = this.fetch.bind(this);
     }
@@ -52,6 +54,13 @@ export abstract class ApiBoundComponent<P extends ApiBoundComponentProps, D, S e
     }
 
     fetch(): void {
+        if (this.requiresUser && !this.props.user.isLoggedIn()) {
+            this.setState({
+                data: null
+            });
+            return;
+        }
+
         Post<D>(this.apiEndpoint, this.getDataToSend(), this.typeCheck)
             .then((data: D | undefined) => {
                 if (data === undefined) {
@@ -78,7 +87,7 @@ export abstract class ApiBoundComponent<P extends ApiBoundComponentProps, D, S e
     }
 
     componentDidUpdate(prevProps: P): void {
-        if (prevProps.userData !== this.props.userData) {
+        if (!prevProps.user.equals(this.props.user)) {
             this.fetch();
         }
     }

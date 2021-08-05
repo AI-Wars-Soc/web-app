@@ -1,7 +1,7 @@
 import React, {Suspense} from "react";
 import {Accordion, Card} from "react-bootstrap";
 import {ChevronDown} from "react-bootstrap-icons";
-import {UserData} from "../user";
+import {User} from "../user";
 import {Post} from "../apiBoundComponent";
 
 const SubmissionWinLossGraph = React.lazy(() => import("./submissionWinLossGraph"));
@@ -21,7 +21,7 @@ export type SubmissionData = {
     prints: string
 };
 export type SubmissionEntryProps = {
-    userData: UserData,
+    user: User,
     refreshSubmissions: () => unknown
 } & SubmissionData;
 
@@ -49,7 +49,7 @@ export class SubmissionEntry extends React.Component<SubmissionEntryProps, Submi
 
         this.setState({
             winLossGraph: <Suspense fallback={<div>Loading Graph...</div>}>
-                <SubmissionWinLossGraph userData={this.props.userData} submission_id={this.props.submission_id}/>
+                <SubmissionWinLossGraph user={this.props.user} submission_id={this.props.submission_id}/>
             </Suspense>
         });
     }

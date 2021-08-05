@@ -1,10 +1,10 @@
 import React from "react";
-import {UserData} from "../user";
+import {User} from "../user";
 import RealNameSwitch from "./realNameSwitch";
 import {DeleteAccountButton} from "./deleteAccountButton";
 
 type MePageProps = {
-    userData: UserData,
+    user: User,
     updateUser: () => unknown,
     logOut: () => unknown
 };
@@ -36,13 +36,10 @@ export default class MePage extends React.Component<MePageProps, MePageState> {
     }
 
     render(): JSX.Element {
-        const {userData} = this.props;
-        if (userData.user === null) {
-            return MePage.getPage();
-        }
+        const user = this.props.user.getUser();
 
-        return MePage.getPage(userData.user.real_name, userData.user.nickname, [
-            <RealNameSwitch key={"displayRealNameSwitch"} active={userData.user.display_real_name} updateUser={this.props.updateUser}/>,
+        return MePage.getPage(user.real_name, user.nickname, [
+            <RealNameSwitch key={"displayRealNameSwitch"} active={user.display_real_name} updateUser={this.props.updateUser}/>,
             <DeleteAccountButton key={"deleteAccountButton"} onDeleteAccount={this.props.logOut}/>
         ]);
     }

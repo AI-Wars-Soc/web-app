@@ -1,4 +1,4 @@
-import {UserData} from "../user";
+import {User} from "../user";
 import {LeaderboardEntry, LeaderboardEntryProps} from "./leaderboardEntry";
 import React from "react";
 import {ApiBoundComponent} from "../apiBoundComponent";
@@ -10,7 +10,7 @@ type LeaderboardData = {
 };
 
 type LeaderboardProps = {
-    userData: UserData
+    user: User
 }
 
 type LeaderboardState = {

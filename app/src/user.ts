@@ -1,7 +1,8 @@
 import {Post} from "./apiBoundComponent";
 import {isA} from "ts-type-checked";
+import RuntimeError = WebAssembly.RuntimeError;
 
-export type User = {
+type UserInfo = {
     _cuwais_type: "user",
     display_name: string,
     display_real_name: boolean,
@@ -11,26 +12,50 @@ export type User = {
     nickname: string,
     real_name: string,
     user_id: number
-} | null;
+};
 
-export type UserResponse = {user: User, expiry: number};
+type UserResponse = {user: UserInfo | null, expiry: number};
 
-export type UserData = {user: User, request_time: number};
+export class User {
+    private readonly user: UserInfo | null;
+    private readonly creationTime: number;
 
-export function usersEqual(u1: UserData, u2: UserData): boolean {
-    if (u1.request_time !== u2.request_time) {
-        return false;
+    constructor(user: UserInfo | null) {
+        this.user = user;
+        this.creationTime = Date.now();
     }
 
-    if (u1.user === null && u2.user === null) {
-        return true;
+    equals(u2: User): boolean {
+        if (this.creationTime !== u2.creationTime) {
+            return false;
+        }
+
+        if (this.user === null && u2.user === null) {
+            return true;
+        }
+
+        if (this.user === null || u2.user === null) {
+            return false;
+        }
+
+        return this.user.user_id === u2.user.user_id;
     }
 
-    if (u1.user === null || u2.user === null) {
-        return false;
+    isLoggedIn(): boolean {
+        return this.user !== null;
     }
 
-    return u1.user.user_id === u2.user.user_id;
+    getUser(): UserInfo {
+        if (this.user === null) {
+            throw new RuntimeError();
+        }
+
+        return this.user;
+    }
+
+    getUserOrNull(): UserInfo | null {
+        return this.user;
+    }
 }
 
 // Cache promise
@@ -42,7 +67,7 @@ function userResponseTypeCheck(data: unknown): data is UserResponse {
     return isA<UserResponse>(data);
 }
 
-export function getUser(currentUser: UserData, setUser: (_:UserData) => unknown): Promise<void> {
+export function getUser(setUser: (_:User) => unknown): Promise<void> {
     if (getUserPromise === null) {
         getUserPromise = Post<UserResponse>("get_user", {}, userResponseTypeCheck)
             .catch((error: Response) => {
@@ -57,23 +82,18 @@ export function getUser(currentUser: UserData, setUser: (_:UserData) => unknown)
                 const expiry = (data.expiry * 1000) - Date.now();
 
                 if (expiry <= 0) {
-                    setUser({
-                        user: null,
-                        request_time: Date.now()
-                    });
+                    setUser(new User(null));
                     return;
                 }
 
-                setUser({
-                    user: data.user,
-                    request_time: Date.now()
-                });
+                const user = new User(data.user);
+                setUser(user);
 
                 if (tokenTimeout !== null) {
                     clearTimeout(tokenTimeout);
                     tokenTimeout = null;
                 }
-                tokenTimeout = setTimeout(() => getUser(currentUser, setUser), expiry);
+                tokenTimeout = setTimeout(() => getUser(setUser), expiry);
 
                 getUserPromise = null;
             });

@@ -1,7 +1,7 @@
 import React from "react";
 import {Chart, ChartConfiguration, LegendItem, registerables} from "chart.js";
 import {ApiBoundComponent} from "../apiBoundComponent";
-import {UserData} from "../user";
+import {User} from "../user";
 import {isA} from "ts-type-checked";
 
 Chart.register(...registerables);
@@ -16,7 +16,7 @@ type SubmissionWinLossGraphData = {
 }
 
 type SubmissionWinLossGraphProps = {
-    userData: UserData,
+    user: User,
     submission_id: number
 }
 

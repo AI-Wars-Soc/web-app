@@ -8,7 +8,7 @@ import {
 } from "react-router-dom";
 import './style.scss';
 import {MyNavbar} from "./navbar/navbar"
-import {getUser, UserData} from "./user"
+import {getUser, User} from "./user"
 
 const AboutPage = React.lazy(() => import("./aboutPage"));
 const SubmissionsPage = React.lazy(() => import("./submissions/submissionsPage"));
@@ -28,8 +28,8 @@ if ('serviceWorker' in navigator) {
 }
 
 function App(): JSX.Element {
-    const [userData, setUser] = useState({user: null, request_time: -1} as UserData);
-    const updateUser = () => getUser(userData, setUser);
+    const [user, setUser] = useState(new User(null));
+    const updateUser = () => getUser(setUser);
     updateUser();
 
     const logOut = () => {
@@ -39,14 +39,14 @@ function App(): JSX.Element {
 
     const GamesPageWrapper = (props: {match: {params: { submissionId: number }}}) => {
         return <Suspense fallback={<div>Loading Game Engine...</div>}>
-            <GamesPage userData={userData} submission_id={props.match.params.submissionId}/>
+            <GamesPage user={user} submission_id={props.match.params.submissionId}/>
         </Suspense>
     };
 
     return (
         <>
             <Router>
-                <MyNavbar userData={userData} updateUser={updateUser} logOut={logOut}/>
+                <MyNavbar user={user} updateUser={updateUser} logOut={logOut}/>
                 <div className="d-flex content mx-lg-2 px-xl-5">
                     <div className="fill flex-column mx-md-3 p-2 p-sm-5">
                         <Switch>
@@ -57,18 +57,18 @@ function App(): JSX.Element {
                             </Route>
                             <Route path="/leaderboard">
                                 <Suspense fallback={<div>Loading Leaderboard...</div>}>
-                                    <LeaderboardPage userData={userData}/>
+                                    <LeaderboardPage user={user}/>
                                 </Suspense>
                             </Route>
                             <Route path="/submissions">
                                 <Suspense fallback={<div>Loading Submissions...</div>}>
-                                    <SubmissionsPage userData={userData}/>
+                                    <SubmissionsPage user={user}/>
                                 </Suspense>
                             </Route>
                             <Route path="/play/:submissionId" component={GamesPageWrapper}/>
                             <Route path="/me">
                                 <Suspense fallback={<div>Loading Your Page...</div>}>
-                                    <MePage userData={userData} logOut={logOut} updateUser={updateUser}/>
+                                    <MePage user={user} logOut={logOut} updateUser={updateUser}/>
                                 </Suspense>
                             </Route>
                             <Route path="/">

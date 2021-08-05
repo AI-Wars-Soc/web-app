@@ -2,7 +2,7 @@ import React from "react";
 import {GoogleLogin, GoogleLoginResponse, GoogleLoginResponseOffline} from "react-google-login";
 import {Alert} from "react-bootstrap";
 import {ApiBoundComponent, Post} from "../apiBoundComponent";
-import {UserData} from "../user";
+import {User} from "../user";
 import {isA} from "ts-type-checked";
 
 type GoogleLoginData = {
@@ -11,7 +11,7 @@ type GoogleLoginData = {
 }
 
 type GoogleLoginProps = {
-    userData: UserData
+    user: User
     updateUser: () => unknown
 }
 
@@ -23,7 +23,7 @@ type GoogleLoginState = {
 
 export class GoogleLoginButton extends ApiBoundComponent<GoogleLoginProps, GoogleLoginData, GoogleLoginState> {
     constructor(props: GoogleLoginProps) {
-        super("get_google_login_data", props);
+        super("get_google_login_data", props, false);
         this.state = {
             error: false,
             loginErrorString: null,
