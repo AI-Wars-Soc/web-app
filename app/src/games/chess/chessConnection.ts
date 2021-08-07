@@ -32,14 +32,18 @@ type MessageData = {
     data: string
 }
 
-type Callback = (fen: string, chess960: boolean, time_remaining: number) => unknown;
+type MoveCallback = (fen: string, chess960: boolean, time_remaining: number) => unknown;
+
+type EndCallback = (result: "win" | "loss" | "draw", result_code: string) => unknown;
 
 export class ChessConnection {
     private readonly socket: WebSocket;
-    private readonly callback: Callback;
+    private readonly moveCallback: MoveCallback;
+    private readonly endCallback: EndCallback;
 
-    constructor(submissionID: number, callback: Callback) {
-        this.callback = callback;
+    constructor(submissionID: number, moveCallback: MoveCallback, endCallback: EndCallback) {
+        this.moveCallback = moveCallback;
+        this.endCallback = endCallback;
         this.socket = new WebSocket("ws://" + location.hostname + "/wsapi/ws/play_game");
 
         // Connection opened
@@ -59,14 +63,12 @@ export class ChessConnection {
 
             switch (data.status) {
                 case "debug":
-                    console.log('Debug data from server: ', data.data);
                     return;
                 case "error":
                     console.error('Game error: ', data.data);
                     this.stop();
                     return;
                 case "message":
-                    console.log('Message from server: ', data.data);
                     const message: MessageType = JSON.parse(data.data);
                     if (!isA<MessageType>(message)) {
                         console.error('Invalid message format from server: ', message);
@@ -76,7 +78,7 @@ export class ChessConnection {
                     this.processMessage(message);
                     return;
                 default:
-                    console.error('Unknown data from server: ', data.status);
+                    console.error('Unknown data from server: ', data);
                     return;
             }
         });
@@ -92,10 +94,14 @@ export class ChessConnection {
                 this.socket.send("pong");
                 return;
             case "call":
-                this.callback(message.kwargs.board.fen, message.kwargs.board.chess960, message.kwargs.time_remaining);
+                this.moveCallback(message.kwargs.board.fen, message.kwargs.board.chess960, message.kwargs.time_remaining);
+                return;
+            case "result":
+                const result = ["win", "loss", "draw"][message.result.submission_results[0].outcome - 1]
+                this.endCallback(result as "win" | "loss" | "draw", message.result.submission_results[0].result_code)
                 return;
             default:
-                console.error('Unknown message from server: ', message.type);
+                console.error('Unknown message from server: ', message);
                 return;
         }
     }

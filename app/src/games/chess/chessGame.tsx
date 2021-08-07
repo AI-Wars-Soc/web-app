@@ -1,8 +1,10 @@
-import React, {CSSProperties} from "react";
+import React, {CSSProperties, Suspense} from "react";
 import {Game} from "../game";
 import Chessboard, {Piece} from "chessboardjsx";
 import Chess, {ChessInstance, Square} from "chess.js";
 import {ChessConnection} from "./chessConnection";
+
+const GameResultModal = React.lazy(() => import("../gameResultModal"));
 
 type SquareStyles = { [square in Square]?: CSSProperties };
 
@@ -11,7 +13,8 @@ export type ChessGameOptions = {
 };
 
 type ChessGameProps = {
-    submissionID: number
+    submissionID: number,
+    restartCallback: () => unknown
 } & ChessGameOptions;
 
 type ChessGameState = {
@@ -19,7 +22,10 @@ type ChessGameState = {
     maxHeight: number,
     selectedSquare: Square | null,
     hoveredSquare: Square | null,
-    moveCount: number // A move history, kept to redraw the board after each move
+    moveCount: number, // A move history, kept to redraw the board after each move
+    finishedSetup: boolean,
+    gameResult: null | "win" | "loss" | "draw",
+    showResultModal: boolean,
 };
 
 export default class ChessGame extends Game<ChessGameProps, ChessGameState> {
@@ -34,14 +40,23 @@ export default class ChessGame extends Game<ChessGameProps, ChessGameState> {
             maxHeight: 0,
             selectedSquare: null,
             hoveredSquare: null,
-            moveCount: 0
+            moveCount: 0,
+            finishedSetup: false,
+            gameResult: null,
+            showResultModal: false
         }
 
         this.game = new Chess("8/8/8/8/8/8/8/8 w - - 0 1");
         this.connection = new ChessConnection(props.submissionID, (fen) => {
             this.game.load(fen);
             this.setState({
-                moveCount: this.state.moveCount + 1
+                moveCount: this.state.moveCount + 1,
+                finishedSetup: true
+            });
+        }, (result) => {
+            this.setState({
+                gameResult: result,
+                showResultModal: true
             });
         });
 
@@ -148,6 +163,10 @@ export default class ChessGame extends Game<ChessGameProps, ChessGameState> {
         const size = Math.min(maxWidth, maxHeight);
         const cellSize = size / 8;
 
+        if (!this.state.finishedSetup) {
+            return <div>Initiating AI...</div>;
+        }
+
         let square = null;
         let intensity = 2;
         if (this.state.selectedSquare !== null) {
@@ -175,6 +194,13 @@ export default class ChessGame extends Game<ChessGameProps, ChessGameState> {
                 onMouseOverSquare={this.onMouseOverSquare}
                 onMouseOutSquare={this.onMouseOutSquare}
             />
+            <Suspense fallback={<></>}>
+                <GameResultModal show={this.state.showResultModal}
+                                 handleClose={() => this.setState({showResultModal: false})}
+                                 handleRestart={this.props.restartCallback}
+                                 result={this.state.gameResult ?? "win"}
+                />
+            </Suspense>
         </>;
     }
 }

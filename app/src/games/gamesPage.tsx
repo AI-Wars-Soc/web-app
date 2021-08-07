@@ -19,7 +19,8 @@ type GamesPageData = {
 
 type GamesPageState = {
     error: boolean,
-    data: GamesPageData | null
+    data: GamesPageData | null,
+    reloadGame: boolean,
 };
 
 export default class GamesPage extends ApiBoundComponent<GamesPageProps, GamesPageData, GamesPageState> {
@@ -28,7 +29,8 @@ export default class GamesPage extends ApiBoundComponent<GamesPageProps, GamesPa
 
         this.state = {
             error: false,
-            data: null
+            data: null,
+            reloadGame: false,
         }
     }
 
@@ -68,7 +70,10 @@ export default class GamesPage extends ApiBoundComponent<GamesPageProps, GamesPa
                     return this.renderError();
                 }
                 lazyElement = <Suspense fallback={this.renderLoading()}>
-                    <ChessGame submissionID={this.props.submission_id} {...data.gamemode.options}/>
+                    <ChessGame submissionID={this.props.submission_id}
+                               restartCallback={() => this.setState({reloadGame: true})}
+                               {...data.gamemode.options}
+                    />
                 </Suspense>
                 break;
             default:
