@@ -72,6 +72,7 @@ export function getUser(setUser: (_:User) => unknown): Promise<void> {
         getUserPromise = Post<UserResponse>("get_user", {}, userResponseTypeCheck)
             .catch((error: Response) => {
                 console.error(error);
+                getUserPromise = null;
                 return {user: null, expiry: -1};
             })
             .then((data) => {
@@ -94,7 +95,8 @@ export function getUser(setUser: (_:User) => unknown): Promise<void> {
                     tokenTimeout = null;
                 }
                 tokenTimeout = setTimeout(() => getUser(setUser), expiry);
-
+            })
+            .then(() => {
                 getUserPromise = null;
             });
     }

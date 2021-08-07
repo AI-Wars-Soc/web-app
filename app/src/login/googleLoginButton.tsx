@@ -1,6 +1,6 @@
 import React from "react";
 import {GoogleLogin, GoogleLoginResponse, GoogleLoginResponseOffline} from "react-google-login";
-import {Alert} from "react-bootstrap";
+import {Alert, Container, Row, Col} from "react-bootstrap";
 import {ApiBoundComponent, Post} from "../apiBoundComponent";
 import {User} from "../user";
 import {isA} from "ts-type-checked";
@@ -83,10 +83,18 @@ export class GoogleLoginButton extends ApiBoundComponent<GoogleLoginProps, Googl
             cookiePolicy: 'single_host_origin',
         }
 
-        return <div className="d-flex justify-content-center">
-            <GoogleLogin {...loginProps}/>
-        {errorMessage}
-        </div>
+        return <Container>
+            <Row>
+                <Col>
+                    <GoogleLogin {...loginProps}/>
+                </Col>
+            </Row>
+            <Row>
+                <Col>
+                    {errorMessage}
+                </Col>
+            </Row>
+        </Container>
     }
 
     protected typeCheck(data: unknown): data is GoogleLoginData {

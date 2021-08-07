@@ -168,6 +168,8 @@ type LeaderboardOverTimeGraphState = {
 export default class LeaderboardOverTimeGraph
     extends ApiBoundComponent<LeaderboardOverTimeGraphProps, LeaderboardOverTimeGraphData, LeaderboardOverTimeGraphState>
 {
+    private chart: Chart<"line"> | null = null;
+
     constructor(props: LeaderboardOverTimeGraphProps) {
         super("get_leaderboard_over_time", props);
 
@@ -175,6 +177,15 @@ export default class LeaderboardOverTimeGraph
             error: false,
             data: null
         };
+    }
+
+    componentWillUnmount(): void {
+        this.destroyChart();
+    }
+
+    private destroyChart(): void {
+        this.chart?.destroy();
+        this.chart = null;
     }
 
     renderError(): JSX.Element {
@@ -185,7 +196,7 @@ export default class LeaderboardOverTimeGraph
         return <></>;
     }
 
-    private static drawChart(canvasElement: HTMLCanvasElement | null, data: LeaderboardOverTimeGraphData): void {
+    private drawChart(canvasElement: HTMLCanvasElement | null, data: LeaderboardOverTimeGraphData): void {
         if (canvasElement === null) {
             return;
         }
@@ -196,11 +207,12 @@ export default class LeaderboardOverTimeGraph
             return;
         }
         const config = get_graph_config(data);
-        new Chart(ctx, config);
+        this.destroyChart();
+        this.chart = new Chart(ctx, config);
     }
 
     renderLoaded(data: LeaderboardOverTimeGraphData): JSX.Element {
-        return <canvas ref={c => LeaderboardOverTimeGraph.drawChart(c, data)} id="overTimeChart"/>;
+        return <canvas ref={c => this.drawChart(c, data)} id="overTimeChart"/>;
     }
 
     protected typeCheck(data: unknown): data is LeaderboardOverTimeGraphData {

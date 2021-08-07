@@ -29,6 +29,8 @@ type SubmissionWinLossGraphState = {
 export default class SubmissionWinLossGraph
     extends ApiBoundComponent<SubmissionWinLossGraphProps, SubmissionWinLossGraphData, SubmissionWinLossGraphState>
 {
+    private chart: Chart<"pie"> | null = null;
+
     constructor(props: SubmissionWinLossGraphProps) {
         super("get_submission_win_loss_data", props);
         this.state = {
@@ -40,6 +42,15 @@ export default class SubmissionWinLossGraph
         this.activateDraw = this.activateDraw.bind(this);
         this.parseData = this.parseData.bind(this);
         this.drawData = this.drawData.bind(this);
+    }
+
+    componentWillUnmount(): void {
+        this.destroyChart();
+    }
+
+    private destroyChart(): void {
+        this.chart?.destroy();
+        this.chart = null;
     }
 
     getDataToSend(): {submission_id: number} {
@@ -89,8 +100,6 @@ export default class SubmissionWinLossGraph
     }
 
     private drawData(ctx: CanvasRenderingContext2D, response: SubmissionWinLossGraphData): void {
-        let chart: Chart<"pie"> | null = null;
-
         const data = this.parseData(response);
         const config: ChartConfiguration<"pie"> = {
             type: "pie",
@@ -107,17 +116,17 @@ export default class SubmissionWinLossGraph
                             },
                         },
                         onClick: () => {
-                            if (chart === null) {
+                            if (this.chart === null) {
                                 return;
                             }
-                            if (chart.isDatasetVisible(1)) {
-                                chart.options.cutout = "50%";
+                            if (this.chart.isDatasetVisible(1)) {
+                                this.chart.options.cutout = "50%";
                                 this.setState({centre_hidden: true});
-                                chart.hide(1);
+                                this.chart.hide(1);
                             } else {
-                                chart.options.cutout = "33%";
+                                this.chart.options.cutout = "33%";
                                 this.setState({centre_hidden: false});
-                                chart.show(1);
+                                this.chart.show(1);
                             }
                         },
                     },
@@ -128,7 +137,8 @@ export default class SubmissionWinLossGraph
                 }
             },
         };
-        chart = new Chart(ctx, config);
+        this.destroyChart();
+        this.chart = new Chart(ctx, config);
     }
 
     protected renderLoaded(data: SubmissionWinLossGraphData): JSX.Element {
