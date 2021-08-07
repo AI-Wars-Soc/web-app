@@ -10,10 +10,7 @@ RUN npm cache clean -f && npm install -g n && n latest
 # Build static files
 COPY app /tmp/app
 WORKDIR /tmp/app
-RUN npm install
-
-# USER web_user
-RUN npm run prod && mv ./dist/* /usr/share/nginx/html/
+RUN npm install && npm run prod && mv ./dist/* /usr/share/nginx/html/ && rm -rf /tmp/app
 
 COPY ./nginx.conf /etc/nginx/nginx.conf
 COPY ./conf.d /etc/nginx/conf.d

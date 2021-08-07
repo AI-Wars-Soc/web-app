@@ -1,7 +1,7 @@
 import React, {CSSProperties} from "react";
 import {Game} from "../game";
 import Chessboard, {Piece} from "chessboardjsx";
-import Chess, {ChessInstance, Move, Square} from "chess.js";
+import Chess, {ChessInstance, Square} from "chess.js";
 import {ChessConnection} from "./chessConnection";
 
 type SquareStyles = { [square in Square]?: CSSProperties };
@@ -19,7 +19,7 @@ type ChessGameState = {
     maxHeight: number,
     selectedSquare: Square | null,
     hoveredSquare: Square | null,
-    history: Move[] // A move history, kept to redraw the board after each move
+    moveCount: number // A move history, kept to redraw the board after each move
 };
 
 export default class ChessGame extends Game<ChessGameProps, ChessGameState> {
@@ -34,11 +34,16 @@ export default class ChessGame extends Game<ChessGameProps, ChessGameState> {
             maxHeight: 0,
             selectedSquare: null,
             hoveredSquare: null,
-            history: []
+            moveCount: 0
         }
 
-        this.connection = new ChessConnection(props.submissionID);
-        this.game = new Chess();
+        this.game = new Chess("8/8/8/8/8/8/8/8 w - - 0 1");
+        this.connection = new ChessConnection(props.submissionID, (fen) => {
+            this.game.load(fen);
+            this.setState({
+                moveCount: this.state.moveCount + 1
+            });
+        });
 
         this.playMove = this.playMove.bind(this);
         this.onDrop = this.onDrop.bind(this);
@@ -62,10 +67,8 @@ export default class ChessGame extends Game<ChessGameProps, ChessGameState> {
             return;
         }
 
-        const history = this.state.history;
-        history.push(move);
         this.setState({
-            history: history
+            moveCount: this.state.moveCount + 1
         });
 
         // Send move to server
