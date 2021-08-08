@@ -1,6 +1,7 @@
 import {Post} from "./apiBoundComponent";
 import {isA} from "ts-type-checked";
 import RuntimeError = WebAssembly.RuntimeError;
+import equal from 'fast-deep-equal/es6/react';
 
 type UserInfo = {
     _cuwais_type: "user",
@@ -67,7 +68,7 @@ function userResponseTypeCheck(data: unknown): data is UserResponse {
     return isA<UserResponse>(data);
 }
 
-export function getUser(setUser: (_:User) => unknown): Promise<void> {
+export function getUser(currentUser: User, setUser: (_:User) => unknown): Promise<void> {
     if (getUserPromise === null) {
         getUserPromise = Post<UserResponse>("get_user", {}, userResponseTypeCheck)
             .catch((error: Response) => {
@@ -77,6 +78,10 @@ export function getUser(setUser: (_:User) => unknown): Promise<void> {
             })
             .then((data) => {
                 if (data === undefined) {
+                    return;
+                }
+
+                if (equal(data.user, currentUser.getUserOrNull())) {
                     return;
                 }
 
@@ -94,7 +99,7 @@ export function getUser(setUser: (_:User) => unknown): Promise<void> {
                     clearTimeout(tokenTimeout);
                     tokenTimeout = null;
                 }
-                tokenTimeout = setTimeout(() => getUser(setUser), expiry);
+                tokenTimeout = setTimeout(() => getUser(user, setUser), expiry);
             })
             .then(() => {
                 getUserPromise = null;

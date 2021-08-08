@@ -85,13 +85,13 @@ export class ChessConnection {
     }
 
     makeMove(move: Move): void {
-        this.socket.send(move.from + move.to + (move.promotion ?? ""));
+        this.socket.send(JSON.stringify({value: move.from + move.to + (move.promotion ?? "")}));
     }
 
     private processMessage(message: MessageType): void {
         switch (message.type) {
             case "ping":
-                this.socket.send("pong");
+                this.socket.send(JSON.stringify({value: "pong"}));
                 return;
             case "call":
                 this.moveCallback(message.kwargs.board.fen, message.kwargs.board.chess960, message.kwargs.time_remaining);

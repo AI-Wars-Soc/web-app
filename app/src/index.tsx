@@ -29,7 +29,7 @@ if ('serviceWorker' in navigator) {
 
 function App(): JSX.Element {
     const [user, setUser] = useState(new User(null));
-    const updateUser = () => getUser(setUser);
+    const updateUser = () => getUser(user, setUser);
     updateUser();
 
     const logOut = () => {

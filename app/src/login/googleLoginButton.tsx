@@ -85,7 +85,7 @@ export class GoogleLoginButton extends ApiBoundComponent<GoogleLoginProps, Googl
 
         return <Container>
             <Row className="justify-content-md-center">
-                <Col>
+                <Col md="auto">
                     <GoogleLogin {...loginProps}/>
                 </Col>
             </Row>
