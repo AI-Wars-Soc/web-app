@@ -3,6 +3,7 @@ import {Game} from "../game";
 import Chessboard, {Piece} from "chessboardjsx";
 import Chess, {ChessInstance, Square} from "chess.js";
 import {ChessConnection} from "./chessConnection";
+import {GameTimer} from "../gameTimer";
 
 const GameResultModal = React.lazy(() => import("../gameResultModal"));
 
@@ -28,6 +29,8 @@ type ChessGameState = {
     showResultModal: boolean,
     isUsersTurn: boolean,
     orientation: "white" | "black",
+    chess960: boolean,
+    timeRemaining: number
 };
 
 export default class ChessGame extends Game<ChessGameProps, ChessGameState> {
@@ -47,17 +50,21 @@ export default class ChessGame extends Game<ChessGameProps, ChessGameState> {
             gameResult: null,
             showResultModal: false,
             isUsersTurn: false,
-            orientation: "black"
+            orientation: "black",
+            chess960: false,
+            timeRemaining: 0
         }
 
         this.game = new Chess("8/8/8/8/8/8/8/8 w - - 0 1");
-        this.connection = new ChessConnection(props.submissionID, (fen) => {
+        this.connection = new ChessConnection(props.submissionID, (fen, chess960, timeRemaining) => {
             this.game.load(fen);
             this.setState({
                 moveCount: this.state.moveCount + 1,
                 orientation: this.game.turn() === "b" ? "black" : "white",
                 finishedSetup: true,
                 isUsersTurn: true,
+                chess960: chess960,
+                timeRemaining: timeRemaining
             });
         }, (result) => {
             this.setState({
@@ -191,7 +198,7 @@ export default class ChessGame extends Game<ChessGameProps, ChessGameState> {
             squareStyles = ChessGame.highlightSquares(options.map(m => m.to), intensity, cellSize / 4);
         }
 
-        return <>
+        return <div id="ChessGame">
             <Chessboard
                 width={size}
                 position={this.game.fen()}
@@ -204,6 +211,14 @@ export default class ChessGame extends Game<ChessGameProps, ChessGameState> {
                 onMouseOverSquare={this.onMouseOverSquare}
                 onMouseOutSquare={this.onMouseOutSquare}
             />
+            <GameTimer startTime={this.state.timeRemaining} countDown={this.state.isUsersTurn}
+                       onTimeout={() => {
+                this.setState({
+                    gameResult: "loss",
+                    showResultModal: true,
+                    isUsersTurn: false,
+                });
+            }}/>
             <Suspense fallback={<></>}>
                 <GameResultModal show={this.state.showResultModal}
                                  handleClose={() => this.setState({showResultModal: false})}
@@ -211,6 +226,6 @@ export default class ChessGame extends Game<ChessGameProps, ChessGameState> {
                                  result={this.state.gameResult ?? "win"}
                 />
             </Suspense>
-        </>;
+        </div>;
     }
 }
