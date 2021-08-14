@@ -1,4 +1,5 @@
 import React from "react";
+import {Link} from "react-router-dom";
 
 export default function AboutPage(): JSX.Element {
     return <>
@@ -17,7 +18,7 @@ export default function AboutPage(): JSX.Element {
                 them play a game against each other, while maintaining an ELO-like score
                 based on win-loss statistics for each AI. Over time, AI scores therefore
                 converge on an increasingly accurate picture of how the AIs perform.
-                You can view score graphs on the <a href="/leaderboard">Leaderboard</a>.
+                You can view score graphs on the <Link to="/leaderboard">Leaderboard</Link>.
                 You can submit as many times as you like, and fine-tune your AI using
                 detailed statistics on its performance.
             </p>
@@ -64,13 +65,13 @@ export default function AboutPage(): JSX.Element {
                     the signatures of the methods that you need to implement.
                 </li>
                 <li>
-                    Once logged in, make a <a href="/submissions">Submission</a>.
+                    Once logged in, make a <Link to="/submissions">Submission</Link>.
                     After submission, your repository will be cloned onto CUWAIS servers
                     and continuously paired up with other users&apos; submissions.
                 </li>
                 <li>
-                    Regularly check the <a href="/leaderboard">Leaderboard</a> to see how you stack up against
-                    other competitors, or check your <a href="/submissions">Submission Statistics</a> to get a more
+                    Regularly check the <Link to="/leaderboard">Leaderboard</Link> to see how you stack up against
+                    other competitors, or check your <Link to="/submissions">Submission Statistics</Link> to get a more
                     detailed analysis of your AI&apos;s performance.
                 </li>
             </ul>

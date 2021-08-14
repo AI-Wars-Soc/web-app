@@ -15,6 +15,7 @@ const SubmissionsPage = React.lazy(() => import("./submissions/submissionsPage")
 const LeaderboardPage = React.lazy(() => import("./leaderboard/leaderboardPage"));
 const GamesPage = React.lazy(() => import("./games/gamesPage"));
 const MePage = React.lazy(() => import("./me/mePage"));
+const AdminPage = React.lazy(() => import("./admin/adminPage"));
 const MyFooter = React.lazy(() => import("./footer"));
 
 if ('serviceWorker' in navigator) {
@@ -63,6 +64,11 @@ function App(): JSX.Element {
                             <Route path="/submissions">
                                 <Suspense fallback={<div>Loading Submissions...</div>}>
                                     <SubmissionsPage user={user}/>
+                                </Suspense>
+                            </Route>
+                            <Route path="/admin">
+                                <Suspense fallback={<div>Loading...</div>}>
+                                    <AdminPage user={user}/>
                                 </Suspense>
                             </Route>
                             <Route path="/play/:submissionId" component={GamesPageWrapper}/>
