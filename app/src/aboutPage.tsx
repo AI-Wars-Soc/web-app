@@ -44,9 +44,9 @@ export default function AboutPage(): JSX.Element {
             </p>
             <p>
                 If the AI runs out of time, makes an invalid move, uses up its memory allocation, or crashes,
-                it forfeits the game, so test your AI can play at least one game
-                game before submitting it and releasing it into the pool of other submissions.
-                However, beyond this, don&apos;t worry about testing your AI too thoroughly before submission.
+                it forfeits the game, so we test that your AI can play at least one game
+                game before releasing it into the pool of other submissions,
+				so don&apos;t worry about testing your AI too thoroughly before submission.
                 Start coding to start winning!
             </p>
         </div>
