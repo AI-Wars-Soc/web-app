@@ -22,10 +22,12 @@ type ChessGameState = {
     maxHeight: number,
     selectedSquare: Square | null,
     hoveredSquare: Square | null,
-    moveCount: number, // A move history, kept to redraw the board after each move
+    moveCount: number, // Kept to redraw the board after each move
     finishedSetup: boolean,
     gameResult: null | "win" | "loss" | "draw",
     showResultModal: boolean,
+    isUsersTurn: boolean,
+    orientation: "white" | "black",
 };
 
 export default class ChessGame extends Game<ChessGameProps, ChessGameState> {
@@ -43,7 +45,9 @@ export default class ChessGame extends Game<ChessGameProps, ChessGameState> {
             moveCount: 0,
             finishedSetup: false,
             gameResult: null,
-            showResultModal: false
+            showResultModal: false,
+            isUsersTurn: false,
+            orientation: "black"
         }
 
         this.game = new Chess("8/8/8/8/8/8/8/8 w - - 0 1");
@@ -51,12 +55,15 @@ export default class ChessGame extends Game<ChessGameProps, ChessGameState> {
             this.game.load(fen);
             this.setState({
                 moveCount: this.state.moveCount + 1,
-                finishedSetup: true
+                orientation: this.game.turn() === "b" ? "black" : "white",
+                finishedSetup: true,
+                isUsersTurn: true,
             });
         }, (result) => {
             this.setState({
                 gameResult: result,
-                showResultModal: true
+                showResultModal: true,
+                isUsersTurn: false,
             });
         });
 
@@ -83,7 +90,8 @@ export default class ChessGame extends Game<ChessGameProps, ChessGameState> {
         }
 
         this.setState({
-            moveCount: this.state.moveCount + 1
+            moveCount: this.state.moveCount + 1,
+            isUsersTurn: false,
         });
 
         // Send move to server
@@ -178,7 +186,7 @@ export default class ChessGame extends Game<ChessGameProps, ChessGameState> {
         }
 
         let squareStyles: SquareStyles = {};
-        if (square !== null) {
+        if (this.state.isUsersTurn && square !== null) {
             const options = this.game.moves({verbose: true, square: square});
             squareStyles = ChessGame.highlightSquares(options.map(m => m.to), intensity, cellSize / 4);
         }
@@ -188,6 +196,8 @@ export default class ChessGame extends Game<ChessGameProps, ChessGameState> {
                 width={size}
                 position={this.game.fen()}
                 squareStyles={squareStyles}
+                allowDrag = {(obj: {piece: Piece}) => this.state.isUsersTurn && obj.piece[0] == this.state.orientation[0]}
+                orientation={this.state.orientation}
 
                 onSquareClick={this.onSquareClick}
                 onDrop={this.onDrop}
