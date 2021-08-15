@@ -27,7 +27,7 @@ export default class AdminPage extends React.Component<AdminPageProps, AdminPage
             <Switch>
                 <Route path="/admin/bots">
                     <Suspense fallback={<div>Loading Bots...</div>}>
-                        <AdminBotsPage/>
+                        <AdminBotsPage user={this.props.user}/>
                     </Suspense>
                 </Route>
                 <Route path="/admin/status">

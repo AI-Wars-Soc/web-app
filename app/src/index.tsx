@@ -34,7 +34,7 @@ function App(): JSX.Element {
     updateUser();
 
     const logOut = () => {
-        document.cookie = "log_out=true; SameSite=Strict";
+        document.cookie = "log_out=true; SameSite=Lax";
         updateUser();
     };
 

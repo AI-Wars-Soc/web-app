@@ -40,11 +40,13 @@ export abstract class ApiBoundComponent<P extends ApiBoundComponentProps, D, S e
 {
     private readonly apiEndpoint: string;
     private readonly requiresUser: boolean;
+    private cancelRequest: boolean;
 
     protected constructor(apiEndpoint: string, props: P, requiresUser = true) {
         super(props);
         this.apiEndpoint = apiEndpoint;
-        this.requiresUser = requiresUser
+        this.requiresUser = requiresUser;
+        this.cancelRequest = false;
 
         this.fetch = this.fetch.bind(this);
     }
@@ -66,6 +68,9 @@ export abstract class ApiBoundComponent<P extends ApiBoundComponentProps, D, S e
                 if (data === undefined) {
                     return Promise.reject("Data field not present");
                 }
+                if (this.cancelRequest) {
+                    return;
+                }
                 this.setState({
                     data: data
                 });
@@ -83,6 +88,7 @@ export abstract class ApiBoundComponent<P extends ApiBoundComponentProps, D, S e
             error: false,
             data: null
         });
+        this.cancelRequest = false;
         this.fetch();
     }
 
@@ -90,6 +96,13 @@ export abstract class ApiBoundComponent<P extends ApiBoundComponentProps, D, S e
         if (!prevProps.user.equals(this.props.user)) {
             this.fetch();
         }
+    }
+
+    componentWillUnmount(): void {
+        this.cancelRequest = true;
+        this.setState({
+            data: null
+        })
     }
 
     render(): JSX.Element {
@@ -105,7 +118,7 @@ export abstract class ApiBoundComponent<P extends ApiBoundComponentProps, D, S e
     }
 
     protected abstract typeCheck(data: unknown): data is D;
-    protected renderError(): JSX.Element { return <>Failed to load endpoint {this.apiEndpoint.replace("_", " ")} </>; }
+    protected renderError(): JSX.Element { return <>Failed to load {this.apiEndpoint.replace("_", " ")} endpoint</>; }
     protected renderLoading(): JSX.Element { return <></>; }
     protected abstract renderLoaded(data: D): JSX.Element;
 }
