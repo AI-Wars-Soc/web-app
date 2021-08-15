@@ -21,24 +21,20 @@ export default class AdminPage extends React.Component<AdminPageProps, AdminPage
         }
 
         const AdminBotsPage = React.lazy(() => import("./adminBotsPage"));
+        const AdminServicePage = React.lazy(() => import("./adminServicePage"));
 
         return <>
-            <nav id="sidebar">
-                <div className="sidebar-header">
-                    <h3>Admin Tools</h3>
-                </div>
-
-                <ul className="list-unstyled components">
-                    <p>Links</p>
-                    <li>
-                        <Link to={"/admin"}>Admin Home</Link>
-                    </li>
-                    <li>
-                        <Link to={"/admin/bots"}>Bots</Link>
-                    </li>
-                </ul>
-            </nav>
             <Switch>
+                <Route path="/admin/bots">
+                    <Suspense fallback={<div>Loading Bots...</div>}>
+                        <AdminBotsPage/>
+                    </Suspense>
+                </Route>
+                <Route path="/admin/status">
+                    <Suspense fallback={<div>Loading Service Status...</div>}>
+                        <AdminServicePage user={this.props.user}/>
+                    </Suspense>
+                </Route>
                 <Route path="/admin">
                     <div className="flex-column justify-content-center justify-content-sm-start">
                         <h1>Admin Index Page</h1>
@@ -48,11 +44,15 @@ export default class AdminPage extends React.Component<AdminPageProps, AdminPage
                             For all your administration needs
                         </p>
                     </div>
-                </Route>
-                <Route path="/admin/bots">
-                    <Suspense fallback={<div>Loading Bots...</div>}>
-                        <AdminBotsPage/>
-                    </Suspense>
+
+                    <ul className="flex-column mb-auto">
+                        <li>
+                            <Link to="/admin/bots">Bots</Link>
+                        </li>
+                        <li>
+                            <Link to="/admin/status">Service Status</Link>
+                        </li>
+                    </ul>
                 </Route>
             </Switch>
         </>;
