@@ -10,7 +10,7 @@ export default class MyFooter extends React.Component {
                             &copy; 2020-2021 Joe O&apos;Connor
                         </li>
                         <li className="nav-item text-center">
-                            Join our <a href="https://discord.gg/mtpmA2MH5u" className="footer-link">Discord</a>
+                            <a href="https://discord.gg/mtpmA2MH5u" className="footer-link">Join our Discord</a>
                         </li>
                     </ul>
                 </div>
