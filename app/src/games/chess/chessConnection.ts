@@ -27,11 +27,6 @@ type MessageType = {
     }
 }
 
-type MessageData = {
-    status: "debug" | "error" | "message",
-    data: string
-}
-
 type MoveCallback = (fen: string, chess960: boolean, time_remaining: number) => unknown;
 
 type EndCallback = (result: "win" | "loss" | "draw", result_code: string) => unknown;
@@ -53,34 +48,15 @@ export class ChessConnection {
 
         // Listen for messages
         this.socket.addEventListener('message', (event) => {
-            const data: MessageData = JSON.parse(event.data);
+            const data: MessageType = JSON.parse(event.data);
 
-            if (!isA<MessageData>(data)) {
+            if (!isA<MessageType>(data)) {
                 console.error('Invalid data from server: ', data);
                 this.stop();
                 return;
             }
 
-            switch (data.status) {
-                case "debug":
-                    return;
-                case "error":
-                    console.error('Game error: ', data.data);
-                    this.stop();
-                    return;
-                case "message":
-                    const message: MessageType = JSON.parse(data.data);
-                    if (!isA<MessageType>(message)) {
-                        console.error('Invalid message format from server: ', message);
-                        this.stop();
-                        return;
-                    }
-                    this.processMessage(message);
-                    return;
-                default:
-                    console.error('Unknown data from server: ', data);
-                    return;
-            }
+            this.processMessage(data);
         });
     }
 
