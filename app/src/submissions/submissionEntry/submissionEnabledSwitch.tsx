@@ -1,5 +1,5 @@
 import React, {ChangeEvent} from "react";
-import {Post} from "../apiBoundComponent";
+import {Post} from "../../apiBoundComponent";
 
 type SubmissionEnabledSwitchProps = {
     submission_id: number,

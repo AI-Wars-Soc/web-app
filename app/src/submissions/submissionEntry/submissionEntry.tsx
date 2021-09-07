@@ -1,8 +1,8 @@
 import React, {Suspense} from "react";
 import {Accordion, Card} from "react-bootstrap";
 import {ChevronDown} from "react-bootstrap-icons";
-import {User} from "../user";
-import {Post} from "../apiBoundComponent";
+import {User} from "../../user";
+import {Post} from "../../apiBoundComponent";
 
 const SubmissionWinLossGraph = React.lazy(() => import("./submissionWinLossGraph"));
 const SubmissionEnabledSwitch = React.lazy(() => import("./submissionEnabledSwitch"));

@@ -1,8 +1,8 @@
 import React from "react";
-import {SubmissionField} from "./submissionField";
+import {SubmissionForm} from "./submissionForm/submissionForm";
 import {User} from "../user";
 import {Accordion} from "react-bootstrap";
-import {SubmissionEntry, SubmissionData} from "./submissionEntry";
+import {SubmissionEntry, SubmissionData} from "./submissionEntry/submissionEntry";
 import {ApiBoundComponent} from "../apiBoundComponent";
 import {isA} from "ts-type-checked";
 
@@ -41,7 +41,7 @@ export default class SubmissionsPage extends ApiBoundComponent<SubmissionsPagePr
             <div className="my-2 my-md-4 d-flex flex-row">
                 <div className="d-flex justify-content-center w-100 w-lg-50">
                     <div className="d-flex flex-column mx-lg-4 flex-grow-1" id="submissions">
-                        <SubmissionField refreshSubmissions={this.fetch}/>
+                        <SubmissionForm refreshSubmissions={this.fetch}/>
                         <div className="p-1 p-md-2">
                             <div className="d-flex justify-content-center w-100 flex-row p-1 p-md-2 px-lg-5">
                                 {submissions}

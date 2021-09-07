@@ -32,6 +32,10 @@ export function Post<T>(apiEndpoint: string, sentData: Record<string, unknown> =
                 console.error("Endpoint gave wrong data shape");
                 return Promise.reject(response);
             }
+            if (returnedData === null || returnedData === undefined) {
+                console.error("Endpoint gave null/undefined");
+                return Promise.reject(response);
+            }
             return returnedData as T;
         });
 }

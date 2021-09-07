@@ -1,19 +1,19 @@
 import React, {FormEvent} from "react";
-import {Post} from "../apiBoundComponent";
+import {Post} from "../../apiBoundComponent";
 
-type SubmissionFieldProps = {
+type SubmissionURLFormProps = {
     refreshSubmissions: () => unknown
 };
 
-type SubmissionFieldState = {
+type SubmissionURLFormState = {
     loading: boolean
     error: boolean
 };
 
-export class SubmissionField extends React.Component<SubmissionFieldProps, SubmissionFieldState> {
+export class SubmissionURLForm extends React.Component<SubmissionURLFormProps, SubmissionURLFormState> {
     private urlNode: HTMLInputElement | null;
 
-    constructor(props: SubmissionFieldProps) {
+    constructor(props: SubmissionURLFormProps) {
         super(props);
         this.state = {
             loading: false,
