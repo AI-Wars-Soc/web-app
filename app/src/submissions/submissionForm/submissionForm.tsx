@@ -1,6 +1,8 @@
 import React from "react";
 import {isA} from "ts-type-checked";
-import {SubmissionURLForm} from "./submissionURLForm";
+import {SubmissionErrorBox} from "./submissionErrorBox";
+const SubmissionURLForm = React.lazy(() => import("./submissionURLForm"));
+const SubmissionUploadForm = React.lazy(() => import("./submissionUploadForm"));
 
 type SubmissionFormProps = {
     refreshSubmissions: () => unknown
@@ -9,7 +11,8 @@ type SubmissionFormProps = {
 type SubmissionMethod = "upload" | "git-url";
 
 type SubmissionFormState = {
-    selectedSubmissionMethod: SubmissionMethod
+    selectedSubmissionMethod: SubmissionMethod,
+    error: string | null
 }
 
 export class SubmissionForm extends React.Component<SubmissionFormProps, SubmissionFormState> {
@@ -22,7 +25,8 @@ export class SubmissionForm extends React.Component<SubmissionFormProps, Submiss
         }
 
         this.state = {
-            selectedSubmissionMethod: submissionMethod as SubmissionMethod
+            selectedSubmissionMethod: submissionMethod as SubmissionMethod,
+            error: null
         }
     }
 
@@ -32,15 +36,13 @@ export class SubmissionForm extends React.Component<SubmissionFormProps, Submiss
         }
     }
 
-    private renderForm(): JSX.Element
-    {
+    private renderForm(): JSX.Element {
+        const setError = (error: string | null) => this.setState({error: error});
         switch (this.state.selectedSubmissionMethod) {
             case "upload":
-                const extension = navigator.platform.startsWith("Win") ? "zip" : "tar";
-                const url = "/api/get_default_submission?extension=" + extension;
-                return <a download={true} href={url}>Download Base</a>
+                return <SubmissionUploadForm refreshSubmissions={this.props.refreshSubmissions} setError={setError}/>
             case "git-url":
-                return <SubmissionURLForm refreshSubmissions={this.props.refreshSubmissions}/>
+                return <SubmissionURLForm refreshSubmissions={this.props.refreshSubmissions} setError={setError}/>
             default:
                 this.setState({
                     selectedSubmissionMethod: "upload"
@@ -54,11 +56,19 @@ export class SubmissionForm extends React.Component<SubmissionFormProps, Submiss
         const iCurrent = options.indexOf(this.state.selectedSubmissionMethod);
         const iNext = (iCurrent + 1) % options.length;
         const next = options[iNext];
-        return <>
-            {this.renderForm()}
-            <a href={"#"} onClick={() => this.setState({
-                selectedSubmissionMethod: next
-            })}>Or {["Upload your files Online", "Provide a Git Link"][iNext]}</a>
-        </>
+        return <div className="container">
+            <div className="row justify-content-center">
+                {this.renderForm()}
+            </div>
+            <div className="w-100 m-3"/>
+            <div className="row justify-content-center">
+                <a className="text-secondary" href={"#"} onClick={() => this.setState({
+                    selectedSubmissionMethod: next
+                })}>Or {["Upload your files Online", "Provide a Git Link"][iNext]}</a>
+            </div>
+            <div className="row justify-content-center">
+                <SubmissionErrorBox error={this.state.error}/>
+            </div>
+        </div>
     }
 }
