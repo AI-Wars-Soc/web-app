@@ -21,7 +21,7 @@ export default class SubmissionUploadForm extends React.Component<SubmissionUplo
             downloaded: localStorage.getItem("downloaded-base-ai") === "true"
         }
 
-        this.onDownloadClicked = this.onDownloadClicked.bind(this);
+        this.setDownloaded = this.setDownloaded.bind(this);
         this.onSubmit = this.onSubmit.bind(this);
     }
 
@@ -36,12 +36,6 @@ export default class SubmissionUploadForm extends React.Component<SubmissionUplo
         localStorage.setItem("downloaded-base-ai", "true");
     }
 
-    private onDownloadClicked(): void {
-        window.open(SubmissionUploadForm.getURL());
-
-        this.setDownloaded();
-    }
-
     private onSubmit(): void {
         this.props.setError("Not Implemented");
 
@@ -53,9 +47,9 @@ export default class SubmissionUploadForm extends React.Component<SubmissionUplo
 
         return <>
             <div className="col-5">
-                <button type="submit"
-                        className={"btn float-right " + (downloaded ? "btn-secondary" : "btn-primary")}
-                        onClick={this.onDownloadClicked}>Download base AI</button>
+                <a href={SubmissionUploadForm.getURL()} download={"base-ai.zip"}
+                   className={"btn float-right " + (downloaded ? "btn-secondary" : "btn-primary")}
+                   onClick={this.setDownloaded}>Download base AI</a>
             </div>
             <div className="col-5">
                 <button type="submit"
