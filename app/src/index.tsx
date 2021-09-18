@@ -1,4 +1,4 @@
-import React, {Suspense, useState} from 'react';
+import React, {useState} from 'react';
 import {render} from 'react-dom';
 import {
     BrowserRouter as Router,
@@ -9,6 +9,7 @@ import {
 import './style.scss';
 import {MyNavbar} from "./navbar/navbar"
 import {getUser, User} from "./user"
+import {LoadingSuspense} from "./loadingSuspense";
 
 const AboutPage = React.lazy(() => import("./aboutPage"));
 const SubmissionsPage = React.lazy(() => import("./submissions/submissionsPage"));
@@ -39,9 +40,9 @@ function App(): JSX.Element {
     };
 
     const GamesPageWrapper = (props: {match: {params: { submissionId: number }}}) => {
-        return <Suspense fallback={<div>Loading Game Engine...</div>}>
+        return <LoadingSuspense>
             <GamesPage user={user} submission_id={props.match.params.submissionId}/>
-        </Suspense>
+        </LoadingSuspense>
     };
 
     return (
@@ -52,30 +53,30 @@ function App(): JSX.Element {
                     <div className="fill flex-column mx-md-3 p-2 p-sm-5">
                         <Switch>
                             <Route path="/about">
-                                <Suspense fallback={<div/>}>
+                                <LoadingSuspense>
                                     <AboutPage/>
-                                </Suspense>
+                                </LoadingSuspense>
                             </Route>
                             <Route path="/leaderboard">
-                                <Suspense fallback={<div>Loading Leaderboard...</div>}>
+                                <LoadingSuspense>
                                     <LeaderboardPage user={user}/>
-                                </Suspense>
+                                </LoadingSuspense>
                             </Route>
                             <Route path="/submissions">
-                                <Suspense fallback={<div>Loading Submissions...</div>}>
+                                <LoadingSuspense>
                                     <SubmissionsPage user={user}/>
-                                </Suspense>
+                                </LoadingSuspense>
                             </Route>
                             <Route path="/admin">
-                                <Suspense fallback={<div>Loading...</div>}>
+                                <LoadingSuspense>
                                     <AdminPage user={user}/>
-                                </Suspense>
+                                </LoadingSuspense>
                             </Route>
                             <Route path="/play/:submissionId" component={GamesPageWrapper}/>
                             <Route path="/me">
-                                <Suspense fallback={<div>Loading Your Page...</div>}>
+                                <LoadingSuspense>
                                     <MePage user={user} logOut={logOut} updateUser={updateUser}/>
-                                </Suspense>
+                                </LoadingSuspense>
                             </Route>
                             <Route path="/">
                                 <Redirect to={"/about"}/>
@@ -85,9 +86,9 @@ function App(): JSX.Element {
                 </div>
             </Router>
 
-            <Suspense fallback={<></>}>
+            <LoadingSuspense>
                 <MyFooter/>
-            </Suspense>
+            </LoadingSuspense>
         </>
     );
 }
