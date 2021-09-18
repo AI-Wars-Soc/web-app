@@ -1,4 +1,8 @@
 import React from "react";
+import {Button, Col} from "react-bootstrap";
+import {LoadingOrText} from "../../loadingOrText";
+import {LoadingSuspense} from "../../loadingSuspense";
+const Dropzone = React.lazy(() => import("react-dropzone"));
 
 type SubmissionUploadFormProps = {
     refreshSubmissions: () => unknown
@@ -46,20 +50,29 @@ export default class SubmissionUploadForm extends React.Component<SubmissionUplo
         const downloaded = this.state.downloaded;
 
         return <>
-            <div className="col-5">
+            <Col xs={3}>
                 <a href={SubmissionUploadForm.getURL()} download={"base-ai.zip"}
                    className={"btn float-right " + (downloaded ? "btn-secondary" : "btn-primary")}
                    onClick={this.setDownloaded}>Download base AI</a>
-            </div>
-            <div className="col-5">
-                <button type="submit"
-                        className={"btn " + (downloaded ? "btn-primary" : "btn-secondary")}
+            </Col>
+            <Col xs={6}>
+                <LoadingSuspense>
+                    <Dropzone>
+                        {({getRootProps, getInputProps}: {getRootProps: () => never, getInputProps: () => never}) => (
+                            <div {...getRootProps()}>
+                                <input {...getInputProps()} />
+                                <p>Drag &apos;n&apos; drop some files here, or click to select files</p>
+                            </div>
+                        )}
+                    </Dropzone>
+                </LoadingSuspense>
+            </Col>
+            <Col xs={3}>
+                <Button type="submit" variant={downloaded ? "primary" : "secondary"}
                         onClick={this.onSubmit}>
-                    {this.state.loading ?
-                        <span className="spinner-border spinner-border-sm" role="status"
-                              id="submit-spinner"/> : <>Upload your new AI</>}
-                </button>
-            </div>
+                    <LoadingOrText loading={this.state.loading}>Upload your new AI</LoadingOrText>
+                </Button>
+            </Col>
         </>;
     }
 }

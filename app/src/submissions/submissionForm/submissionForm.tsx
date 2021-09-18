@@ -1,6 +1,7 @@
 import React from "react";
 import {isA} from "ts-type-checked";
 import {SubmissionErrorBox} from "./submissionErrorBox";
+import {LoadingSuspense} from "../../loadingSuspense";
 const SubmissionURLForm = React.lazy(() => import("./submissionURLForm"));
 const SubmissionUploadForm = React.lazy(() => import("./submissionUploadForm"));
 
@@ -40,9 +41,13 @@ export class SubmissionForm extends React.Component<SubmissionFormProps, Submiss
         const setError = (error: string | null) => this.setState({error: error});
         switch (this.state.selectedSubmissionMethod) {
             case "upload":
-                return <SubmissionUploadForm refreshSubmissions={this.props.refreshSubmissions} setError={setError}/>
+                return <LoadingSuspense>
+                    <SubmissionUploadForm refreshSubmissions={this.props.refreshSubmissions} setError={setError}/>
+                </LoadingSuspense>
             case "git-url":
-                return <SubmissionURLForm refreshSubmissions={this.props.refreshSubmissions} setError={setError}/>
+                return <LoadingSuspense>
+                    <SubmissionURLForm refreshSubmissions={this.props.refreshSubmissions} setError={setError}/>
+                </LoadingSuspense>
             default:
                 this.setState({
                     selectedSubmissionMethod: "upload"
