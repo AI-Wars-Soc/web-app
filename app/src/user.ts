@@ -1,6 +1,5 @@
 import {Post} from "./apiBoundComponent";
 import {isA} from "ts-type-checked";
-import RuntimeError = WebAssembly.RuntimeError;
 import equal from 'fast-deep-equal/es6/react';
 
 type UserInfo = {
@@ -44,14 +43,6 @@ export class User {
 
     isLoggedIn(): boolean {
         return this.user !== null;
-    }
-
-    getUser(): UserInfo {
-        if (this.user === null) {
-            throw new RuntimeError();
-        }
-
-        return this.user;
     }
 
     getUserOrNull(): UserInfo | null {

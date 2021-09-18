@@ -36,7 +36,11 @@ export default class MePage extends React.Component<MePageProps, MePageState> {
     }
 
     render(): JSX.Element {
-        const user = this.props.user.getUser();
+        const user = this.props.user.getUserOrNull();
+
+        if (user === null) {
+            return <>Please log in to see this page</>;
+        }
 
         return MePage.getPage(user.real_name, user.nickname, [
             <RealNameSwitch key={"displayRealNameSwitch"} active={user.display_real_name} updateUser={this.props.updateUser}/>,

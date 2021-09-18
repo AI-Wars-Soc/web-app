@@ -110,17 +110,13 @@ export default function AboutPage(): JSX.Element {
                     Therefore:
                     <ul>
                         <li>
-                            Your program should be completely stateless.
-                            The game is not guaranteed to start from a usual starting position.
-                        </li>
-                        <li>
-                            Your AI will be terminated if you go over the given limits.
-                        </li>
-                        <li>
                             Do not try to break out of the sandbox provided.
                         </li>
                         <li>
                             Do not search for extra processors or processing devices.
+                        </li>
+                        <li>
+                            Your AI will be terminated if you go over the given limits.
                         </li>
                     </ul>
                     You will be disqualified from all future events if you are found to have tried to gain access to

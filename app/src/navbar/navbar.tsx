@@ -67,6 +67,14 @@ class MyRoutableNavbar extends ApiBoundComponent<NavbarProps, NavbarData, Navbar
         this.setState({loginModalShow: false});
     }
 
+    componentDidUpdate(prevProps: NavbarProps) {
+        super.componentDidUpdate(prevProps);
+
+        if (prevProps.location.pathname !== this.props.location.pathname) {
+            this.closeModal();
+        }
+    }
+
     private static renderNavbar(error: boolean, soc_name = ".", lNav: JSX.Element[] = [], rNav: JSX.Element[] = []): JSX.Element {
         let errorDiv = <></>;
         if (error) {
@@ -116,7 +124,7 @@ class MyRoutableNavbar extends ApiBoundComponent<NavbarProps, NavbarData, Navbar
             if (forceShow) {
                 this.props.history.push("/");
             }
-            this.closeModal()
+            this.closeModal();
         };
 
         const lNavItems: [string, JSX.Element][] = [
@@ -157,4 +165,4 @@ class MyRoutableNavbar extends ApiBoundComponent<NavbarProps, NavbarData, Navbar
     }
 }
 
-export const MyNavbar = withRouter(MyRoutableNavbar);
+export default withRouter(MyRoutableNavbar);
