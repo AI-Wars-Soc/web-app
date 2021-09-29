@@ -16,6 +16,22 @@ type SubmissionUploadFormState = {
     downloaded: boolean
 };
 
+const dropzoneStyle = {
+    flex: 1,
+    display: 'flex',
+    flexDirection: 'column',
+    alignItems: 'center',
+    padding: '20px',
+    borderWidth: 2,
+    borderRadius: 2,
+    borderColor: '#eeeeee',
+    borderStyle: 'dashed',
+    backgroundColor: '#fafafa',
+    color: '#bdbdbd',
+    outline: 'none',
+    transition: 'border .24s ease-in-out'
+};
+
 export default class SubmissionUploadForm extends React.Component<SubmissionUploadFormProps, SubmissionUploadFormState> {
     constructor(props: SubmissionUploadFormProps) {
         super(props);
@@ -50,16 +66,11 @@ export default class SubmissionUploadForm extends React.Component<SubmissionUplo
         const downloaded = this.state.downloaded;
 
         return <>
-            <Col xs={3}>
-                <a href={SubmissionUploadForm.getURL()} download={"base-ai.zip"}
-                   className={"btn float-right " + (downloaded ? "btn-secondary" : "btn-primary")}
-                   onClick={this.setDownloaded}>Download base AI</a>
-            </Col>
-            <Col xs={6}>
+            <Col xs={12}>
                 <LoadingSuspense>
                     <Dropzone>
                         {({getRootProps, getInputProps}: {getRootProps: () => never, getInputProps: () => never}) => (
-                            <div {...getRootProps()}>
+                            <div style={dropzoneStyle} {...getRootProps()}>
                                 <input {...getInputProps()} />
                                 <p>Drag &apos;n&apos; drop some files here, or click to select files</p>
                             </div>
@@ -67,7 +78,12 @@ export default class SubmissionUploadForm extends React.Component<SubmissionUplo
                     </Dropzone>
                 </LoadingSuspense>
             </Col>
-            <Col xs={3}>
+            <Col xs={6}>
+                <a href={SubmissionUploadForm.getURL()} download={"base-ai.zip"}
+                   className={"btn float-right " + (downloaded ? "btn-secondary" : "btn-primary")}
+                   onClick={this.setDownloaded}>Download base AI</a>
+            </Col>
+            <Col xs={6}>
                 <Button type="submit" variant={downloaded ? "primary" : "secondary"}
                         onClick={this.onSubmit}>
                     <LoadingOrText loading={this.state.loading}>Upload your new AI</LoadingOrText>

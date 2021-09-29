@@ -92,77 +92,6 @@ body {
   opacity: 0.5;
 }
 
-.nickname-text {
-  color: $gray-600;
-}
-
-#leaderboard {
-
-}
-
-.leaderboard-entry-child-container {
-
-}
-
-.leaderboard-position {
-  width: 100px;
-  text-align: center;
-}
-
-.leaderboard-name {
-  flex-grow: 1;
-}
-
-.leaderboard-wins {
-  width: 80px;
-  text-align: center;
-}
-
-.leaderboard-losses {
-  width: 80px;
-  text-align: center;
-}
-
-.leaderboard-draws {
-  width: 80px;
-  text-align: center;
-}
-
-.leaderboard-spacer {
-  width: 30px;
-}
-
-.leaderboard-score {
-  width: 100px;
-  text-align: end;
-}
-
-.leaderboard-submission {
-  border-width: 1px;
-  border-style: solid;
-  border-color: transparent;
-  border-radius: 20px;
-  margin: 5px;
-}
-
-.leaderboard-user-submission {
-  border-width: 6px;
-  border-style: double;
-  border-color: #2D7DD2;
-  margin: 0;
-}
-
-.leaderboard-bot-submission {
-  border-width: 3px;
-  border-style: solid;
-  border-color: #90001C;
-  margin: 3px !important;
-}
-
-.leaderboard-other-submission {
-  border-color: $secondary;
-}
-
 #overTimeChartContainer {
 }
 
@@ -239,11 +168,6 @@ body {
           rgba(235, 54, 54, 0.1) 10px,
           rgba(235, 54, 54, 0.4) 10px,
           rgba(235, 54, 54, 0.4) 20px);
-}
-
-.submission-submit-button {
-  max-width: 100px;
-  width: 100% !important;
 }
 
 @keyframes barberpole {

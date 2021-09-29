@@ -3,6 +3,7 @@ import {User} from "../user";
 import {ApiBoundComponent} from "../apiBoundComponent";
 import {isA} from "ts-type-checked";
 import {ChessGameOptions} from "./chess/chessGame";
+import {CenterDiv} from "../centreDiv";
 
 type GamesPageProps = {
     user: User,
@@ -82,7 +83,9 @@ export default class GamesPage extends ApiBoundComponent<GamesPageProps, GamesPa
 
         return <>
             Playing {data.gamemode.id}
-            {lazyElement}
+            <CenterDiv>
+                {lazyElement}
+            </CenterDiv>
         </>
     }
 }

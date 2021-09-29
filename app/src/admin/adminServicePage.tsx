@@ -2,6 +2,7 @@ import React from "react";
 import {ApiBoundComponent} from "../apiBoundComponent";
 import {User} from "../user";
 import {isA} from "ts-type-checked";
+import {Container, Row} from "react-bootstrap";
 
 type AdminServicePageProps = {
     user: User
@@ -28,9 +29,9 @@ export default class AdminServicePage extends ApiBoundComponent<AdminServicePage
 
     protected renderLoaded(data: AdminServicePageData): JSX.Element {
         const elms: [string, boolean][] = [["web-api", data.web_api]]
-        return <ul>
-            {elms.map(([a, b]) => <li key={a}> {a}: {b ? "&#x2714;" : "&#x2717;"} </li>)}
-            </ul>;
+        return <Container>
+            {elms.map(([a, b]) => <Row key={a}> {a}: {b ? "&#x2714;" : "&#x2717;"} </Row>)}
+            </Container>;
     }
 
     protected typeCheck(data: unknown): data is AdminServicePageData {

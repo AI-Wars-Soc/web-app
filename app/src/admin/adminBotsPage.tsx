@@ -2,7 +2,8 @@ import React, {FormEvent} from "react";
 import {ApiBoundComponent, Post} from "../apiBoundComponent";
 import {User} from "../user";
 import {isA} from "ts-type-checked";
-import {Button} from "react-bootstrap";
+import {Button, Col, FormControl, Row} from "react-bootstrap";
+import {SubmissionButton} from "../submissions/submissionButton";
 
 type AdminBotsPageProps = {
     user: User
@@ -95,35 +96,27 @@ export default class AdminBotsPage extends ApiBoundComponent<AdminBotsPageProps,
         }
 
         const submissionForm = <form action="#" id="bot-form" method="GET" onSubmit={this.onSubmit}>
-            <div className="d-flex justify-content-center w-100">
-                <div className="d-flex max-width-center row">
-                    <div className="col-2 my-auto">
-                        <label htmlFor="name" className="my-auto text-right">Bot Name:</label>
-                    </div>
-                    <div className="col-10 my-auto">
-                        <input type="text" className="form-control" id="name" ref={node => (this.nameNode = node)}
-                               placeholder={"Bot " + (data.bots.length + 1)} required/>
-                    </div>
-                    <div className="col-2 my-auto">
-                        <label htmlFor="repo" className="my-auto text-right">Repository URL:</label>
-                    </div>
-                    <div className="col-10 my-auto">
-                        <input type="url" className="form-control" id="repo" ref={node => (this.urlNode = node)}
-                               placeholder="https://github.com/your/repo" required/>
-                    </div>
-                    <div className="col-4 my-auto py-2 py-sm-3 py-md-0">
-                        <div
-                            className="d-flex w-100 justify-content-center justify-content-md-left">
-                            <button type="submit"
-                                    className="btn btn-primary submission-submit-button">
-                                {this.state.loading ?
-                                    <span className="spinner-border spinner-border-sm" role="status"
-                                          id="submit-spinner"/> : <>Submit</>}
-                            </button>
-                        </div>
-                    </div>
-                </div>
-            </div>
+            <Row style={{width: "100%", maxWidth: "1000px"}}>
+                <Col xs={2} className="text-right my-auto">
+                    <label htmlFor="name">Bot Name:</label>
+                </Col>
+                <Col xs={10}>
+                    <FormControl type="text" id="name" ref={(node: HTMLInputElement) => (this.nameNode = node)}
+                           placeholder={"Bot " + (data.bots.length + 1)} required/>
+                </Col>
+                <Col xs={2} className="text-right my-auto">
+                    <label htmlFor="repo">Repository URL:</label>
+                </Col>
+                <Col xs={10}>
+                    <FormControl type="url" id="repo" ref={(node: HTMLInputElement) => (this.urlNode = node)}
+                           placeholder="https://github.com/your/repo" required/>
+                </Col>
+                <Col xs={12}>
+                    <SubmissionButton loading={this.state.loading}>
+                        Submit
+                    </SubmissionButton>
+                </Col>
+            </Row>
         </form>;
 
         return <>
