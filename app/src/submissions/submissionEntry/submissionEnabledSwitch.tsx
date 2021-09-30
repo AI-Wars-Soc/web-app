@@ -1,5 +1,6 @@
 import React, {ChangeEvent} from "react";
 import {Post} from "../../apiBoundComponent";
+import Switch from "react-bootstrap/Switch";
 
 type SubmissionEnabledSwitchProps = {
     submission_id: number,
@@ -35,16 +36,13 @@ export default class SubmissionEnabledSwitch extends React.Component<SubmissionE
     }
 
     render(): JSX.Element {
-        return <div className="p-1 submission-active-switch">
-            <div className="custom-control custom-switch">
-                <input type="checkbox" className="custom-control-input"
-                       id={"enabledSwitch" + this.props.submission_id}
-                       checked={this.props.active}
-                       onChange={this.onSwitch}/>
-                <label className="custom-control-label"
-                       htmlFor={"enabledSwitch" + this.props.submission_id}>{this.props.active ? "Enabled" : "Disabled"}</label>
-
-            </div>
+        return <div className="p-1">
+            <Switch
+                onChange={this.onSwitch}
+                id={"enabledSwitch" + this.props.submission_id}
+                label={this.props.active ? "Enabled" : "Disabled"}
+                checked={this.props.active}
+            />
         </div>;
     }
 }

@@ -35,15 +35,6 @@ body {
   flex-shrink: 0;
 }
 
-.hand {
-  cursor: pointer;
-}
-
-.max-width-center {
-  max-width: 1000px;
-  width: 100% !important;
-}
-
 .footer-link {
   max-height: 24px;
   color: $footer-link-color;
@@ -53,79 +44,9 @@ body {
   opacity: 0.5;
 }
 
-#overTimeChartContainer {
-}
-
 #overTimeChart {
   max-width: 800px;
   max-height: 400px;
-}
-
-.submission-index {
-  width: 50px;
-  text-align: left;
-}
-
-.submission-url {
-}
-
-.submission-date {
-}
-
-.submission-rounded {
-  border-radius: 14px !important;
-  border-width: 0;
-}
-
-.submission-entry {
-  border-radius: 15px;
-  border-width: 2px;
-  border-style: solid;
-  margin: 4px;
-  opacity: 0.5;
-}
-
-.submission-entry-active {
-  opacity: 1.0;
-}
-
-.submission-entry-selected {
-  border-radius: 20px;
-  border-width: 6px;
-  border-style: double;
-
-  margin: 0;
-}
-
-.submission-entry-testing {
-  background: rgba(54, 126, 235, 0.3);
-}
-
-.submission-crash-report {
-  background: rgba($bg-main, 0.5);
-  border-radius: 20px;
-}
-
-.testing-stripes {
-  background: repeating-linear-gradient(35deg,
-          rgba(54, 126, 235, 0.1),
-          rgba(54, 126, 235, 0.1) 10px,
-          rgba(54, 126, 235, 0.4) 10px,
-          rgba(54, 126, 235, 0.4) 20px);
-  background-size: 200% 200%;
-  animation: barberpole 5s linear infinite;
-}
-
-.submission-entry-invalid {
-  background: rgba(235, 54, 54, 0.3);
-}
-
-.invalid-stripes {
-  background: repeating-linear-gradient(45deg,
-          rgba(235, 54, 54, 0.1),
-          rgba(235, 54, 54, 0.1) 10px,
-          rgba(235, 54, 54, 0.4) 10px,
-          rgba(235, 54, 54, 0.4) 20px);
 }
 
 @keyframes barberpole {

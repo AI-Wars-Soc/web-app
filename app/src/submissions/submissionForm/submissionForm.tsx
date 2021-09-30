@@ -2,6 +2,8 @@ import React from "react";
 import {isA} from "ts-type-checked";
 import {SubmissionErrorBox} from "./submissionErrorBox";
 import {LoadingSuspense} from "../../loadingSuspense";
+import {Container, Row} from "react-bootstrap";
+import {CenterDiv} from "../../centreDiv";
 const SubmissionURLForm = React.lazy(() => import("./submissionURLForm"));
 const SubmissionUploadForm = React.lazy(() => import("./submissionUploadForm"));
 
@@ -61,19 +63,25 @@ export class SubmissionForm extends React.Component<SubmissionFormProps, Submiss
         const iCurrent = options.indexOf(this.state.selectedSubmissionMethod);
         const iNext = (iCurrent + 1) % options.length;
         const next = options[iNext];
-        return <div className="container">
-            <div className="row justify-content-center">
-                {this.renderForm()}
-            </div>
+        return <Container>
+            <Row>
+                <CenterDiv>
+                    {this.renderForm()}
+                </CenterDiv>
+            </Row>
             <div className="w-100 m-3"/>
-            <div className="row justify-content-center">
-                <a className="text-secondary" href={"#"} onClick={() => this.setState({
-                    selectedSubmissionMethod: next
-                })}>Or {["Upload your files Online", "Provide a Git Link"][iNext]}</a>
-            </div>
-            <div className="row justify-content-center">
-                <SubmissionErrorBox error={this.state.error}/>
-            </div>
-        </div>
+            <Row>
+                <CenterDiv>
+                    <a className="text-secondary" href={"#"} onClick={() => this.setState({
+                        selectedSubmissionMethod: next
+                    })}>Or {["Upload your files Online", "Provide a Git Link"][iNext]}</a>
+                </CenterDiv>
+            </Row>
+            <Row>
+                <CenterDiv>
+                    <SubmissionErrorBox error={this.state.error}/>
+                </CenterDiv>
+            </Row>
+        </Container>
     }
 }
