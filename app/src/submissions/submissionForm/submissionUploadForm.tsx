@@ -26,7 +26,8 @@ export default class SubmissionUploadForm extends React.Component<SubmissionUplo
         }
 
         this.setDownloaded = this.setDownloaded.bind(this);
-        this.onSubmit = this.onSubmit.bind(this);
+        this.onOpenUploadDialogue = this.onOpenUploadDialogue.bind(this);
+        this.onFilesOpened = this.onFilesOpened.bind(this);
     }
 
     private static getURL(): string {
@@ -40,7 +41,23 @@ export default class SubmissionUploadForm extends React.Component<SubmissionUplo
         localStorage.setItem("downloaded-base-ai", "true");
     }
 
-    private onSubmit(): void {
+    private onFilesOpened(files: File[]): void {
+        files.forEach((file) => {
+            const reader = new FileReader()
+
+            reader.onabort = () => console.log('file reading was aborted')
+            reader.onerror = () => console.log('file reading has failed')
+            reader.onload = () => {
+                // Do whatever you want with the file contents
+                const binaryStr = reader.result
+                console.log(binaryStr)
+            }
+
+            reader.readAsArrayBuffer(file)
+        })
+    }
+
+    private onOpenUploadDialogue(): void {
         this.setState({uploadModalOpen: true});
 
         this.setDownloaded();
@@ -51,7 +68,7 @@ export default class SubmissionUploadForm extends React.Component<SubmissionUplo
 
         return <>
             <SubmissionUploadModal handleClose={() => this.setState({uploadModalOpen: false})}
-                                   handleSubmissionUpload={acceptedFiles => console.log(acceptedFiles)}
+                                   handleSubmissionUpload={acceptedFiles => this.onFilesOpened(acceptedFiles)}
                                    show={this.state.uploadModalOpen}/>
             <Col xs={6}>
                 <a href={SubmissionUploadForm.getURL()} download={"base-ai.zip"}
@@ -60,7 +77,7 @@ export default class SubmissionUploadForm extends React.Component<SubmissionUplo
             </Col>
             <Col xs={6}>
                 <Button type="submit" variant={downloaded ? "primary" : "secondary"}
-                        onClick={this.onSubmit}>
+                        onClick={this.onOpenUploadDialogue}>
                     <LoadingOrText loading={this.state.loading}>Upload your new AI</LoadingOrText>
                 </Button>
             </Col>
