@@ -58,8 +58,7 @@ export default class SubmissionsPage extends ApiBoundComponent<SubmissionsPagePr
         if (data.submissions.length == 0) {
             submissions = <CenterDiv>
                 <div className="my-3 p-2 text-center border border-info rounded">
-                    To begin, clone the <a href="https://github.com/AI-Wars-Soc/chess-ai">Github
-                    Repository</a> for
+                    To begin, download the Base AI for
                     the signatures of the method that you need to implement.
                 </div>
             </CenterDiv>

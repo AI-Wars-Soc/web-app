@@ -1,8 +1,7 @@
 import React from "react";
 import {Button, Col} from "react-bootstrap";
 import {LoadingOrText} from "../../loadingOrText";
-import {LoadingSuspense} from "../../loadingSuspense";
-const Dropzone = React.lazy(() => import("react-dropzone"));
+import SubmissionUploadModal from "./submissionUploadModal";
 
 type SubmissionUploadFormProps = {
     refreshSubmissions: () => unknown
@@ -12,24 +11,8 @@ type SubmissionUploadFormProps = {
 type SubmissionUploadFormState = {
     loading: boolean
     error: boolean
-
     downloaded: boolean
-};
-
-const dropzoneStyle = {
-    flex: 1,
-    display: 'flex',
-    flexDirection: 'column',
-    alignItems: 'center',
-    padding: '20px',
-    borderWidth: 2,
-    borderRadius: 2,
-    borderColor: '#eeeeee',
-    borderStyle: 'dashed',
-    backgroundColor: '#fafafa',
-    color: '#bdbdbd',
-    outline: 'none',
-    transition: 'border .24s ease-in-out'
+    uploadModalOpen: boolean
 };
 
 export default class SubmissionUploadForm extends React.Component<SubmissionUploadFormProps, SubmissionUploadFormState> {
@@ -38,7 +21,8 @@ export default class SubmissionUploadForm extends React.Component<SubmissionUplo
         this.state = {
             loading: false,
             error: false,
-            downloaded: localStorage.getItem("downloaded-base-ai") === "true"
+            downloaded: localStorage.getItem("downloaded-base-ai") === "true",
+            uploadModalOpen: false
         }
 
         this.setDownloaded = this.setDownloaded.bind(this);
@@ -57,7 +41,7 @@ export default class SubmissionUploadForm extends React.Component<SubmissionUplo
     }
 
     private onSubmit(): void {
-        this.props.setError("Not Implemented");
+        this.setState({uploadModalOpen: true});
 
         this.setDownloaded();
     }
@@ -66,18 +50,9 @@ export default class SubmissionUploadForm extends React.Component<SubmissionUplo
         const downloaded = this.state.downloaded;
 
         return <>
-            <Col xs={12}>
-                <LoadingSuspense>
-                    <Dropzone>
-                        {({getRootProps, getInputProps}: {getRootProps: () => never, getInputProps: () => never}) => (
-                            <div style={dropzoneStyle} {...getRootProps()}>
-                                <input {...getInputProps()} />
-                                <p>Drag &apos;n&apos; drop some files here, or click to select files</p>
-                            </div>
-                        )}
-                    </Dropzone>
-                </LoadingSuspense>
-            </Col>
+            <SubmissionUploadModal handleClose={() => this.setState({uploadModalOpen: false})}
+                                   handleSubmissionUpload={acceptedFiles => console.log(acceptedFiles)}
+                                   show={this.state.uploadModalOpen}/>
             <Col xs={6}>
                 <a href={SubmissionUploadForm.getURL()} download={"base-ai.zip"}
                    className={"btn float-right " + (downloaded ? "btn-secondary" : "btn-primary")}
