@@ -3,7 +3,7 @@ import { Modal, Button } from "react-bootstrap"
 
 type ConfirmModalProps = {
     title?: string,
-    handleClose: React.MouseEventHandler<HTMLElement>,
+    handleClose: () => void,
     handleConfirm: React.MouseEventHandler<HTMLElement>,
     show: boolean,
     static?: boolean,

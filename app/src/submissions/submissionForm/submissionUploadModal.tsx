@@ -4,7 +4,7 @@ import {LoadingSuspense} from "../../loadingSuspense";
 const Dropzone = React.lazy(() => import("../../dropzone"));
 
 type SubmissionUploadModalProps = {
-    handleClose: React.MouseEventHandler<HTMLElement>,
+    handleClose: () => void,
     handleSubmissionUpload: (f: File[]) => unknown,
     show: boolean,
 }
@@ -16,8 +16,8 @@ export default function SubmissionUploadModal(props: SubmissionUploadModalProps)
         setFiles([...files, ...newFiles]);
     };
 
-    const handleClose = (e: React.MouseEvent<HTMLElement>) => {
-        props.handleClose(e);
+    const handleClose = () => {
+        props.handleClose();
         setFiles([]);
     };
 
@@ -36,7 +36,7 @@ export default function SubmissionUploadModal(props: SubmissionUploadModalProps)
             </LoadingSuspense>
         </Modal.Body>
         <Modal.Footer>
-            <Button variant="primary" onClick={e => {props.handleSubmissionUpload(files); handleClose(e);}}>
+            <Button variant="primary" onClick={() => {props.handleSubmissionUpload(files); handleClose();}}>
                 Upload
             </Button>
             <Button variant="secondary" onClick={handleClose}>

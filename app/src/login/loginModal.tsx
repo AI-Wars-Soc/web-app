@@ -4,7 +4,7 @@ import {GoogleLoginButton} from "./googleLoginButton";
 import {User} from "../user";
 
 type LoginModalProps = {
-    handleClose: React.MouseEventHandler<HTMLElement>
+    handleClose: () => void,
     show: boolean,
     static: boolean,
     user: User,
