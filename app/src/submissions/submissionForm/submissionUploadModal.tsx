@@ -12,22 +12,18 @@ type SubmissionUploadModalProps = {
 export default function SubmissionUploadModal(props: SubmissionUploadModalProps): JSX.Element {
     const [files, setFiles] = useState([] as File[]);
 
-    const addFile = (file: File) => {
-        const newFiles = files;
-
-        newFiles.push(file);
-
-        setFiles(newFiles);
+    const addFiles = (newFiles: File[]) => {
+        setFiles([...files, ...newFiles]);
     };
 
     const handleClose = (e: React.MouseEvent<HTMLElement>) => {
         props.handleClose(e);
         setFiles([]);
-    }
+    };
 
     return <Modal
         show={props.show}
-        onHide={props.handleClose}
+        onHide={handleClose}
         backdrop={true}
         keyboard={true}
     >
@@ -36,7 +32,7 @@ export default function SubmissionUploadModal(props: SubmissionUploadModalProps)
         </Modal.Header>
         <Modal.Body>
             <LoadingSuspense>
-                <Dropzone files={files} onFileAdded={addFile}/>
+                <Dropzone files={files} onFilesAdded={addFiles}/>
             </LoadingSuspense>
         </Modal.Body>
         <Modal.Footer>
@@ -47,5 +43,5 @@ export default function SubmissionUploadModal(props: SubmissionUploadModalProps)
                 Close
             </Button>
         </Modal.Footer>
-    </Modal>
+    </Modal>;
 }
