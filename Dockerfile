@@ -4,8 +4,8 @@ FROM nginx
 COPY root-serve /usr/share/nginx/html/
 
 # Install node and requirements
-RUN apt-get update && apt-get install -y nodejs npm
-RUN npm cache clean -f && npm install -g n && n latest
+RUN curl -fsSL https://deb.nodesource.com/setup_lts.x | bash && apt-get update && apt-get install -y nodejs
+RUN npm cache clean -f && npm install -g n && n lts
 
 # Build static files
 COPY app /tmp/app
