@@ -35,7 +35,7 @@ export default class SubmissionsPage extends ApiBoundComponent<SubmissionsPagePr
             <PageTitle>Submissions</PageTitle>
             <PageInfo>Here you can see your previous submissions and make new ones.</PageInfo>
             <CenterDiv>
-                <div className="my-2 my-md-4 mx-lg-4">
+                <div className="my-2 my-md-4 mx-lg-4 w-100" style={{maxWidth: "1000px"}}>
                     <SubmissionForm refreshSubmissions={this.fetch}/>
                     <div className="p-2 p-md-4 px-lg-5">
                         {submissions}

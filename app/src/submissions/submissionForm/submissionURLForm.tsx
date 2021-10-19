@@ -1,5 +1,6 @@
 import React from "react";
 import {Post} from "../../apiBoundComponent";
+import {Col} from "react-bootstrap";
 
 type SubmissionURLFormProps = {
     refreshSubmissions: () => unknown
@@ -56,16 +57,16 @@ export default class SubmissionURLForm extends React.Component<SubmissionURLForm
 
     render(): JSX.Element {
         return <>
-            <div className="col-md-2 d-none d-md-block my-auto">
+            <Col md={2} className="d-none d-md-block my-auto">
                 <label htmlFor="repo" className="my-auto text-right">Repository URL:</label>
-            </div>
-            <div className="col-12 col-md-8 my-auto">
+            </Col>
+            <Col xs={10} md={8} className="my-auto">
                 <input type="url" className="form-control" id="repo" ref={node => (this.urlNode = node)}
                        placeholder="https://github.com/your/repo" required/>
-            </div>
-            <div className="col-12 col-md-2 my-auto py-2 py-sm-3 py-md-0">
+            </Col>
+            <Col xs={2} className="my-auto py-2 py-sm-3 py-md-0">
                 <div
-                    className="d-flex w-100 justify-content-center justify-content-md-left">
+                    className="d-flex w-100 justify-content-center">
                     <button type="submit"
                             className="btn btn-primary submission-submit-button"
                             onClick={this.onSubmit}>
@@ -74,7 +75,7 @@ export default class SubmissionURLForm extends React.Component<SubmissionURLForm
                                   id="submit-spinner"/> : <>Submit</>}
                     </button>
                 </div>
-            </div>
+            </Col>
         </>;
     }
 }

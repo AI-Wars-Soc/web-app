@@ -222,9 +222,16 @@ export class SubmissionEntry extends React.Component<SubmissionEntryProps, Submi
 
                                         <Col xs={6} md={12}>
                                             <div style={{cursor: "pointer"}}>
-                                                <Suspense fallback={<div/>}>
-                                                    <SubmissionDeleteButton {...this.props}/>
-                                                </Suspense>
+                                                <div className="d-md-none float-right">
+                                                    <Suspense fallback={<div/>}>
+                                                        <SubmissionDeleteButton {...this.props}/>
+                                                    </Suspense>
+                                                </div>
+                                                <div className="d-none d-md-block" style={{position: "absolute", bottom: 0}}>
+                                                    <Suspense fallback={<div/>}>
+                                                        <SubmissionDeleteButton {...this.props}/>
+                                                    </Suspense>
+                                                </div>
                                             </div>
                                         </Col>
                                     </Row>

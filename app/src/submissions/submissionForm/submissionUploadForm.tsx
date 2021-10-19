@@ -106,12 +106,12 @@ export default class SubmissionUploadForm extends React.Component<SubmissionUplo
             </Suspense>
             <Col xs={6}>
                 <a href={SubmissionUploadForm.getURL()} download={"base-ai.zip"}
-                   className={"btn float-right " + (downloaded ? "btn-secondary" : "btn-primary")}
+                   className={"btn float-right h-100 " + (downloaded ? "btn-secondary" : "btn-primary")}
                    onClick={this.setDownloaded}>Download base AI</a>
             </Col>
             <Col xs={6}>
                 <Button type="submit" variant={downloaded ? "primary" : "secondary"}
-                        onClick={this.onOpenUploadDialogue}>
+                        onClick={this.onOpenUploadDialogue} className="h-100">
                     <LoadingOrText loading={this.state.loading}>Upload your new AI</LoadingOrText>
                 </Button>
             </Col>
