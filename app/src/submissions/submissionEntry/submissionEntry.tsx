@@ -130,10 +130,15 @@ export class SubmissionEntry extends React.Component<SubmissionEntryProps, Submi
         const crashed = this.props.tested && !this.props.healthy;
 
         let activeSwitch = <></>;
+        let playButton = <></>;
         if (this.props.healthy) {
             activeSwitch = <Suspense fallback={<div/>}>
                     <SubmissionEnabledSwitch {...this.props} />
                 </Suspense>;
+            playButton = <a href={"/play/" + this.props.submission_id}
+                            className={"btn btn-primary"}>
+                Play this AI
+            </a>;
         }
 
         let crashedDiv = <></>;
@@ -213,14 +218,18 @@ export class SubmissionEntry extends React.Component<SubmissionEntryProps, Submi
                             <Row>
                                 <Col xs={12} md={6}>
                                     <Row className="h-100">
-                                        <Col xs={6} md={12}>
+                                        <Col xs={5} md={12}>
                                             <div className="p-1">
                                                 {this.props.submission_date}
                                             </div>
                                             {activeSwitch}
                                         </Col>
 
-                                        <Col xs={6} md={12}>
+                                        <Col xs={5} md={12}>
+                                            {playButton}
+                                        </Col>
+
+                                        <Col xs={2} md={12}>
                                             <div style={{cursor: "pointer"}}>
                                                 <div className="d-md-none float-right">
                                                     <Suspense fallback={<div/>}>
