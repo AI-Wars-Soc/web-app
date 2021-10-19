@@ -45,7 +45,11 @@ export default class SubmissionURLForm extends React.Component<SubmissionURLForm
                     this.setState({
                         loading: false,
                     });
-                    this.props.setError(error);
+                    if (error.message) {
+                        this.props.setError(error.message);
+                    } else {
+                        this.props.setError("Unknown error!");
+                    }
                 }
             )
     }

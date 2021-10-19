@@ -1,7 +1,9 @@
-import React from "react";
+import React, {Suspense} from "react";
 import {Button, Col} from "react-bootstrap";
 import {LoadingOrText} from "../../loadingOrText";
-import SubmissionUploadModal from "./submissionUploadModal";
+import {Post} from "../../apiBoundComponent";
+
+const SubmissionUploadModal = React.lazy(() => import("./submissionUploadModal"));
 
 type SubmissionUploadFormProps = {
     refreshSubmissions: () => unknown
@@ -31,8 +33,8 @@ export default class SubmissionUploadForm extends React.Component<SubmissionUplo
     }
 
     private static getURL(): string {
-        const extension = navigator.platform.startsWith("Win") ? "zip" : "tar";
-        return  "/api/get_default_submission?extension=" + extension;
+        const extension = (!navigator.platform || navigator.platform.startsWith("Win")) ? "zip" : "tar";
+        return "/api/get_default_submission?extension=" + extension;
     }
 
     private setDownloaded(): void {
@@ -42,19 +44,49 @@ export default class SubmissionUploadForm extends React.Component<SubmissionUplo
     }
 
     private onFilesOpened(files: File[]): void {
+        let error: null | string = null;
+        const datas: {fileName: string, data: string}[] = [];
+
+        const onReadAll = () => {
+            this.props.setError(error);
+            if (error !== null) {
+                return;
+            }
+
+            Post<{submission_id: number}>("add_submission_raw_files", {files: datas})
+                .then(() => {
+                    this.props.setError(null);
+                    this.props.refreshSubmissions();
+                })
+                .catch(
+                    (error) => {
+                        console.error(error);
+                        if (error.message) {
+                            this.props.setError(error.message);
+                        } else {
+                            this.props.setError("Unknown error!");
+                        }
+                    }
+                )
+        };
+
         files.forEach((file) => {
             const reader = new FileReader()
 
-            reader.onabort = () => console.log('file reading was aborted')
-            reader.onerror = () => console.log('file reading has failed')
+            reader.onabort = () => { error = "File " + file.name + " read was aborted"; };
+            reader.onerror = () => { error = "File " + file.name + " read error"; };
             reader.onload = () => {
-                // Do whatever you want with the file contents
-                const binaryStr = reader.result
-                console.log(binaryStr)
+                const binaryStr = reader.result as string;
+
+                datas.push({fileName: file.name, data: binaryStr});
+
+                if (datas.length === files.length) {
+                    onReadAll();
+                }
             }
 
-            reader.readAsArrayBuffer(file)
-        })
+            reader.readAsBinaryString(file);
+        });
     }
 
     private onOpenUploadDialogue(): void {
@@ -67,9 +99,11 @@ export default class SubmissionUploadForm extends React.Component<SubmissionUplo
         const downloaded = this.state.downloaded;
 
         return <>
-            <SubmissionUploadModal handleClose={() => this.setState({uploadModalOpen: false})}
-                                   handleSubmissionUpload={acceptedFiles => this.onFilesOpened(acceptedFiles)}
-                                   show={this.state.uploadModalOpen}/>
+            <Suspense fallback={<></>}>
+                <SubmissionUploadModal handleClose={() => this.setState({uploadModalOpen: false})}
+                                       handleSubmissionUpload={acceptedFiles => this.onFilesOpened(acceptedFiles)}
+                                       show={this.state.uploadModalOpen}/>
+            </Suspense>
             <Col xs={6}>
                 <a href={SubmissionUploadForm.getURL()} download={"base-ai.zip"}
                    className={"btn float-right " + (downloaded ? "btn-secondary" : "btn-primary")}
