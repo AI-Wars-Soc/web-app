@@ -10,10 +10,12 @@ while getopts 'p' flag; do
     esac
 done
 
+npm update
+
 mkdir /tmp/web-app_build/
 rsync -av --progress "$SCRIPT_DIR"/app/ /tmp/web-app_build/ --exclude dist --exclude node_modules 
 
-(cd /tmp/web-app_build/ && npm i && npm run "$mode") || exit
+(cd /tmp/web-app_build/ && npm i && npm update && npm run "$mode") || exit
 
 rm "$SCRIPT_DIR"/app/dist/*
 rsync -av --progress /tmp/web-app_build/dist/ "$SCRIPT_DIR"/app/dist/

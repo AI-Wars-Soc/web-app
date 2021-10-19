@@ -1,6 +1,8 @@
 import React, {Suspense} from "react";
 import {User} from "../user";
 import {Route, Switch, Link} from "react-router-dom";
+import {PageTitle, PageInfo} from "../pageTitleAndInfo";
+import {Row} from "react-bootstrap";
 
 type AdminPageProps = {
     user: User,
@@ -36,23 +38,15 @@ export default class AdminPage extends React.Component<AdminPageProps, AdminPage
                     </Suspense>
                 </Route>
                 <Route path="/admin">
-                    <div className="flex-column justify-content-center justify-content-sm-start">
-                        <h1>Admin Index Page</h1>
-                    </div>
-                    <div className="px-3 d-none d-sm-block">
-                        <p className="lead">
-                            For all your administration needs
-                        </p>
-                    </div>
+                    <PageTitle>Admin Index Page</PageTitle>
+                    <PageInfo>For all your administration needs</PageInfo>
 
-                    <ul className="flex-column mb-auto">
-                        <li>
-                            <Link to="/admin/bots">Bots</Link>
-                        </li>
-                        <li>
-                            <Link to="/admin/status">Service Status</Link>
-                        </li>
-                    </ul>
+                    <Row>
+                        <Link to="/admin/bots">Bots</Link>
+                    </Row>
+                    <Row>
+                        <Link to="/admin/status">Service Status</Link>
+                    </Row>
                 </Route>
             </Switch>
         </>;

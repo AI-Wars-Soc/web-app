@@ -1,5 +1,6 @@
 import React, {ChangeEvent} from "react";
 import {Post} from "../apiBoundComponent";
+import Switch from "react-bootstrap/Switch";
 
 type RealNameSwitchProps = {
     active: boolean,
@@ -32,16 +33,13 @@ export default class RealNameSwitch extends React.Component<RealNameSwitchProps>
     }
 
     render(): JSX.Element {
-        return <div className="p-1 submission-active-switch">
-            <div className="custom-control custom-switch">
-                <input type="checkbox" className="custom-control-input"
-                       id="displayRealNameSwitch"
-                       checked={this.props.active}
-                       onChange={this.onSwitch}/>
-                <label className="custom-control-label"
-                       htmlFor="displayRealNameSwitch">Display your real name on the
-                    leaderboard</label>
-            </div>
+        return <div className="p-1">
+            <Switch
+                onChange={this.onSwitch}
+                id="real-name-switch"
+                label="Display your real name on the leaderboard"
+                checked={this.props.active}
+            />
         </div>;
     }
 }

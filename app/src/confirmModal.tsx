@@ -1,17 +1,17 @@
 import React from "react";
 import { Modal, Button } from "react-bootstrap"
 
-type LoginModalProps = {
+type ConfirmModalProps = {
     title?: string,
-    handleClose: React.MouseEventHandler<HTMLElement>,
+    handleClose: () => void,
     handleConfirm: React.MouseEventHandler<HTMLElement>,
     show: boolean,
     static?: boolean,
-    children: (string|number)[]|string|number
+    children: React.ReactNode
 }
 
-export default class ConfirmModal extends React.Component<LoginModalProps> {
-    constructor(props: LoginModalProps) {
+export default class ConfirmModal extends React.Component<ConfirmModalProps> {
+    constructor(props: ConfirmModalProps) {
         super(props);
     }
 

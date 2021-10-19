@@ -10,11 +10,11 @@ export default function AboutPage(): JSX.Element {
             <p>
                 The <b>Cambridge University Warring AI Society (CUWAIS)</b> is a new society
                 for people who want to test their skills at programming and game-playing.
-                Every holiday, we set a game (currently Chess960) and invite competitors
+                Each competition, we set a game and invite competitors
                 to submit their original AIs to compete against each other.
             </p>
             <p>
-                The server repeatedly takes two AIs from the pool of submitted AIs and has
+                The server repeatedly takes AIs from the pool of submission and has
                 them play a game against each other, while maintaining an ELO-like score
                 based on win-loss statistics for each AI. Over time, AI scores therefore
                 converge on an increasingly accurate picture of how the AIs perform.
@@ -61,12 +61,8 @@ export default function AboutPage(): JSX.Element {
                     You will automatically get a CUWAIS account and be logged in.
                 </li>
                 <li>
-                    Clone the <a href="https://github.com/AI-Wars-Soc/chess-ai">Github Repository</a> for
-                    the signatures of the methods that you need to implement.
-                </li>
-                <li>
                     Once logged in, make a <Link to="/submissions">Submission</Link>.
-                    After submission, your repository will be cloned onto CUWAIS servers
+                    After submission, your code will be saved onto our servers
                     and continuously paired up with other users&apos; submissions.
                 </li>
                 <li>
@@ -110,17 +106,13 @@ export default function AboutPage(): JSX.Element {
                     Therefore:
                     <ul>
                         <li>
-                            Your program should be completely stateless.
-                            The game is not guaranteed to start from a usual starting position.
-                        </li>
-                        <li>
-                            Your AI will be terminated if you go over the given limits.
-                        </li>
-                        <li>
                             Do not try to break out of the sandbox provided.
                         </li>
                         <li>
                             Do not search for extra processors or processing devices.
+                        </li>
+                        <li>
+                            Your AI will be terminated if you go over the given limits.
                         </li>
                     </ul>
                     You will be disqualified from all future events if you are found to have tried to gain access to

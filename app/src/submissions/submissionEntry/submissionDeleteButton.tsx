@@ -1,8 +1,8 @@
 import React, { Suspense } from "react";
 import {TrashFill} from "react-bootstrap-icons";
-import {Post} from "../apiBoundComponent";
+import {Post} from "../../apiBoundComponent";
 
-const ConfirmModal = React.lazy(() => import("../confirmModal"))
+const ConfirmModal = React.lazy(() => import("../../confirmModal"))
 
 type SubmissionDeleteButtonProps = {
     submission_id: number,

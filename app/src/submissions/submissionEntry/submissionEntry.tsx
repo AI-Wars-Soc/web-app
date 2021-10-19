@@ -1,8 +1,8 @@
 import React, {Suspense} from "react";
-import {Accordion, Card} from "react-bootstrap";
+import {Accordion, Card, Container, Row, Col} from "react-bootstrap";
 import {ChevronDown} from "react-bootstrap-icons";
-import {User} from "../user";
-import {Post} from "../apiBoundComponent";
+import {User} from "../../user";
+import {Post} from "../../apiBoundComponent";
 
 const SubmissionWinLossGraph = React.lazy(() => import("./submissionWinLossGraph"));
 const SubmissionEnabledSwitch = React.lazy(() => import("./submissionEnabledSwitch"));
@@ -20,14 +20,57 @@ export type SubmissionData = {
     crash_reason_long: string,
     prints: string
 };
-export type SubmissionEntryProps = {
+
+type SubmissionEntryProps = {
     user: User,
     refreshSubmissions: () => unknown
 } & SubmissionData;
 
 export type SubmissionEntryState = {
     winLossGraph: JSX.Element | null
-}
+};
+
+const crashedDivStyle = {
+    background: "rgba(255, 255, 255, 0.5)",
+    borderRadius: "20px"
+};
+
+const entryStyle = {
+    borderRadius: "15px",
+    borderWidth: "2px",
+    borderStyle: "solid",
+    margin: "4px",
+    opacity: 0.5,
+};
+
+const entryActiveStyle = {
+    opacity: 1.0
+};
+
+const invalidStripesStyle = {
+    background: "repeating-linear-gradient(45deg," +
+        "rgba(235, 54, 54, 0.1)," +
+        "rgba(235, 54, 54, 0.1) 10px," +
+        "rgba(235, 54, 54, 0.4) 10px," +
+        "rgba(235, 54, 54, 0.4) 20px)"
+};
+
+const testingStripesStyle = {
+    background: "repeating-linear-gradient(35deg, " +
+        "rgba(54, 126, 235, 0.1), " +
+        "rgba(54, 126, 235, 0.1) 10px, " +
+        "rgba(54, 126, 235, 0.4) 10px, " +
+        "rgba(54, 126, 235, 0.4) 20px)",
+    backgroundSize: "200% 200%",
+    animation: "barberpole 5s linear infinite"
+};
+
+const entrySelectedStyle = {
+    borderRadius: "20px",
+    borderWidth: "6px",
+    borderStyle: "double",
+    margin: "0px"
+};
 
 export class SubmissionEntry extends React.Component<SubmissionEntryProps, SubmissionEntryState> {
     private testingCheckInterval: NodeJS.Timeout | null;
@@ -84,6 +127,8 @@ export class SubmissionEntry extends React.Component<SubmissionEntryProps, Submi
     }
 
     render(): JSX.Element {
+        const crashed = this.props.tested && !this.props.healthy;
+
         let activeSwitch = <></>;
         if (this.props.healthy) {
             activeSwitch = <Suspense fallback={<div/>}>
@@ -91,10 +136,9 @@ export class SubmissionEntry extends React.Component<SubmissionEntryProps, Submi
                 </Suspense>;
         }
 
-        const crashed = this.props.tested && !this.props.healthy;
         let crashedDiv = <></>;
         if (crashed) {
-            crashedDiv = <div className="submission-crash-report p-1 px-3">
+            crashedDiv = <div style={crashedDivStyle} className="p-1 px-3">
                 <div>
                     <b>Crash Reason:</b>
                     <p className="text-monospace">{this.props.crash_reason}</p>
@@ -129,29 +173,31 @@ export class SubmissionEntry extends React.Component<SubmissionEntryProps, Submi
             status = "Invalid";
         }
 
-        const class_names = ["submission-entry"];
-        const subdiv_class_names = ["submission-rounded", "w-100"];
+        let submissionStyle = entryStyle;
+        const headerStyle = {
+            borderRadius: "14px !important",
+            borderWidth: "0px",
+            background: "inherit"
+        }
         if (this.props.active) {
-            class_names.push('submission-entry-active');
+            submissionStyle = {...submissionStyle, ...entryActiveStyle};
         }
         if (crashed) {
-            class_names.push('invalid-stripes');
-            subdiv_class_names.push("submission-entry-invalid");
+            submissionStyle = {...submissionStyle, ...invalidStripesStyle};
+            headerStyle.background = "rgba(235, 54, 54, 0.3)";
         }
         if (!this.props.tested) {
-            class_names.push('testing-stripes');
-            subdiv_class_names.push("submission-entry-testing");
+            submissionStyle = {...submissionStyle, ...testingStripesStyle};
+            headerStyle.background = "rgba(54, 126, 235, 0.3)";
         }
         if (this.props.selected) {
-            class_names.push('submission-entry-selected');
+            submissionStyle = {...submissionStyle, ...entrySelectedStyle};
         }
-        const div_class = class_names.join(" ");
-        const subdiv_class = subdiv_class_names.join(" ");
 
         return <Card className={"border-0"}>
-            <div className={div_class}>
-                <Accordion.Toggle as={Card.Header} variant="link" eventKey={"" + this.props.index}
-                                  className={subdiv_class} onClick={this.toggleGraph}>
+            <div style={submissionStyle}>
+                <Accordion.Toggle as={Card.Header} variant="link" eventKey={"" + this.props.index} style={headerStyle}
+                                  className="w-100" onClick={this.toggleGraph}>
                     <span className="h5">
                         Submission {this.props.index}
                     </span>
@@ -163,32 +209,32 @@ export class SubmissionEntry extends React.Component<SubmissionEntryProps, Submi
 
                 <Accordion.Collapse eventKey={"" + this.props.index}>
                     <Card.Body>
-                        <div className="container">
-                            <div className="row justify-content-center">
-                                <div className="col-11 col-md-6">
-                                    <div className="row justify-content-center h-100">
-                                        <div className="col-6 col-md-11">
-                                            <div className="p-1 submission-date">
+                        <Container>
+                            <Row>
+                                <Col xs={12} md={6}>
+                                    <Row className="h-100">
+                                        <Col xs={6} md={12}>
+                                            <div className="p-1">
                                                 {this.props.submission_date}
                                             </div>
                                             {activeSwitch}
-                                        </div>
+                                        </Col>
 
-                                        <div className="col-6 col-md-11">
-                                            <div className="absolute-top-right absolute-md-bottom-left hand">
+                                        <Col xs={6} md={12}>
+                                            <div style={{cursor: "pointer"}}>
                                                 <Suspense fallback={<div/>}>
                                                     <SubmissionDeleteButton {...this.props}/>
                                                 </Suspense>
                                             </div>
-                                        </div>
-                                    </div>
-                                </div>
-                                <div className="col-11 col-md-6">
+                                        </Col>
+                                    </Row>
+                                </Col>
+                                <Col xs={12} md={6}>
                                     {this.state.winLossGraph}
                                     {crashedDiv}
-                                </div>
-                            </div>
-                        </div>
+                                </Col>
+                            </Row>
+                        </Container>
                     </Card.Body>
                 </Accordion.Collapse>
             </div>

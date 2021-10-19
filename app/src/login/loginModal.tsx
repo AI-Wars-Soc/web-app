@@ -4,7 +4,7 @@ import {GoogleLoginButton} from "./googleLoginButton";
 import {User} from "../user";
 
 type LoginModalProps = {
-    handleClose: React.MouseEventHandler<HTMLElement>
+    handleClose: () => void,
     show: boolean,
     static: boolean,
     user: User,
@@ -17,7 +17,11 @@ export default class LoginModal extends React.Component<LoginModalProps> {
     }
 
     render(): JSX.Element {
-        return <Modal
+        const loginButton = <GoogleLoginButton user={this.props.user} updateUser={this.props.updateUser}/>;
+        const hiddenLoginButton = <div className="d-none">{loginButton}</div>; // Preload for a better UX
+
+        return <>
+            <Modal
                 show={this.props.show}
                 onHide={this.props.handleClose}
                 backdrop={this.props.static ? "static" : true}
@@ -32,7 +36,7 @@ export default class LoginModal extends React.Component<LoginModalProps> {
                         as well as allowing us to store your name and and email address.
                         You can delete your account at any time.
                     </p>
-                    <GoogleLoginButton user={this.props.user} updateUser={this.props.updateUser}/>
+                    {loginButton}
                 </Modal.Body>
                 <Modal.Footer>
                     <Button variant="secondary" onClick={this.props.handleClose}>
@@ -40,5 +44,7 @@ export default class LoginModal extends React.Component<LoginModalProps> {
                     </Button>
                 </Modal.Footer>
             </Modal>
+            {hiddenLoginButton}
+        </>
     }
 }

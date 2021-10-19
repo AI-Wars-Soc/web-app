@@ -1,4 +1,6 @@
 import React from "react";
+import {CenterDiv} from "../centreDiv";
+import {Col, Row} from "react-bootstrap";
 
 export type LeaderboardEntryProps = {
     position: number | string,
@@ -9,48 +11,98 @@ export type LeaderboardEntryProps = {
     losses: number | string,
     draws: number | string,
     score: number | string,
-    boarder_style: string
+    is_bot: boolean,
+    is_you: boolean
 }
 
 
+const leaderboardTitleStyle = {
+    borderWidth: "0px 0px 1px",
+    borderStyle: "solid",
+    borderColor: "#7a7a7a",
+}
+
+const leaderboardEntryStyle = {
+    borderWidth: "1px",
+    borderStyle: "solid",
+    borderColor: "transparent",
+    borderRadius: "20px",
+    margin: "5px",
+}
+
+const leaderboardUserSubmission = {
+    borderWidth: "6px",
+    borderStyle: "double",
+    borderColor: "#2D7DD2",
+    margin: 0
+}
+
+const leaderboardBotSubmission = {
+    borderWidth: "3px",
+    borderStyle: "solid",
+    borderColor: "#90001C",
+    margin: "3px !important",
+}
+
+const leaderboardOtherSubmission = {
+    borderColor: "#8d8d8d"
+}
+
+function LeaderboardItem(props: {width: number, align?: "left" | "center" | "right", hideBefore?: "sm" | "md" | "lg", children?: React.ReactNode}): JSX.Element {
+    const style = {width: props.width + "px", maxWidth: props.width + "px", textAlign: props.align || "center"};
+    const className = props.hideBefore === undefined ? "" : "d-none d-" + props.hideBefore + "-block";
+    return <Col style={style} className={className}>
+        {props.children}
+    </Col>
+}
+
 export class LeaderboardEntry extends React.Component<LeaderboardEntryProps> {
     render(): JSX.Element {
-        const {position, name, is_real_name, nickname, wins, losses, draws, score, boarder_style} = this.props;
-        return <div className="p-1 px-md-3 text-nowrap" id={"leaderboard-entry-" + position}>
-            <div className="px-lg-5 d-flex justify-content-center">
-                <div
-                    className={"max-width-center d-flex w-100 flex-row p-2 p-md-3 leaderboard-submission " + boarder_style}>
-                    <div className="leaderboard-position">
+        const {position, name, is_real_name, nickname, wins, losses, draws, score, is_bot, is_you} = this.props;
+
+        let boarderStyle: React.CSSProperties;
+        if (is_bot && is_you) {  // Use impossible state for title. Hacky!
+            boarderStyle = leaderboardTitleStyle;
+        } else {
+            boarderStyle = is_bot ? leaderboardBotSubmission
+                    : is_you ? leaderboardUserSubmission
+                    : leaderboardOtherSubmission;
+        }
+        const style = {...leaderboardEntryStyle, ...boarderStyle}
+
+        return <Row className="p-1 px-md-3 px-lg-5 text-nowrap">
+            <CenterDiv>
+                <Row style={style} className={"p-2 p-md-3 w-100"}>
+                    <LeaderboardItem width={100}>
                         {position}
-                    </div>
-                    <div className="leaderboard-name flex-column">
-                        <div className="row">
-                            <div className="p-0 col-auto">
+                    </LeaderboardItem>
+                    <Col style={{flexGrow: 1}} className="flex-column">
+                        <Row>
+                            <Col xs="auto" className="p-0">
                                 {name}
-                            </div>
+                            </Col>
                             {is_real_name &&
-                            <div className="col-6 d-none d-lg-block nickname-text">
+                            <Col xs="auto" style={{color: "#6C757D"}} className="d-none d-lg-block">
                                 ({nickname})
-                            </div>
+                            </Col>
                             }
-                        </div>
-                    </div>
-                    <div className="leaderboard-wins d-none d-md-block">
+                        </Row>
+                    </Col>
+                    <LeaderboardItem width={80} hideBefore={"md"}>
                         {wins}
-                    </div>
-                    <div className="leaderboard-losses d-none d-md-block">
+                    </LeaderboardItem>
+                    <LeaderboardItem width={80} hideBefore={"md"}>
                         {losses}
-                    </div>
-                    <div className="leaderboard-draws d-none d-md-block">
+                    </LeaderboardItem>
+                    <LeaderboardItem width={80} hideBefore={"md"}>
                         {draws}
-                    </div>
-                    <div className="leaderboard-spacer d-none d-lg-block">
-                    </div>
-                    <div className="leaderboard-score">
+                    </LeaderboardItem>
+                    <LeaderboardItem width={30} hideBefore={"lg"}/>
+                    <LeaderboardItem width={100} align={"right"}>
                         {score}
-                    </div>
-                </div>
-            </div>
-        </div>;
+                    </LeaderboardItem>
+                </Row>
+            </CenterDiv>
+        </Row>;
     }
 }

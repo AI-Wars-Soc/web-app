@@ -3,6 +3,7 @@ import {LeaderboardEntry, LeaderboardEntryProps} from "./leaderboardEntry";
 import React from "react";
 import {ApiBoundComponent} from "../apiBoundComponent";
 import {isA} from "ts-type-checked";
+import {Col} from "react-bootstrap";
 
 
 type LeaderboardData = {
@@ -31,11 +32,11 @@ export class Leaderboard extends ApiBoundComponent<LeaderboardProps, Leaderboard
     protected renderLoaded(data: LeaderboardData): JSX.Element {
         const entryDivs = data.entries.map(e => <LeaderboardEntry key={e.position} {...e}/>)
 
-        return <div className="d-flex flex-column py-2 flex-grow-1" id="leaderboard">
+        return <Col className="py-2">
             <LeaderboardEntry position="Position" name="Name" is_real_name={false} nickname=""
-                              wins="Wins" losses="Losses" draws="Draws" score="Score" boarder_style="border-bottom"/>
+                              wins="Wins" losses="Losses" draws="Draws" score="Score" is_bot={true} is_you={true}/>
             {entryDivs}
-        </div>;
+        </Col>;
     }
 
     protected typeCheck(data: unknown): data is LeaderboardData {
