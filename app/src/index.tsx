@@ -20,15 +20,6 @@ const MePage = React.lazy(() => import("./me/mePage"));
 const AdminPage = React.lazy(() => import("./admin/adminPage"));
 const MyFooter = React.lazy(() => import("./footer"));
 
-if ('serviceWorker' in navigator) {
-    window.addEventListener('load', () => {
-        navigator.serviceWorker.register('/service-worker.js').then(registration => {
-            console.log('SW registered: ', registration);
-        }).catch(registrationError => {
-            console.log('SW registration failed: ', registrationError);
-        });
-    });
-}
 
 function AppFn(props: { location: RouteLocation<LocationState>, history: RouteHistory<LocationState> }): JSX.Element {
     const [user, setUser] = useState(new User(null));
